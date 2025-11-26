@@ -2,6 +2,9 @@
   "name": "@teldio/fabric-json-schema-form",
   "version": "0.1.0",
   "type": "module",
+  "repository": {
+    "url": "https://github.com/teldio/fabric-json-schema-form"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
