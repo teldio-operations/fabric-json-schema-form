@@ -1,5 +1,5 @@
 {
-  "name": "@teldio/fabric-rjsf-form",
+  "name": "@teldio/fabric-json-schema-form",
   "version": "0.0.1",
   "type": "module",
   "devDependencies": {
