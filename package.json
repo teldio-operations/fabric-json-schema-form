@@ -1,5 +1,6 @@
 {
-  "name": "fabric-rjsf-form",
+  "name": "@teldio/fabric-rjsf-form",
+  "version": "0.0.1",
   "type": "module",
   "devDependencies": {
     "@types/bun": "latest"
