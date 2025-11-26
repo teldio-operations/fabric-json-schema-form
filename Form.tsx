@@ -1,15 +1,12 @@
 import { Button, Stack } from "@mui/material";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import type { PickerValue } from "@mui/x-date-pickers/internals";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { getDefaultRegistry, type FormProps } from "@rjsf/core";
 import Form from "@rjsf/mui";
-import type { FieldProps, RJSFSchema, WidgetProps } from "@rjsf/utils";
+import type { FieldProps, RJSFSchema } from "@rjsf/utils";
 import { customizeValidator } from "@rjsf/validator-ajv8";
 import Ajv2020 from "ajv/dist/2020";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { CustomTimePicker } from "./CustomTimePicker";
 
 dayjs.extend(customParseFormat);
 
@@ -25,7 +22,7 @@ const {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type RjsfFormProps = FormProps<any, RJSFSchema, any>;
 
-type Props = Omit<RjsfFormProps, "validator"> & {
+export type FabricJsonSchemaFormProps = Omit<RjsfFormProps, "validator"> & {
   onCancel?: () => void;
   loading?: boolean;
 };
@@ -34,7 +31,7 @@ export const FabricJsonSchemaForm = ({
   onCancel,
   loading,
   ...props
-}: Props) => {
+}: FabricJsonSchemaFormProps) => {
   const showSubmitButton =
     props.uiSchema?.["ui:submitButtonOptions"]?.norender !== true;
 
@@ -77,51 +74,24 @@ export const FabricJsonSchemaForm = ({
   );
 };
 
-const CustomTimePicker = (props: WidgetProps) => {
-  const { label, value, onChange, disabled, readonly, rawErrors } = props;
-
-  const handleChange = (newValue: PickerValue) => {
-    onChange(newValue?.format("HH:mm:ss"));
-  };
-
-  return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <TimePicker
-        label={label}
-        value={value ? dayjs(value, "HH:mm:ss") : null}
-        onChange={handleChange}
-        disabled={disabled || readonly}
-        ampm={false}
-        slotProps={{
-          textField: {
-            fullWidth: true,
-            error: rawErrors && rawErrors.length > 0,
-          },
-        }}
-      />
-    </LocalizationProvider>
-  );
-};
-
-const SchemaField = (props: FieldProps) => {
+export const SchemaField = (props: FieldProps) => {
   if (!DefaultSchemaField) {
     return null;
   }
 
-  if (props.schema.type === "string" && props.schema.control === "password") {
-    return (
-      <DefaultSchemaField {...props} uiSchema={{ "ui:widget": "password" }} />
-    );
-  }
-  if (props.schema.type === "string" && props.schema.control === "textarea") {
-    return (
-      <DefaultSchemaField {...props} uiSchema={{ "ui:widget": "textarea" }} />
-    );
-  }
   if (props.schema.type === "string" && props.schema.format === "time") {
     return (
-      <DefaultSchemaField {...props} uiSchema={{ "ui:widget": "TimeWidget" }} />
+      <DefaultSchemaField
+        {...props}
+        uiSchema={{ "ui:widget": "TimeWidget", ...props.uiSchema }}
+      />
     );
   }
-  return <DefaultSchemaField {...props} />;
+
+  return (
+    <DefaultSchemaField
+      {...props}
+      uiSchema={{ "ui:widget": props.schema.control, ...props.uiSchema }}
+    />
+  );
 };
