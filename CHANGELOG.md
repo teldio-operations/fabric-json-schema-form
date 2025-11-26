@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.1.1...v0.1.2) (2025-11-26)
+
+
+### Bug Fixes
+
+* Export schemafield and always pass control prop ([a3e3c71](https://github.com/teldio-operations/fabric-json-schema-form/commit/a3e3c71c77a74b958ac9787668073c3990d20393))
+
 ## [0.1.1](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.1.0...v0.1.1) (2025-11-26)
 
 
