@@ -1,7 +1,7 @@
 import { Button, Stack } from "@mui/material";
 import { getDefaultRegistry, type FormProps } from "@rjsf/core";
-import Form from "@rjsf/mui";
-import type { FieldProps, RJSFSchema } from "@rjsf/utils";
+import RJSFMuiForm from "@rjsf/mui";
+import type { FieldProps } from "@rjsf/utils";
 import { CustomTimePicker } from "./CustomTimePicker";
 import { validator } from "./validator";
 
@@ -9,10 +9,7 @@ const {
   fields: { SchemaField: DefaultSchemaField },
 } = getDefaultRegistry();
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type RjsfFormProps = FormProps<any, RJSFSchema, any>;
-
-export type FabricJsonSchemaFormProps = Omit<RjsfFormProps, "validator"> & {
+export type FabricJsonSchemaFormProps = Omit<FormProps, "validator"> & {
   onCancel?: () => void;
   loading?: boolean;
 };
@@ -31,7 +28,7 @@ export const FabricJsonSchemaForm = ({
   const disabled = props.disabled || loading;
 
   return (
-    <Form
+    <RJSFMuiForm
       {...props}
       validator={validator}
       disabled={disabled}
@@ -63,7 +60,7 @@ export const FabricJsonSchemaForm = ({
           </Button>
         </Stack>
       )}
-    </Form>
+    </RJSFMuiForm>
   );
 };
 
