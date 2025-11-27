@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.1.3...v0.1.4) (2025-11-27)
+
+
+### Bug Fixes
+
+* Attempt to fix type errors ([e1ed712](https://github.com/teldio-operations/fabric-json-schema-form/commit/e1ed7123bb480cd22649dc24b647ffdf4c7ba11d))
+
 ## [0.1.3](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.1.2...v0.1.3) (2025-11-27)
 
 
