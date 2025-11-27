@@ -2,18 +2,8 @@ import { Button, Stack } from "@mui/material";
 import { getDefaultRegistry, type FormProps } from "@rjsf/core";
 import Form from "@rjsf/mui";
 import type { FieldProps, RJSFSchema } from "@rjsf/utils";
-import { customizeValidator } from "@rjsf/validator-ajv8";
-import Ajv2020 from "ajv/dist/2020";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
 import { CustomTimePicker } from "./CustomTimePicker";
-
-dayjs.extend(customParseFormat);
-
-const validator = customizeValidator({
-  AjvClass: Ajv2020,
-  ajvOptionsOverrides: {},
-});
+import { validator } from "./validator";
 
 const {
   fields: { SchemaField: DefaultSchemaField },
@@ -32,8 +22,11 @@ export const FabricJsonSchemaForm = ({
   loading,
   ...props
 }: FabricJsonSchemaFormProps) => {
-  const showSubmitButton =
-    props.uiSchema?.["ui:submitButtonOptions"]?.norender !== true;
+  const submitButtonOptions =
+    props.uiSchema?.["ui:options"]?.submitButtonOptions ??
+    props.uiSchema?.["ui:submitButtonOptions"];
+
+  const showSubmitButton = submitButtonOptions?.norender !== true;
 
   const disabled = props.disabled || loading;
 

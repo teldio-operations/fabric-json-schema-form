@@ -3,6 +3,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import type { PickerValue } from "@mui/x-date-pickers/internals";
 import type { WidgetProps } from "@rjsf/utils";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 
 export const CustomTimePicker = (props: WidgetProps) => {
   const { label, value, onChange, disabled, readonly, rawErrors } = props;
