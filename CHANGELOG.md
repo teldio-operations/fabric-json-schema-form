@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.1.2...v0.1.3) (2025-11-27)
+
+
+### Bug Fixes
+
+* Add missing dependency ([cb2337a](https://github.com/teldio-operations/fabric-json-schema-form/commit/cb2337a7e3cb6661b61f7c7448b749fc80ff8849))
+
 ## [0.1.2](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.1.1...v0.1.2) (2025-11-26)
 
 
