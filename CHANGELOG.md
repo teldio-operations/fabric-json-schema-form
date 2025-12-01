@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.5](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.1.4...v0.1.5) (2025-12-01)
+
+
+### Bug Fixes
+
+* Cleanup remaining issues ([9ed0e46](https://github.com/teldio-operations/fabric-json-schema-form/commit/9ed0e46ab226e9ed6db93895d8f320d0b8b84ac2))
+* Prevent missing widget errors ([bf9d252](https://github.com/teldio-operations/fabric-json-schema-form/commit/bf9d25260d357846820d6e0abec9eef9c61ec53e))
+
 ## [0.1.4](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.1.3...v0.1.4) (2025-11-27)
 
 
