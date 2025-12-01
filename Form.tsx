@@ -78,10 +78,14 @@ export const SchemaField = (props: FieldProps) => {
     );
   }
 
-  return (
-    <DefaultSchemaField
-      {...props}
-      uiSchema={{ "ui:widget": props.schema.control, ...props.uiSchema }}
-    />
-  );
+  if (props.schema.control != null) {
+    return (
+      <DefaultSchemaField
+        {...props}
+        uiSchema={{ "ui:widget": props.schema.control, ...props.uiSchema }}
+      />
+    );
+  }
+
+  return <DefaultSchemaField {...props} />;
 };
