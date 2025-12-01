@@ -1,13 +1,9 @@
 import { Button, Stack } from "@mui/material";
-import { getDefaultRegistry, type FormProps } from "@rjsf/core";
+import { type FormProps } from "@rjsf/core";
 import RJSFMuiForm from "@rjsf/mui";
-import type { FieldProps } from "@rjsf/utils";
 import { CustomTimePicker } from "./CustomTimePicker";
+import { SchemaField } from "./SchemaField";
 import { validator } from "./validator";
-
-const {
-  fields: { SchemaField: DefaultSchemaField },
-} = getDefaultRegistry();
 
 export type FabricJsonSchemaFormProps = Omit<FormProps, "validator"> & {
   onCancel?: () => void;
@@ -62,30 +58,4 @@ export const FabricJsonSchemaForm = ({
       )}
     </RJSFMuiForm>
   );
-};
-
-export const SchemaField = (props: FieldProps) => {
-  if (!DefaultSchemaField) {
-    return null;
-  }
-
-  if (props.schema.type === "string" && props.schema.format === "time") {
-    return (
-      <DefaultSchemaField
-        {...props}
-        uiSchema={{ "ui:widget": "TimeWidget", ...props.uiSchema }}
-      />
-    );
-  }
-
-  if (props.schema.control != null) {
-    return (
-      <DefaultSchemaField
-        {...props}
-        uiSchema={{ "ui:widget": props.schema.control, ...props.uiSchema }}
-      />
-    );
-  }
-
-  return <DefaultSchemaField {...props} />;
 };

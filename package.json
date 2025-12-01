@@ -1,17 +1,9 @@
 {
   "name": "@teldio/fabric-json-schema-form",
   "version": "0.1.4",
-  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/teldio-operations/fabric-json-schema-form"
-  },
-  "devDependencies": {
-    "@types/bun": "latest",
-    "@types/react": "^19.2.7"
-  },
-  "peerDependencies": {
-    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@mui/material": "^7.3.5",
@@ -22,5 +14,6 @@
     "@rjsf/validator-ajv8": "^6.1.2",
     "ajv": "^8.17.1",
     "dayjs": "^1.11.19"
-  }
+  },
+  "type": "module"
 }
