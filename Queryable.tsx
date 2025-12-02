@@ -113,7 +113,7 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
           }
         }}
       >
-        <MenuItem value=""></MenuItem>
+        <MenuItem value="" sx={{ display: "none" }} />
 
         {info?.managerPort &&
           Object.entries(modulesWithQueryables).map(
