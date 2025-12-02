@@ -49,7 +49,7 @@ type QueryRequest = {
 
 export const Queryable = (props: FieldProps<QueryRequest>) => {
   const {
-    label,
+    schema: { title, description },
     disabled,
     onChange,
     formData,
@@ -102,7 +102,8 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
     <Stack>
       <TextField
         select
-        label={label}
+        label={title}
+        helperText={description}
         disabled={disabled}
         value={toValue(formData?.moduleId, formData?.name) ?? ""}
         onChange={(e) => {
