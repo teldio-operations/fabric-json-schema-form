@@ -1,7 +1,8 @@
-import { ListItemText, MenuItem, Stack, TextField } from "@mui/material";
+import { ListItemText, MenuItem, Stack } from "@mui/material";
 import type { FieldProps, RJSFSchema } from "@rjsf/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Configuration, DefaultApi, ModulesApi } from "./api/src";
+import { LoadingTextField } from "./components/LoadingTextField";
 import { FabricJsonSchemaForm } from "./Form";
 
 const isObject = (value: unknown): value is Record<string, unknown> => {
@@ -59,20 +60,40 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
     },
   } = props;
 
-  const { data: info } = useQuery({
+  const {
+    data: info,
+    isFetching: isFetchingInfo,
+    refetch: refetchInfo,
+  } = useQuery({
     queryKey: ["info"],
     queryFn: () => defaultApi.getInfo(),
   });
 
-  const { data: appinfo } = useQuery({
+  const {
+    data: appinfo,
+    isFetching: isFetchingAppinfo,
+    refetch: refetchAppinfo,
+  } = useQuery({
     queryKey: ["appinfo"],
     queryFn: () => modulesApi.moduleGetAppinfoConfigured(),
   });
 
-  const { data: configs } = useQuery({
+  const {
+    data: configs,
+    isFetching: isFetchingConfigs,
+    refetch: refetchConfigs,
+  } = useQuery({
     queryKey: ["configs"],
     queryFn: () => modulesApi.getConfigs(),
   });
+
+  const refetch = () => {
+    refetchInfo();
+    refetchAppinfo();
+    refetchConfigs();
+  };
+
+  const isFetching = isFetchingInfo || isFetchingAppinfo || isFetchingConfigs;
 
   const modulesWithQueryables = Object.fromEntries(
     Object.entries(appinfo ?? {})
@@ -92,16 +113,12 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
       )
     : undefined;
 
-  if (selectedQueryable) {
-    console.log("selectedQueryable: ", selectedQueryable);
-  }
-
-  console.log("value: ", formData);
-
   return (
     <Stack>
-      <TextField
+      <LoadingTextField
+        loading={isFetching}
         select
+        onClick={refetch}
         label={title}
         helperText={description}
         disabled={disabled}
@@ -127,7 +144,7 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
                 </MenuItem>
               ))
           )}
-      </TextField>
+      </LoadingTextField>
 
       {selectedQueryable?.input && (
         <FabricJsonSchemaForm
