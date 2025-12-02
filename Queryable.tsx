@@ -140,7 +140,10 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
           Object.entries(modulesWithQueryables).map(
             ([moduleId, { appinfo, config }]) =>
               appinfo.queries?.map((query) => (
-                <MenuItem value={toValue(moduleId, query.name)}>
+                <MenuItem
+                  disabled={isFetching}
+                  value={toValue(moduleId, query.name)}
+                >
                   <ListItemText
                     primary={query.name}
                     secondary={config?.title ?? appinfo.title}
