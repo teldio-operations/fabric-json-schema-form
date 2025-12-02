@@ -33,32 +33,21 @@ const configuration = new Configuration({
 const modulesApi = new ModulesApi(configuration);
 const defaultApi = new DefaultApi(configuration);
 
-const toValue = (port: number, moduleId: string, queryName: string) =>
-  `http://localhost:${port}/a/${moduleId}/${queryName}`;
+const toValue = (moduleId?: string, name?: string) =>
+  moduleId && name ? `${moduleId}/${name}` : undefined;
 
 const fromValue = (value: string) => {
-  if (typeof value !== "string") {
-    return {};
-  }
-
-  const match = /http:\/\/localhost:\d+\/a\/(.+)\/(.+)/.exec(value);
-  if (!match) {
-    return {};
-  }
-  const [, moduleId, queryName] = match;
-
-  return {
-    moduleId,
-    queryName,
-  };
+  const [moduleId, name] = value.split("/");
+  return { moduleId, name };
 };
 
-type QueryableValue = {
-  endpoint: string;
+type QueryRequest = {
+  name: string;
+  moduleId: string;
   input?: Record<string, unknown>;
 };
 
-export const Queryable = (props: FieldProps<QueryableValue>) => {
+export const Queryable = (props: FieldProps<QueryRequest>) => {
   const {
     label,
     disabled,
@@ -97,17 +86,10 @@ export const Queryable = (props: FieldProps<QueryableValue>) => {
       ])
   );
 
-  const { moduleId, queryName } = fromValue(formData?.endpoint ?? "");
-
-  if (moduleId) {
-    console.log("moduleId: ", moduleId);
-  }
-  if (queryName) {
-    console.log("queryName: ", queryName);
-  }
-
-  const selectedQueryable = moduleId
-    ? appinfo?.[moduleId]?.queries?.find((q) => q.name === queryName)
+  const selectedQueryable = formData?.moduleId
+    ? appinfo?.[formData.moduleId]?.queries?.find(
+        (q) => q.name === formData.name
+      )
     : undefined;
 
   if (selectedQueryable) {
@@ -120,12 +102,15 @@ export const Queryable = (props: FieldProps<QueryableValue>) => {
     <Stack>
       <TextField
         select
-        label={props.label}
+        label={label}
         disabled={disabled}
-        value={formData?.endpoint ?? ""}
-        onChange={(e) =>
-          onChange({ ...formData, endpoint: e.target.value }, path)
-        }
+        value={toValue(formData?.moduleId, formData?.name) ?? ""}
+        onChange={(e) => {
+          const { moduleId, name } = fromValue(e.target.value);
+          if (moduleId && name) {
+            onChange({ ...formData, moduleId, name }, path);
+          }
+        }}
       >
         <MenuItem value=""></MenuItem>
 
@@ -133,9 +118,7 @@ export const Queryable = (props: FieldProps<QueryableValue>) => {
           Object.entries(modulesWithQueryables).map(
             ([moduleId, { appinfo, config }]) =>
               appinfo.queries?.map((query) => (
-                <MenuItem
-                  value={toValue(info.managerPort, moduleId, query.name)}
-                >
+                <MenuItem value={toValue(moduleId, query.name)}>
                   <ListItemText
                     primary={query.name}
                     secondary={config?.title ?? appinfo.title}

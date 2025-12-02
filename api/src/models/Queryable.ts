@@ -30,6 +30,12 @@ export interface Queryable {
     [key: string]: any | any;
     /**
      * 
+     * @type {string}
+     * @memberof Queryable
+     */
+    description?: string;
+    /**
+     * 
      * @type {Schema}
      * @memberof Queryable
      */
@@ -46,6 +52,12 @@ export interface Queryable {
      * @memberof Queryable
      */
     name: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Queryable
+     */
+    title?: string;
 }
 
 /**
@@ -68,9 +80,11 @@ export function QueryableFromJSONTyped(json: any, ignoreDiscriminator: boolean):
     return {
         
             ...json,
+        'description': json['description'] == null ? undefined : json['description'],
         'input': json['input'] == null ? undefined : SchemaFromJSON(json['input']),
         'mediaType': json['mediaType'],
         'name': json['name'],
+        'title': json['title'] == null ? undefined : json['title'],
     };
 }
 
@@ -86,9 +100,11 @@ export function QueryableToJSONTyped(value?: Queryable | null, ignoreDiscriminat
     return {
         
             ...value,
+        'description': value['description'],
         'input': SchemaToJSON(value['input']),
         'mediaType': value['mediaType'],
         'name': value['name'],
+        'title': value['title'],
     };
 }
 

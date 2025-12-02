@@ -6,9 +6,11 @@
 
 Name | Type
 ------------ | -------------
+`description` | string
 `input` | [Schema](Schema.md)
 `mediaType` | string
 `name` | string
+`title` | string
 
 ## Example
 
@@ -17,9 +19,11 @@ import type { Queryable } from 'api'
 
 // TODO: Update the object below with actual values
 const example = {
+  "description": null,
   "input": null,
   "mediaType": null,
   "name": null,
+  "title": null,
 } satisfies Queryable
 
 console.log(example)
