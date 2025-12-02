@@ -1,7 +1,7 @@
 import { ListItemText, MenuItem, Stack } from "@mui/material";
 import type { FieldProps, RJSFSchema } from "@rjsf/utils";
 import { useQuery } from "@tanstack/react-query";
-import { Configuration, DefaultApi, ModulesApi } from "./api/src";
+import { Configuration, ModulesApi } from "./api/src";
 import { LoadingTextField } from "./components/LoadingTextField";
 import { FabricJsonSchemaForm } from "./Form";
 
@@ -32,7 +32,6 @@ const configuration = new Configuration({
 });
 
 const modulesApi = new ModulesApi(configuration);
-const defaultApi = new DefaultApi(configuration);
 
 const toValue = (moduleId?: string, name?: string) =>
   moduleId && name ? `${moduleId}/${name}` : undefined;
@@ -61,17 +60,8 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
   } = props;
 
   const {
-    data: info,
-    isFetching: isFetchingInfo,
-    refetch: refetchInfo,
-  } = useQuery({
-    queryKey: ["info"],
-    queryFn: () => defaultApi.getInfo(),
-  });
-
-  const {
     data: appinfo,
-    isFetching: isFetchingAppinfo,
+    isPending: isFetchingAppinfo,
     refetch: refetchAppinfo,
   } = useQuery({
     queryKey: ["appinfo"],
@@ -80,7 +70,7 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
 
   const {
     data: configs,
-    isFetching: isFetchingConfigs,
+    isPending: isFetchingConfigs,
     refetch: refetchConfigs,
   } = useQuery({
     queryKey: ["configs"],
@@ -88,12 +78,11 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
   });
 
   const refetch = () => {
-    refetchInfo();
     refetchAppinfo();
     refetchConfigs();
   };
 
-  const isFetching = isFetchingInfo || isFetchingAppinfo || isFetchingConfigs;
+  const isFetching = isFetchingAppinfo || isFetchingConfigs;
 
   const modulesWithQueryables = Object.fromEntries(
     Object.entries(appinfo ?? {})
@@ -136,21 +125,20 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
       >
         <MenuItem value="" sx={{ display: "none" }} />
 
-        {info?.managerPort &&
-          Object.entries(modulesWithQueryables).map(
-            ([moduleId, { appinfo, config }]) =>
-              appinfo.queries?.map((query) => (
-                <MenuItem
-                  disabled={isFetching}
-                  value={toValue(moduleId, query.name)}
-                >
-                  <ListItemText
-                    primary={query.name}
-                    secondary={config?.title ?? appinfo.title}
-                  />
-                </MenuItem>
-              ))
-          )}
+        {Object.entries(modulesWithQueryables).map(
+          ([moduleId, { appinfo, config }]) =>
+            appinfo.queries?.map((query) => (
+              <MenuItem
+                disabled={isFetching}
+                value={toValue(moduleId, query.name)}
+              >
+                <ListItemText
+                  primary={query.name}
+                  secondary={config?.title ?? appinfo.title}
+                />
+              </MenuItem>
+            ))
+        )}
       </LoadingTextField>
 
       {selectedQueryable?.input && (
