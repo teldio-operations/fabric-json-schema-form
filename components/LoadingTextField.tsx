@@ -17,8 +17,11 @@ export const LoadingTextField = ({ loading, ...props }: Props) => {
         slotProps={{
           input: {
             endAdornment: (
-              <InputAdornment position="end">
-                <CircularProgress color="inherit" />
+              <InputAdornment
+                position="end"
+                sx={props.select ? { pr: 2 } : undefined}
+              >
+                <CircularProgress size="1em" color="inherit" />
               </InputAdornment>
             ),
           },
