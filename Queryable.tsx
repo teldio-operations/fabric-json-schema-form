@@ -118,7 +118,6 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
       <LoadingTextField
         loading={isFetching}
         select
-        onClick={refetch}
         label={title}
         helperText={description}
         disabled={disabled}
@@ -128,6 +127,11 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
           if (moduleId && name) {
             onChange({ ...formData, moduleId, name }, path);
           }
+        }}
+        slotProps={{
+          select: {
+            onOpen: refetch,
+          },
         }}
       >
         <MenuItem value="" sx={{ display: "none" }} />

@@ -1,6 +1,7 @@
 import {
   CircularProgress,
   InputAdornment,
+  Stack,
   TextField,
   type TextFieldProps,
 } from "@mui/material";
@@ -15,7 +16,6 @@ export const LoadingTextField = ({ loading, ...props }: Props) => {
         {...props}
         disabled
         value="Loading..."
-        select={false}
         slotProps={{
           input: {
             startAdornment: (
@@ -24,8 +24,30 @@ export const LoadingTextField = ({ loading, ...props }: Props) => {
               </InputAdornment>
             ),
           },
+          select: {
+            MenuProps: {
+              style: {
+                position: "relative",
+              },
+            },
+          },
         }}
-      />
+      >
+        {props.children}
+
+        {props.select && (
+          <Stack
+            position="absolute"
+            top={0}
+            left={0}
+            right={0}
+            bottom={0}
+            sx={{ backgroundColor: (t) => t.palette.action.disabledOpacity }}
+          >
+            <CircularProgress color="inherit" />
+          </Stack>
+        )}
+      </TextField>
     );
   }
 
