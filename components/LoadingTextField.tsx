@@ -16,9 +16,9 @@ export const LoadingTextField = ({ loading, ...props }: Props) => {
         disabled
         slotProps={{
           input: {
-            startAdornment: (
-              <InputAdornment position="start" sx={{ pr: 1 }}>
-                <CircularProgress size="1em" color="inherit" />
+            endAdornment: (
+              <InputAdornment position="end">
+                <CircularProgress color="inherit" />
               </InputAdornment>
             ),
           },
