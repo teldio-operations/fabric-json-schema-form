@@ -19,6 +19,15 @@ export const SchemaField = (props: FieldProps) => {
     );
   }
 
+  if (props.schema.control == "queryable") {
+    return (
+      <DefaultSchemaField
+        {...props}
+        uiSchema={{ "ui:field": "Queryable", ...props.uiSchema }}
+      />
+    );
+  }
+
   if (props.schema.control != null) {
     return (
       <DefaultSchemaField

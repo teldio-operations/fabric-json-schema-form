@@ -12,8 +12,13 @@
     "@rjsf/mui": "^6.1.2",
     "@rjsf/utils": "^6.1.2",
     "@rjsf/validator-ajv8": "^6.1.2",
+    "@tanstack/react-query": "^5.90.11",
     "ajv": "^8.17.1",
     "dayjs": "^1.11.19"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@types/web": "^0.0.294",
+    "typescript": "^5.9.3"
+  }
 }
