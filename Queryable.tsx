@@ -65,6 +65,9 @@ export const Queryable = (props: FieldProps<QueryableValue>) => {
     onChange,
     formData,
     fieldPathId: { path },
+    registry: {
+      fields: { SchemaField },
+    },
   } = props;
 
   const { data: info } = useQuery({
@@ -150,6 +153,7 @@ export const Queryable = (props: FieldProps<QueryableValue>) => {
           onChange={(data) =>
             formData && onChange({ ...formData, input: data.formData }, path)
           }
+          fields={SchemaField && { SchemaField }}
           uiSchema={{
             "ui:submitButtonOptions": {
               norender: true,
