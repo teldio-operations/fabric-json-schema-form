@@ -1,4 +1,4 @@
-import { MenuItem, Stack, Typography } from "@mui/material";
+import { Divider, MenuItem, Stack, Typography } from "@mui/material";
 import type { FieldProps, RJSFSchema } from "@rjsf/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -139,7 +139,9 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
     );
 
   return (
-    <Stack>
+    <Stack gap={1}>
+      <Divider flexItem />
+
       <LoadingTextField
         loading={isFetching}
         select
@@ -221,10 +223,11 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
             "ui:submitButtonOptions": {
               norender: true,
             },
-            "ui:title": "Configure query",
           }}
         />
       )}
+
+      <Divider flexItem />
     </Stack>
   );
 };
