@@ -1,4 +1,4 @@
-import { ListItemText, MenuItem, Stack, Typography } from "@mui/material";
+import { MenuItem, Stack, Typography } from "@mui/material";
 import type { FieldProps, RJSFSchema } from "@rjsf/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Configuration, ModulesApi } from "./api/src";
@@ -151,20 +151,29 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
                 disabled={isFetching}
                 value={toValue(moduleId, query.name)}
               >
-                <ListItemText
-                  primary={
-                    <div>
-                      {query.title || query.name}
-                      {query.description && (
-                        <Typography variant="body2" color="text.secondary">
-                          {" | "}
+                <Stack>
+                  <Stack direction="row" overflow="hidden">
+                    {query.title || query.name}
+
+                    {query.description && (
+                      <>
+                        {" | "}
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          overflow="hidden"
+                          textOverflow="ellipsis"
+                          whiteSpace="nowrap"
+                        >
                           {query.description}
                         </Typography>
-                      )}
-                    </div>
-                  }
-                  secondary={config?.title ?? appinfo.title}
-                />
+                      </>
+                    )}
+                  </Stack>
+                  <Typography variant="body2" color="text.secondary">
+                    {config?.title ?? appinfo.title}
+                  </Typography>
+                </Stack>
               </MenuItem>
             ))
         )}
