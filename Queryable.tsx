@@ -140,7 +140,7 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
 
   return (
     <Stack gap={1}>
-      <Divider flexItem />
+      <Divider flexItem sx={{ pb: 2 }} />
 
       <LoadingTextField
         loading={isFetching}
@@ -162,7 +162,6 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
             onOpen: refetch,
           },
         }}
-        sx={{ pt: 2 }}
       >
         <MenuItem value="" sx={{ display: required ? "none" : undefined }}>
           <em>None</em>
