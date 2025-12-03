@@ -1,7 +1,11 @@
 import { MenuItem, Stack, Typography } from "@mui/material";
 import type { FieldProps, RJSFSchema } from "@rjsf/utils";
 import { useQuery } from "@tanstack/react-query";
-import { Configuration, ModulesApi } from "./api/src";
+import {
+  Configuration,
+  ModulesApi,
+  type Queryable as QueryableType,
+} from "./api/src";
 import { LoadingTextField } from "./components/LoadingTextField";
 import { FabricJsonSchemaForm } from "./Form";
 
@@ -47,9 +51,16 @@ type QueryRequest = {
   input?: Record<string, unknown>;
 };
 
-export const Queryable = (props: FieldProps<QueryRequest>) => {
+type QueryableSchema = RJSFSchema & {
+  queryable?: {
+    requiredType?: string;
+    requiredSubtype?: string;
+  };
+};
+
+export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
   const {
-    schema: { title, description },
+    schema: { title, description, queryable },
     required,
     disabled,
     onChange,
@@ -83,18 +94,34 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
     refetchConfigs();
   };
 
+  const filterQueries = (q: QueryableType) => {
+    const [baseType, _parameters] = q.mediaType.split(";");
+    const [type, subtype] = baseType?.split("/") ?? [];
+
+    if (queryable?.requiredType && type !== queryable.requiredType) {
+      return false;
+    }
+
+    if (queryable?.requiredSubtype && subtype !== queryable.requiredSubtype) {
+      return false;
+    }
+
+    return true;
+  };
+
   const isFetching = isFetchingAppinfo || isFetchingConfigs;
 
   const modulesWithQueryables = Object.fromEntries(
     Object.entries(appinfo ?? {})
-      .filter(([, appinfo]) => !!appinfo.queries?.length)
-      .map(([moduleId, appinfo]) => [
-        moduleId,
-        {
-          appinfo,
-          config: configs?.[moduleId],
-        },
-      ])
+      .map(
+        ([id, info]) =>
+          [
+            id,
+            { ...info, queries: info.queries?.filter(filterQueries) },
+          ] as const
+      )
+      .filter(([, info]) => !!info.queries?.length)
+      .map(([id, info]) => [id, { appinfo: info, config: configs?.[id] }])
   );
 
   const selectedQueryable = formData?.moduleId
