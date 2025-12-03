@@ -153,7 +153,7 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
               >
                 <Stack>
                   <Stack direction="row" overflow="hidden" alignItems="center">
-                    {query.title || query.name}
+                    <span>{query.title || query.name}</span>
 
                     {query.description && (
                       <Typography
