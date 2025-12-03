@@ -116,6 +116,7 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
       <LoadingTextField
         loading={isFetching}
         select
+        error={!isValidValue}
         required={required}
         label={title}
         helperText={description}
