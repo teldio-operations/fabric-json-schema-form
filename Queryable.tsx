@@ -139,7 +139,7 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
         </MenuItem>
 
         {!isValidValue && (
-          <MenuItem value={value} sx={{ color: "error.main" }}>
+          <MenuItem disabled value={value} sx={{ color: "error.main" }}>
             <em>Unknown query</em>
           </MenuItem>
         )}
