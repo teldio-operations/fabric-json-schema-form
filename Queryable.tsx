@@ -50,6 +50,7 @@ type QueryRequest = {
 export const Queryable = (props: FieldProps<QueryRequest>) => {
   const {
     schema: { title, description },
+    required,
     disabled,
     onChange,
     formData,
@@ -102,15 +103,24 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
       )
     : undefined;
 
+  const value = toValue(formData?.moduleId, formData?.name) ?? "";
+
+  const isValidValue =
+    formData?.moduleId &&
+    appinfo?.[formData.moduleId]?.queries?.some(
+      (q) => q.name === formData?.name
+    );
+
   return (
     <Stack>
       <LoadingTextField
         loading={isFetching}
         select
+        required={required}
         label={title}
         helperText={description}
         disabled={disabled}
-        value={toValue(formData?.moduleId, formData?.name) ?? ""}
+        value={value}
         onChange={(e) => {
           const { moduleId, name } = fromValue(e.target.value);
           if (moduleId && name) {
@@ -123,7 +133,15 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
           },
         }}
       >
-        <MenuItem value="" sx={{ display: "none" }} />
+        <MenuItem value="" sx={{ display: required ? "none" : undefined }}>
+          <em>None</em>
+        </MenuItem>
+
+        {!isValidValue && (
+          <MenuItem value={value} sx={{ color: "error.main" }}>
+            <em>Unknown query</em>
+          </MenuItem>
+        )}
 
         {Object.entries(modulesWithQueryables).map(
           ([moduleId, { appinfo, config }]) =>
