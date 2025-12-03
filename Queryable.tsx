@@ -139,7 +139,12 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
     );
 
   return (
-    <Paper component={Stack} p={2} gap={2}>
+    <Paper
+      component={Stack}
+      p={2}
+      pt={selectedQueryable?.input ? 4 : 2}
+      gap={2}
+    >
       <LoadingTextField
         loading={isFetching}
         select
