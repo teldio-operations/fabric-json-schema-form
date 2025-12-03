@@ -133,7 +133,7 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
   const value = toValue(formData?.moduleId, formData?.name) ?? "";
 
   const isValidValue =
-    formData?.moduleId &&
+    (!formData?.moduleId && !formData?.name) ||
     appinfo?.[formData.moduleId]?.queries?.some(
       (q) => q.name === formData?.name
     );
