@@ -162,6 +162,7 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
             onOpen: refetch,
           },
         }}
+        sx={{ pt: 2 }}
       >
         <MenuItem value="" sx={{ display: required ? "none" : undefined }}>
           <em>None</em>
