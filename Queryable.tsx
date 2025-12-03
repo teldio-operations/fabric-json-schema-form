@@ -162,8 +162,8 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
                         overflow="hidden"
                         textOverflow="ellipsis"
                         whiteSpace="nowrap"
+                        pl={2}
                       >
-                        {" | "}
                         {query.description}
                       </Typography>
                     )}
