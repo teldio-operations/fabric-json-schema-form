@@ -152,22 +152,20 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
                 value={toValue(moduleId, query.name)}
               >
                 <Stack>
-                  <Stack direction="row" overflow="hidden">
+                  <Stack direction="row" overflow="hidden" alignItems="center">
                     {query.title || query.name}
 
                     {query.description && (
-                      <>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        overflow="hidden"
+                        textOverflow="ellipsis"
+                        whiteSpace="nowrap"
+                      >
                         {" | "}
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          overflow="hidden"
-                          textOverflow="ellipsis"
-                          whiteSpace="nowrap"
-                        >
-                          {query.description}
-                        </Typography>
-                      </>
+                        {query.description}
+                      </Typography>
                     )}
                   </Stack>
                   <Typography variant="body2" color="text.secondary">
