@@ -1,4 +1,4 @@
-import { ListItemText, MenuItem, Stack } from "@mui/material";
+import { ListItemText, MenuItem, Stack, Typography } from "@mui/material";
 import type { FieldProps, RJSFSchema } from "@rjsf/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Configuration, ModulesApi } from "./api/src";
@@ -152,7 +152,17 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
                 value={toValue(moduleId, query.name)}
               >
                 <ListItemText
-                  primary={query.name}
+                  primary={
+                    <>
+                      {query.title || query.name}
+                      {query.description && (
+                        <Typography variant="body2" color="text.secondary">
+                          {" | "}
+                          {query.description}
+                        </Typography>
+                      )}
+                    </>
+                  }
                   secondary={config?.title ?? appinfo.title}
                 />
               </MenuItem>
@@ -173,6 +183,7 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
             "ui:submitButtonOptions": {
               norender: true,
             },
+            "ui:title": "Configure query",
           }}
         />
       )}
