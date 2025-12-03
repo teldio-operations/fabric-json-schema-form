@@ -153,7 +153,7 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
               >
                 <ListItemText
                   primary={
-                    <>
+                    <div>
                       {query.title || query.name}
                       {query.description && (
                         <Typography variant="body2" color="text.secondary">
@@ -161,7 +161,7 @@ export const Queryable = (props: FieldProps<QueryRequest>) => {
                           {query.description}
                         </Typography>
                       )}
-                    </>
+                    </div>
                   }
                   secondary={config?.title ?? appinfo.title}
                 />
