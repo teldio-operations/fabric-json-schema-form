@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.1.5...v0.1.6) (2025-12-10)
+
+
+### Bug Fixes
+
+* Rename package for private repo ([1cbe64c](https://github.com/teldio-operations/fabric-json-schema-form/commit/1cbe64cf2942effae1e5f21748fcd58f00445922))
+
 ## [0.1.5](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.1.4...v0.1.5) (2025-12-01)
 
 
