@@ -26,7 +26,7 @@ export const SchemaField = (props: FieldProps) => {
     uiSchema = { "ui:autocomplete" : isPassword ? "new-password" : "off", ...props.uiSchema }
   }
 
-  if (props.schema.control != null) {
+  if (props.schema.control) {
     uiSchema = { "ui:widget": props.schema.control, ...uiSchema }
   }
 
