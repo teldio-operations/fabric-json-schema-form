@@ -19,13 +19,22 @@ export const SchemaField = (props: FieldProps) => {
     );
   }
 
-  if (props.schema.control != null) {
-    return (
-      <DefaultSchemaField
-        {...props}
-        uiSchema={{ "ui:widget": props.schema.control, ...props.uiSchema }}
-      />
-    );
+  let uiSchema: typeof props.uiSchema = {};
+
+  if (props.schema.type === "string") {
+    const isPassword = props.schema.control === "password";
+    uiSchema = {
+      "ui:autocomplete": isPassword ? "new-password" : "off",
+      ...props.uiSchema,
+    };
+  }
+
+  if (props.schema.control) {
+    uiSchema = { "ui:widget": props.schema.control, ...uiSchema };
+  }
+
+  if (Object.keys(uiSchema).length !== 0) {
+    return <DefaultSchemaField {...props} uiSchema={uiSchema} />;
   }
 
   return <DefaultSchemaField {...props} />;
