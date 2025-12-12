@@ -23,4 +23,3 @@ jobs:
         run: |
           bun install
           bun run check
-        working-directory: webui
