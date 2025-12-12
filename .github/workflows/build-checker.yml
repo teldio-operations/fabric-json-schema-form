@@ -1,0 +1,26 @@
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+name: Build checker
+
+jobs:
+  check-build:
+    name: Run checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Check frontend
+        run: |
+          bun install
+          bun run check
+        working-directory: webui
