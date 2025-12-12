@@ -19,7 +19,7 @@ export const SchemaField = (props: FieldProps) => {
     );
   }
 
-  let uiSchema: Record<string, any> = {};
+  let uiSchema: typeof props.uiSchema = {};
 
   if (props.schema.type === "string") {
     const isPassword = props.schema.control === "password"
