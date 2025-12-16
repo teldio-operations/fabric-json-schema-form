@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.1.5...v0.2.0) (2025-12-16)
+
+
+### Features
+
+* Add Queryables ([#7](https://github.com/teldio-operations/fabric-json-schema-form/issues/7)) ([c447112](https://github.com/teldio-operations/fabric-json-schema-form/commit/c447112864275538b61c417bad7596e89430c7d8))
+
 ## [0.1.5](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.1.4...v0.1.5) (2025-12-01)
 
 
