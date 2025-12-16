@@ -124,6 +124,16 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
       .map(([id, info]) => [id, { appinfo: info, config: configs?.[id] }]),
   );
 
+  const selectedConfig = formData?.moduleId
+    ? configs?.[formData.moduleId]
+    : undefined;
+  const notRunning = !selectedConfig?.running;
+
+  const severity = notRunning ? "warning" : undefined;
+  const alert = notRunning
+    ? "Module is not running currently, so it will not be able to execute queries"
+    : undefined;
+
   const selectedQueryable = formData?.moduleId
     ? appinfo?.[formData.moduleId]?.queries?.find(
         (q) => q.name === formData.name,
@@ -146,6 +156,8 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
       gap={2}
     >
       <LoadingTextField
+        severity={severity}
+        alert={alert}
         loading={isFetching}
         select
         error={!isValidValue}
