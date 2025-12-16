@@ -6,6 +6,7 @@ import {
   styled,
   TextField,
   Tooltip,
+  tooltipClasses,
   type AlertColor,
   type SvgIconProps,
   type TextFieldProps,
@@ -14,10 +15,10 @@ import { mergeSx } from "@mui/x-date-pickers/internals";
 import type { ReactNode } from "react";
 
 const ColoredTooltip = styled(Tooltip)(({ color }) => ({
-  "& .MuiTooltip-tooltip": {
+  [`& ${tooltipClasses.tooltip}`]: {
     backgroundColor: `${color}.main`,
   },
-  "& .MuiTooltip-arrow": {
+  [`& ${tooltipClasses.arrow}`]: {
     color: `${color}.main`,
   },
 }));
@@ -83,9 +84,9 @@ export const LoadingTextField = ({
           },
           "& fieldset": {
             borderColor: `${severity}.main`,
-            "&:hover": {
-              borderColor: `${severity}.main`,
-            },
+          },
+          "&:hover fieldset": {
+            borderColor: `${severity}.main`,
           },
         })}
       />
