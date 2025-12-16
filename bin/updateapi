@@ -1,0 +1,20 @@
+#!/bin/sh
+# This script updates the generated OpenAPI library in `webui`.
+# That way the react app can call the manager API in a readable way.
+
+set -e
+
+URL=http://localhost:20112/openapi.yaml
+
+if ! curl $URL >/dev/null 2>&1; then
+	echo 'Manager not running. Exiting...'
+	exit 1
+fi
+
+TARGET_DIR="./api"
+
+rm -rf "$TARGET_DIR"
+openapi-generator generate -g typescript-fetch \
+	-p=npmName=api \
+	-o "$TARGET_DIR" -i "$URL" \
+	>/dev/null
