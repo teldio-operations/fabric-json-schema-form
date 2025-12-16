@@ -105,7 +105,7 @@ export const LoadingTextField = ({
   const icon = AlertIcon ? <AlertIcon color={severity} /> : undefined;
 
   return (
-    <ColoredTooltip title={alert} color={severity}>
+    <ColoredTooltip placement="top" title={alert} color={severity}>
       <ColoredTextField
         {...props}
         slotProps={mergeSlotProps(props.slotProps, {
