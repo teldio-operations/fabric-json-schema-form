@@ -55,13 +55,22 @@ type QueryableSchema = RJSFSchema & {
   accept?: string;
 };
 
+const notNullOrUndefined = <T,>(value: T): value is NonNullable<T> => {
+  return value !== null && value !== undefined;
+};
+
 const parseAccept = (accept?: string) => {
   return (
     accept
       ?.split(",")
       .map((p) => p.trim())
       .map((i) => i.split("/"))
-      .map(([type, subtype]) => ({ type, subtype })) ?? []
+      .map(([type, subtype]) => [type, subtype?.split(";")].flat())
+      .map(([type, subtype, ...parameters]) => ({
+        type,
+        subtype,
+        parameters: parameters.filter(notNullOrUndefined),
+      })) ?? []
   );
 };
 
