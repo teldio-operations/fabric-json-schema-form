@@ -15,10 +15,10 @@ import { mergeSx } from "@mui/x-date-pickers/internals";
 import type { ReactNode } from "react";
 
 const ColoredTooltip = styled(Tooltip)(({ color }) => ({
-  [`& ${tooltipClasses.tooltip}`]: {
+  [tooltipClasses.tooltip]: {
     backgroundColor: `${color}.main`,
   },
-  [`& ${tooltipClasses.arrow}`]: {
+  [tooltipClasses.arrow]: {
     color: `${color}.main`,
   },
 }));
@@ -86,7 +86,7 @@ export const LoadingTextField = ({
             borderColor: `${severity}.main`,
           },
           "&:hover fieldset": {
-            borderColor: `${severity}.main`,
+            borderColor: `${severity}.main !important`,
           },
         })}
       />
