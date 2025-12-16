@@ -127,7 +127,7 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
   const selectedConfig = formData?.moduleId
     ? configs?.[formData.moduleId]
     : undefined;
-  const notRunning = !selectedConfig?.running;
+  const notRunning = selectedConfig && !selectedConfig.running;
 
   const severity = notRunning ? "warning" : undefined;
   const alert = notRunning
