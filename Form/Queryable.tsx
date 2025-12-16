@@ -117,11 +117,15 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
     const [type, subtype] = baseType?.split("/") ?? [];
 
     for (const { type: acceptedType, subtype: acceptedSubtype } of accepted) {
-      if (type !== acceptedType && type !== "*") {
+      if (!!acceptedType && acceptedType !== "*" && type !== acceptedType) {
         continue;
       }
 
-      if (subtype !== acceptedSubtype && subtype !== "*") {
+      if (
+        !!acceptedSubtype &&
+        acceptedSubtype !== "*" &&
+        subtype !== acceptedSubtype
+      ) {
         continue;
       }
 
