@@ -9,6 +9,7 @@
     "check": "bun tsc --noEmit && bun eslint . && bun prettier --check ."
   },
   "dependencies": {
+    "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
     "@mui/x-date-pickers": "^8.21.0",
     "@rjsf/core": "^6.1.2",
@@ -17,7 +18,8 @@
     "@rjsf/validator-ajv8": "^6.1.2",
     "@tanstack/react-query": "^5.90.12",
     "ajv": "^8.17.1",
-    "dayjs": "^1.11.19"
+    "dayjs": "^1.11.19",
+    "react": "^19.2.3"
   },
   "type": "module",
   "devDependencies": {
@@ -27,8 +29,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "prettier": "^3.7.4",
-    "typescript-eslint": "^8.49.0",
-    "@types/web": "^0.0.296",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.49.0"
   }
 }
