@@ -3,6 +3,7 @@ import {
   CircularProgress,
   InputAdornment,
   mergeSlotProps,
+  styled,
   TextField,
   Tooltip,
   type AlertColor,
@@ -11,6 +12,15 @@ import {
 } from "@mui/material";
 import { mergeSx } from "@mui/x-date-pickers/internals";
 import type { ReactNode } from "react";
+
+const ColoredTooltip = styled(Tooltip)(({ color }) => ({
+  "& .MuiTooltip-tooltip": {
+    backgroundColor: `${color}.main`,
+  },
+  "& .MuiTooltip-arrow": {
+    color: `${color}.main`,
+  },
+}));
 
 type Props = TextFieldProps & {
   loading?: boolean;
@@ -57,7 +67,7 @@ export const LoadingTextField = ({
   const icon = AlertIcon ? <AlertIcon color={severity} /> : undefined;
 
   return (
-    <Tooltip title={alert}>
+    <ColoredTooltip title={alert} color={severity}>
       <TextField
         {...props}
         slotProps={mergeSlotProps(props.slotProps, {
@@ -73,9 +83,12 @@ export const LoadingTextField = ({
           },
           "& fieldset": {
             borderColor: `${severity}.main`,
+            "&:hover": {
+              borderColor: `${severity}.main`,
+            },
           },
         })}
       />
-    </Tooltip>
+    </ColoredTooltip>
   );
 };
