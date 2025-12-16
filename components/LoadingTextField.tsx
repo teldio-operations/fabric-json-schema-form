@@ -2,6 +2,7 @@ import { CheckCircle, Error, Info, Warning } from "@mui/icons-material";
 import {
   CircularProgress,
   InputAdornment,
+  mergeSlotProps,
   TextField,
   Tooltip,
   type AlertColor,
@@ -30,14 +31,6 @@ export const LoadingTextField = ({
   alert,
   ...props
 }: Props) => {
-  const AlertIcon = severity ? IconMap[severity] : undefined;
-
-  const icon = AlertIcon ? (
-    <Tooltip title={alert}>
-      <AlertIcon />
-    </Tooltip>
-  ) : undefined;
-
   if (loading) {
     return (
       <TextField
@@ -45,9 +38,6 @@ export const LoadingTextField = ({
         disabled
         slotProps={{
           input: {
-            startAdornment: (
-              <InputAdornment position="start">{icon}</InputAdornment>
-            ),
             endAdornment: (
               <InputAdornment
                 position="end"
@@ -58,12 +48,31 @@ export const LoadingTextField = ({
             ),
           },
         }}
-        sx={mergeSx(props.sx, {
-          color: `${severity}.main`,
-        })}
       />
     );
   }
 
-  return <TextField {...props} />;
+  const AlertIcon = severity ? IconMap[severity] : undefined;
+
+  const icon = AlertIcon ? (
+    <Tooltip title={alert}>
+      <AlertIcon />
+    </Tooltip>
+  ) : undefined;
+
+  return (
+    <TextField
+      {...props}
+      slotProps={mergeSlotProps(props.slotProps, {
+        input: {
+          startAdornment: icon ? (
+            <InputAdornment position="start">{icon}</InputAdornment>
+          ) : undefined,
+        },
+      })}
+      sx={mergeSx(props.sx, {
+        color: `${severity}.main`,
+      })}
+    />
+  );
 };
