@@ -54,25 +54,28 @@ export const LoadingTextField = ({
 
   const AlertIcon = severity ? IconMap[severity] : undefined;
 
-  const icon = AlertIcon ? (
-    <Tooltip title={alert}>
-      <AlertIcon />
-    </Tooltip>
-  ) : undefined;
+  const icon = AlertIcon ? <AlertIcon color={severity} /> : undefined;
 
   return (
-    <TextField
-      {...props}
-      slotProps={mergeSlotProps(props.slotProps, {
-        input: {
-          startAdornment: icon ? (
-            <InputAdornment position="start">{icon}</InputAdornment>
-          ) : undefined,
-        },
-      })}
-      sx={mergeSx(props.sx, {
-        color: `${severity}.main`,
-      })}
-    />
+    <Tooltip title={alert}>
+      <TextField
+        {...props}
+        slotProps={mergeSlotProps(props.slotProps, {
+          input: {
+            startAdornment: icon ? (
+              <InputAdornment position="start">{icon}</InputAdornment>
+            ) : undefined,
+          },
+        })}
+        sx={mergeSx(props.sx, {
+          "& label": {
+            color: `${severity}.main`,
+          },
+          "& fieldset": {
+            borderColor: `${severity}.main`,
+          },
+        })}
+      />
+    </Tooltip>
   );
 };
