@@ -15,7 +15,7 @@ import {
 import type { ReactNode } from "react";
 
 const ColoredTooltip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip classes={{ popper: className }} {...props} />
+  <Tooltip {...props} classes={{ popper: className }} />
 ))(({ color }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: `${color}.main`,
