@@ -10,18 +10,35 @@ import {
   type AlertColor,
   type SvgIconProps,
   type TextFieldProps,
+  type TooltipProps,
 } from "@mui/material";
-import { mergeSx } from "@mui/x-date-pickers/internals";
 import type { ReactNode } from "react";
 
-const ColoredTooltip = styled(Tooltip)(({ color }) => ({
-  [tooltipClasses.tooltip]: {
+const ColoredTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip classes={{ popper: className }} {...props} />
+))(({ color }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: `${color}.main`,
   },
-  [tooltipClasses.arrow]: {
+  [`& .${tooltipClasses.arrow}`]: {
     color: `${color}.main`,
   },
 }));
+
+const ColoredTextField = styled(TextField)(
+  ({ color, theme }) =>
+    color && {
+      "& label": {
+        color: theme.palette[color].main,
+      },
+      "& fieldset": {
+        borderColor: theme.palette[color].main,
+      },
+      "&:hover fieldset": {
+        borderColor: theme.palette[color].main + " !important",
+      },
+    },
+);
 
 type Props = TextFieldProps & {
   loading?: boolean;
@@ -69,24 +86,13 @@ export const LoadingTextField = ({
 
   return (
     <ColoredTooltip title={alert} color={severity}>
-      <TextField
+      <ColoredTextField
         {...props}
         slotProps={mergeSlotProps(props.slotProps, {
           input: {
             startAdornment: icon ? (
               <InputAdornment position="start">{icon}</InputAdornment>
             ) : undefined,
-          },
-        })}
-        sx={mergeSx(props.sx, {
-          "& label": {
-            color: `${severity}.main`,
-          },
-          "& fieldset": {
-            borderColor: `${severity}.main`,
-          },
-          "&:hover fieldset": {
-            borderColor: `${severity}.main !important`,
           },
         })}
       />
