@@ -52,15 +52,22 @@ type QueryRequest = {
 };
 
 type QueryableSchema = RJSFSchema & {
-  queryable?: {
-    requiredType?: string;
-    requiredSubtype?: string;
-  };
+  accept?: string;
+};
+
+const parseAccept = (accept?: string) => {
+  return (
+    accept
+      ?.split(",")
+      .map((p) => p.trim())
+      .map((i) => i.split("/"))
+      .map(([type, subtype]) => ({ type, subtype })) ?? []
+  );
 };
 
 export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
   const {
-    schema: { title, description, queryable },
+    schema: { title, description, accept },
     required,
     disabled,
     onChange,
@@ -94,19 +101,25 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
     refetchConfigs();
   };
 
+  const accepted = parseAccept(accept);
+
   const filterQueries = (q: QueryableType) => {
     const [baseType] = q.mediaType.split(";");
     const [type, subtype] = baseType?.split("/") ?? [];
 
-    if (queryable?.requiredType && type !== queryable.requiredType) {
-      return false;
+    for (const { type: acceptedType, subtype: acceptedSubtype } of accepted) {
+      if (type !== acceptedType && type !== "*") {
+        continue;
+      }
+
+      if (subtype !== acceptedSubtype && subtype !== "*") {
+        continue;
+      }
+
+      return true;
     }
 
-    if (queryable?.requiredSubtype && subtype !== queryable.requiredSubtype) {
-      return false;
-    }
-
-    return true;
+    return false;
   };
 
   const isFetching = isFetchingAppinfo || isFetchingConfigs;
