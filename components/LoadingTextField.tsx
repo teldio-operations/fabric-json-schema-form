@@ -10,18 +10,37 @@ import {
   type AlertColor,
   type SvgIconProps,
   type TextFieldProps,
+  type Theme,
   type TooltipProps,
 } from "@mui/material";
 import type { ReactNode } from "react";
 
+const getColor = (color: string | undefined, theme: Theme) => {
+  if (!color) {
+    return undefined;
+  }
+  if (
+    color !== "primary" &&
+    color !== "secondary" &&
+    color !== "error" &&
+    color !== "warning" &&
+    color !== "info" &&
+    color !== "success"
+  ) {
+    return undefined;
+  }
+  return theme.palette[color].main;
+};
+
 const ColoredTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
-))(({ color }) => ({
+))(({ color, theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: `${color}.main`,
+    backgroundColor: getColor(color, theme),
+    maxWidth: "none",
   },
   [`& .${tooltipClasses.arrow}`]: {
-    color: `${color}.main`,
+    color: getColor(color, theme),
   },
 }));
 
