@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import type { ReactNode } from "react";
 
-const getColor = (color: string | undefined, theme: Theme) => {
+const getPalette = (color: string | undefined, theme: Theme) => {
   if (!color) {
     return undefined;
   }
@@ -29,18 +29,19 @@ const getColor = (color: string | undefined, theme: Theme) => {
   ) {
     return undefined;
   }
-  return theme.palette[color].main;
+  return theme.palette[color];
 };
 
 const ColoredTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
 ))(({ color, theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: getColor(color, theme),
+    backgroundColor: getPalette(color, theme)?.main,
+    color: getPalette(color, theme)?.contrastText,
     maxWidth: "none",
   },
   [`& .${tooltipClasses.arrow}`]: {
-    color: getColor(color, theme),
+    color: getPalette(color, theme)?.main,
   },
 }));
 
