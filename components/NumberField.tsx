@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { NumberField as BaseNumberField } from '@base-ui-components/react/number-field';
 import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
@@ -28,10 +27,7 @@ export default function NumberField({
   size?: 'small' | 'medium';
   error?: boolean;
 }) {
-  let id = React.useId();
-  if (idProp) {
-    id = idProp;
-  }
+  let id = idProp;
   return (
     <BaseNumberField.Root
       {...other}
