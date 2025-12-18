@@ -4,7 +4,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import NumberField from "./NumberField";
 dayjs.extend(customParseFormat);
 
-export const NumberFieldStringValue = (props: WidgetProps) => {
+export const NumberAsStringField = (props: WidgetProps) => {
     const { label, value, onChange, disabled, readonly, rawErrors } = props;
 
     const handleChange = (newValue: number | null) => {

@@ -19,6 +19,15 @@ export const SchemaField = (props: FieldProps) => {
     );
   }
 
+  if (props.schema.control === "numberAsStringInput") {
+    return (
+      <DefaultSchemaField
+        {...props}
+        uiSchema={{ "ui:widget": "NumberAsStringField", ...props.uiSchema }}
+      />
+    );
+  }
+
   let uiSchema: typeof props.uiSchema = {};
 
   if (props.schema.type === "string") {

@@ -6,6 +6,7 @@ import { CustomTimePicker } from "../components/CustomTimePicker";
 import { validator } from "../utils/validator";
 import { Queryable } from "./Queryable";
 import { SchemaField } from "./SchemaField";
+import { NumberAsStringField } from "../components/NumberAsStringField";
 
 export type FabricJsonSchemaFormProps = Omit<FormProps, "validator"> & {
   onCancel?: () => void;
@@ -36,6 +37,7 @@ export const FabricJsonSchemaForm = ({
         fields={{ SchemaField, Queryable, ...props.fields }}
         widgets={{
           TimeWidget: CustomTimePicker,
+          NumberAsStringField: NumberAsStringField,
           ...props.widgets,
         }}
       >
