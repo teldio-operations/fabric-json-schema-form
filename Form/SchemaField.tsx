@@ -19,7 +19,7 @@ export const SchemaField = (props: FieldProps) => {
     );
   }
 
-  if (props.schema.control === "numberAsStringInput") {
+  if (props.schema.control === "numberAsStringField") {
     return (
       <DefaultSchemaField
         {...props}
