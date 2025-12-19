@@ -1,7 +1,6 @@
 import { NumberField as BaseNumberField } from '@base-ui-components/react/number-field';
 import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
@@ -101,9 +100,6 @@ export default function NumberField({
           />
         )}
       />
-      <FormHelperText sx={{ ml: 0, '&:empty': { mt: 0 } }}>
-        Enter value between 10 and 40
-      </FormHelperText>
     </BaseNumberField.Root>
   );
 }
