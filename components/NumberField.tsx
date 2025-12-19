@@ -1,11 +1,11 @@
-import { NumberField as BaseNumberField } from '@base-ui-components/react/number-field';
-import IconButton from '@mui/material/IconButton';
-import FormControl from '@mui/material/FormControl';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputAdornment from '@mui/material/InputAdornment';
-import InputLabel from '@mui/material/InputLabel';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { NumberField as BaseNumberField } from "@base-ui-components/react/number-field";
+import IconButton from "@mui/material/IconButton";
+import FormControl from "@mui/material/FormControl";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputAdornment from "@mui/material/InputAdornment";
+import InputLabel from "@mui/material/InputLabel";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 /**
  * This component is a placeholder for FormControl to correctly set the shrink label state on SSR.
@@ -14,17 +14,17 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 function SSRInitialFilled(_: BaseNumberField.Root.Props) {
   return null;
 }
-SSRInitialFilled.muiName = 'Input';
+SSRInitialFilled.muiName = "Input";
 
 export default function NumberField({
   id: idProp,
   label,
   error,
-  size = 'medium',
+  size = "medium",
   ...other
 }: BaseNumberField.Root.Props & {
   label?: React.ReactNode;
-  size?: 'small' | 'medium';
+  size?: "small" | "medium";
   error?: boolean;
 }) {
   const id = idProp;
@@ -65,13 +65,13 @@ export default function NumberField({
               <InputAdornment
                 position="end"
                 sx={{
-                  flexDirection: 'column',
-                  maxHeight: 'unset',
-                  alignSelf: 'stretch',
-                  borderLeft: '1px solid',
-                  borderColor: 'divider',
+                  flexDirection: "column",
+                  maxHeight: "unset",
+                  alignSelf: "stretch",
+                  borderLeft: "1px solid",
+                  borderColor: "divider",
                   ml: 0,
-                  '& button': {
+                  "& button": {
                     py: 0,
                     flex: 1,
                     borderRadius: 0.5,
@@ -83,7 +83,7 @@ export default function NumberField({
                 >
                   <KeyboardArrowUpIcon
                     fontSize={size}
-                    sx={{ transform: 'translateY(2px)' }}
+                    sx={{ transform: "translateY(2px)" }}
                   />
                 </BaseNumberField.Increment>
 
@@ -92,7 +92,7 @@ export default function NumberField({
                 >
                   <KeyboardArrowDownIcon
                     fontSize={size}
-                    sx={{ transform: 'translateY(-2px)' }}
+                    sx={{ transform: "translateY(-2px)" }}
                   />
                 </BaseNumberField.Decrement>
               </InputAdornment>
