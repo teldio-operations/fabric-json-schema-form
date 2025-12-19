@@ -10,6 +10,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 /**
  * This component is a placeholder for FormControl to correctly set the shrink label state on SSR.
  */
+// eslint-disable-next-line
 function SSRInitialFilled(_: BaseNumberField.Root.Props) {
   return null;
 }
@@ -26,7 +27,7 @@ export default function NumberField({
   size?: 'small' | 'medium';
   error?: boolean;
 }) {
-  let id = idProp;
+  const id = idProp;
   return (
     <BaseNumberField.Root
       {...other}
