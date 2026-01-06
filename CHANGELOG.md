@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.2.0...v0.2.1) (2026-01-06)
+
+
+### Bug Fixes
+
+* Don't use incorrect appinfo method ([#14](https://github.com/teldio-operations/fabric-json-schema-form/issues/14)) ([8a09830](https://github.com/teldio-operations/fabric-json-schema-form/commit/8a09830589bab22717b7ab4eadcb39ee0a789a92))
+
 ## [0.2.0](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.1.5...v0.2.0) (2025-12-16)
 
 
