@@ -104,19 +104,26 @@ const BNumberField = ({
       />
     </BaseNumberField.Root>
   );
-}
+};
 
 export default function NumberField(props: FieldProps) {
-    const { label, formData, onChange, disabled, readonly, rawErrors, itemID, fieldPathId } =
-    props;
-    console.log("NumberField props:", props);
+  const {
+    label,
+    formData,
+    onChange,
+    disabled,
+    readonly,
+    rawErrors,
+    itemID,
+    fieldPathId,
+  } = props;
 
   return (
     <BNumberField
       id={itemID}
       label={label}
       value={formData}
-      onValueChange={value => onChange(value, fieldPathId.path)}
+      onValueChange={(value) => onChange(value, fieldPathId.path)}
       disabled={disabled || readonly}
       error={rawErrors && rawErrors.length > 0}
     />

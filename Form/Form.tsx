@@ -34,7 +34,12 @@ export const FabricJsonSchemaForm = ({
         {...props}
         validator={validator}
         disabled={disabled}
-        fields={{ SchemaField, Queryable, ...props.fields, "NumberField": NumberField }}
+        fields={{
+          SchemaField,
+          Queryable,
+          NumberField,
+          ...props.fields,
+        }}
         widgets={{
           TimeWidget: CustomTimePicker,
           ...props.widgets,
