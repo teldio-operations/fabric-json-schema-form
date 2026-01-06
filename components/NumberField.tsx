@@ -107,7 +107,7 @@ const BNumberField = ({
 }
 
 export default function NumberField(props: FieldProps) {
-    const { label, value, onChange, disabled, readonly, rawErrors, itemID } =
+    const { label, value, onChange, disabled, readonly, rawErrors, itemID, fieldPathId } =
     props;
 
   return (
@@ -115,7 +115,7 @@ export default function NumberField(props: FieldProps) {
       id={itemID}
       label={label}
       value={Number.isNaN(Number(value)) ? null : Number(value)}
-      onValueChange={value => onChange(value, [])}
+      onValueChange={value => onChange(value, fieldPathId.path)}
       disabled={disabled || readonly}
       error={rawErrors && rawErrors.length > 0}
     />
