@@ -144,13 +144,11 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
 
   const queryableModules = useMemo(
     () =>
-      Object.entries(configs ?? {})
-        .map(([id, config]) => ({
-          id,
-          config,
-          queries: appinfo?.find(({ name }) => name === config.name)?.queries,
-        }))
-        .filter(({ queries }) => !!queries?.length),
+      Object.entries(configs ?? {}).map(([id, config]) => ({
+        id,
+        config,
+        queries: appinfo?.find(({ name }) => name === config.name)?.queries,
+      })),
     [accept, appinfo, configs],
   );
 
