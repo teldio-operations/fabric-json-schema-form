@@ -93,7 +93,7 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
     refetch: refetchAppinfo,
   } = useQuery({
     queryKey: ["appinfo"],
-    queryFn: () => modulesApi.moduleGetAppinfoConfigured(),
+    queryFn: () => modulesApi.getAppinfo(),
   });
 
   const {
@@ -160,19 +160,15 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
     ? "Module is not running currently, so it will not be able to execute queries"
     : undefined;
 
-  const selectedQueryable = formData?.moduleId
-    ? appinfo?.[formData.moduleId]?.queries?.find(
-        (q) => q.name === formData.name,
-      )
-    : undefined;
+  const selectedQueryable = appinfo
+    ?.find(({ name }) => name === selectedConfig?.name)
+    ?.queries?.find((q) => q.name === formData?.name);
 
   const value = toValue(formData?.moduleId, formData?.name) ?? "";
 
-  const isValidValue =
-    (!formData?.moduleId && !formData?.name) ||
-    appinfo?.[formData.moduleId]?.queries?.some(
-      (q) => q.name === formData?.name,
-    );
+  const nothingSelected = !formData?.moduleId && !formData?.name;
+
+  const isValidValue = selectedQueryable || nothingSelected;
 
   return (
     <Paper
