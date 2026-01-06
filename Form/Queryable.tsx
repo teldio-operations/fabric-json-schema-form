@@ -168,7 +168,7 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
     : undefined;
 
   const selectedQueryable = appinfo
-    ?.find(({ name }) => name === selectedConfig?.name)
+    ?.find(({ name }) => name === selectedConfig?.module)
     ?.queries?.find((q) => q.name === formData?.name);
 
   const value = toValue(formData?.moduleId, formData?.name) ?? "";
@@ -235,7 +235,7 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
                 </Stack>
 
                 <Typography variant="body2" color="text.secondary">
-                  {config?.title ?? config.name}
+                  {config?.title ?? config.module}
                 </Typography>
               </Stack>
             </MenuItem>
