@@ -144,12 +144,15 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
 
   const queryableModules = useMemo(
     () =>
-      Object.entries(configs ?? {}).map(([id, config]) => ({
-        id,
-        config,
-        appinfo: appinfo?.find(({ name }) => name === config.name),
-        queries: appinfo?.find(({ name }) => name === config.name)?.queries,
-      })),
+      Object.entries(configs ?? {})
+        .map(([id, config]) => ({
+          id,
+          config,
+          queries: appinfo
+            ?.find(({ name }) => name === config.module)
+            ?.queries?.filter(filterQueries(accept)),
+        }))
+        .filter(({ queries }) => !!queries?.length),
     [accept, appinfo, configs],
   );
 
@@ -173,9 +176,6 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
   const nothingSelected = !formData?.moduleId && !formData?.name;
 
   const isValidValue = selectedQueryable || nothingSelected;
-
-  console.log(accept, parseAccept(accept));
-  console.log(configs, appinfo, queryableModules);
 
   return (
     <Paper
