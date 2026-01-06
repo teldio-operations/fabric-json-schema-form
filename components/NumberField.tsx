@@ -126,6 +126,9 @@ export default function NumberField(props: FieldProps) {
       onValueChange={(value) => onChange(value, fieldPathId.path)}
       disabled={disabled || readonly}
       error={rawErrors && rawErrors.length > 0}
+      format={{
+        useGrouping: false,
+      }}
     />
   );
 }
