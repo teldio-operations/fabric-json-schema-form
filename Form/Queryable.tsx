@@ -8,6 +8,7 @@ import {
 } from "../api/src";
 import { LoadingTextField } from "../components/LoadingTextField";
 import { FabricJsonSchemaForm } from "./Form";
+import { useCallback, useMemo } from "react";
 
 const isObject = (value: unknown): value is Record<string, unknown> => {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -74,45 +75,10 @@ const parseAccept = (accept?: string) => {
   );
 };
 
-export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
-  const {
-    schema: { title, description, accept },
-    required,
-    disabled,
-    onChange,
-    formData,
-    fieldPathId: { path },
-    registry: {
-      fields: { SchemaField },
-    },
-  } = props;
-
-  const {
-    data: appinfo,
-    isPending: isFetchingAppinfo,
-    refetch: refetchAppinfo,
-  } = useQuery({
-    queryKey: ["appinfo"],
-    queryFn: () => modulesApi.moduleGetAppinfoConfigured(),
-  });
-
-  const {
-    data: configs,
-    isPending: isFetchingConfigs,
-    refetch: refetchConfigs,
-  } = useQuery({
-    queryKey: ["configs"],
-    queryFn: () => modulesApi.getConfigs(),
-  });
-
-  const refetch = () => {
-    refetchAppinfo();
-    refetchConfigs();
-  };
-
+const filterQueries = (accept?: string) => {
   const accepted = parseAccept(accept);
 
-  const filterQueries = (q: QueryableType) => {
+  return (q: QueryableType) => {
     const [baseType] = q.mediaType.split(";");
     const [type, subtype] = baseType?.split("/") ?? [];
 
@@ -134,25 +100,64 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
 
     return false;
   };
+};
+
+export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
+  const {
+    schema: { title, description, accept },
+    required,
+    disabled,
+    onChange,
+    formData,
+    fieldPathId: { path },
+    registry: {
+      fields: { SchemaField },
+    },
+  } = props;
+
+  const {
+    data: appinfo,
+    isPending: isFetchingAppinfo,
+    refetch: refetchAppinfo,
+  } = useQuery({
+    queryKey: ["appinfo"],
+    queryFn: () => modulesApi.getAppinfo(),
+  });
+
+  const {
+    data: configs,
+    isPending: isFetchingConfigs,
+    refetch: refetchConfigs,
+  } = useQuery({
+    queryKey: ["configs"],
+    queryFn: () => modulesApi.getConfigs(),
+  });
+
+  const refetch = () => {
+    refetchAppinfo();
+    refetchConfigs();
+  };
 
   const isFetching = isFetchingAppinfo || isFetchingConfigs;
 
-  const modulesWithQueryables = Object.fromEntries(
-    Object.entries(appinfo ?? {})
-      .map(
-        ([id, info]) =>
-          [
-            id,
-            { ...info, queries: info.queries?.filter(filterQueries) },
-          ] as const,
-      )
-      .filter(([, info]) => !!info.queries?.length)
-      .map(([id, info]) => [id, { appinfo: info, config: configs?.[id] }]),
+  const queryableModules = useMemo(
+    () =>
+      Object.entries(configs ?? {})
+        .map(([id, config]) => ({
+          id,
+          config,
+          queries: appinfo
+            ?.find(({ name }) => name === config.name)
+            ?.queries?.filter(filterQueries(accept)),
+        }))
+        .filter(({ queries }) => !!queries?.length),
+    [accept, appinfo, configs],
   );
 
   const selectedConfig = formData?.moduleId
     ? configs?.[formData.moduleId]
     : undefined;
+
   const notRunning = selectedConfig && !selectedConfig.running;
 
   const severity = notRunning ? "warning" : undefined;
@@ -160,19 +165,15 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
     ? "Module is not running currently, so it will not be able to execute queries"
     : undefined;
 
-  const selectedQueryable = formData?.moduleId
-    ? appinfo?.[formData.moduleId]?.queries?.find(
-        (q) => q.name === formData.name,
-      )
-    : undefined;
+  const selectedQueryable = appinfo
+    ?.find(({ name }) => name === selectedConfig?.name)
+    ?.queries?.find((q) => q.name === formData?.name);
 
   const value = toValue(formData?.moduleId, formData?.name) ?? "";
 
-  const isValidValue =
-    (!formData?.moduleId && !formData?.name) ||
-    appinfo?.[formData.moduleId]?.queries?.some(
-      (q) => q.name === formData?.name,
-    );
+  const nothingSelected = !formData?.moduleId && !formData?.name;
+
+  const isValidValue = selectedQueryable || nothingSelected;
 
   return (
     <Paper
@@ -214,30 +215,29 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
           </MenuItem>
         )}
 
-        {Object.entries(modulesWithQueryables).map(
-          ([moduleId, { appinfo, config }]) =>
-            appinfo.queries?.map((query) => (
-              <MenuItem
-                key={moduleId + query.name}
-                disabled={isFetching}
-                value={toValue(moduleId, query.name)}
-              >
-                <Stack>
-                  <Stack
-                    direction="row"
-                    overflow="hidden"
-                    alignItems="center"
-                    gap={1}
-                  >
-                    {query.title || query.name}
-                  </Stack>
-
-                  <Typography variant="body2" color="text.secondary">
-                    {config?.title ?? appinfo.title}
-                  </Typography>
+        {queryableModules.map(({ id, config, queries }) =>
+          queries?.map((query) => (
+            <MenuItem
+              key={id + query.name}
+              disabled={isFetching}
+              value={toValue(id, query.name)}
+            >
+              <Stack>
+                <Stack
+                  direction="row"
+                  overflow="hidden"
+                  alignItems="center"
+                  gap={1}
+                >
+                  {query.title || query.name}
                 </Stack>
-              </MenuItem>
-            )),
+
+                <Typography variant="body2" color="text.secondary">
+                  {config?.title ?? config.name}
+                </Typography>
+              </Stack>
+            </MenuItem>
+          )),
         )}
       </LoadingTextField>
 
