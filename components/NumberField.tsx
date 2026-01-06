@@ -109,6 +109,7 @@ const BNumberField = ({
 export default function NumberField(props: FieldProps) {
     const { label, value, onChange, disabled, readonly, rawErrors, itemID, fieldPathId } =
     props;
+    console.log("NumberField props:", props);
 
   return (
     <BNumberField
