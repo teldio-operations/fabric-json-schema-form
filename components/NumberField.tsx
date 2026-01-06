@@ -123,7 +123,7 @@ export default function NumberField(props: FieldProps) {
   const { schemaUtils } = registry;
   const displaylabel = schemaUtils.getDisplayLabel(schema);
   const uiOptions = getUiOptions(uiSchema);
-  const label = uiOptions.label ?? title ?? schema.title ?? null;
+  const label = uiOptions.label ?? title ?? schema.title;
 
   return (
     <BNumberField
