@@ -117,6 +117,7 @@ export default function NumberField(props: FieldProps) {
     itemID,
     fieldPathId,
   } = props;
+  console.log("Props", props);
 
   return (
     <BNumberField
