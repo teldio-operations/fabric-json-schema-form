@@ -175,6 +175,8 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
 
   const isValidValue = selectedQueryable || nothingSelected;
 
+  console.log(configs, appinfo, queryableModules);
+
   return (
     <Paper
       component={Stack}
