@@ -147,6 +147,7 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
       Object.entries(configs ?? {}).map(([id, config]) => ({
         id,
         config,
+        appinfo: appinfo?.find(({ name }) => name === config.name),
         queries: appinfo?.find(({ name }) => name === config.name)?.queries,
       })),
     [accept, appinfo, configs],
