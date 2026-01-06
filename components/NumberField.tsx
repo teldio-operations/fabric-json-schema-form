@@ -1,4 +1,4 @@
-import { NumberField as BaseNumberField } from "@base-ui-components/react/number-field";
+import { NumberField as BaseNumberField } from "@base-ui/react/number-field";
 import IconButton from "@mui/material/IconButton";
 import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
