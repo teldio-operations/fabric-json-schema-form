@@ -6,7 +6,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import InputLabel from "@mui/material/InputLabel";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import type { FieldProps } from "@rjsf/utils";
+import { getUiOptions, type FieldProps } from "@rjsf/utils";
 
 /**
  * This component is a placeholder for FormControl to correctly set the shrink label state on SSR.
@@ -108,7 +108,6 @@ const BNumberField = ({
 
 export default function NumberField(props: FieldProps) {
   const {
-    label,
     formData,
     onChange,
     disabled,
@@ -116,13 +115,20 @@ export default function NumberField(props: FieldProps) {
     rawErrors,
     itemID,
     fieldPathId,
+    registry,
+    schema,
+    uiSchema,
+    title,
   } = props;
-  console.log("Props", props);
+  const { schemaUtils } = registry;
+  const displaylabel = schemaUtils.getDisplayLabel(schema);
+  const uiOptions = getUiOptions(uiSchema);
+  const label = uiOptions.label ?? title ?? schema.title ?? null;
 
   return (
     <BNumberField
       id={itemID}
-      label={label}
+      label={displaylabel ? label : null}
       value={formData}
       onValueChange={(value) => onChange(value, fieldPathId.path)}
       disabled={disabled || readonly}
