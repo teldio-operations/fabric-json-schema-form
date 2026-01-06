@@ -148,9 +148,7 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
         .map(([id, config]) => ({
           id,
           config,
-          queries: appinfo
-            ?.find(({ name }) => name === config.name)
-            ?.queries?.filter(filterQueries(accept)),
+          queries: appinfo?.find(({ name }) => name === config.name)?.queries,
         }))
         .filter(({ queries }) => !!queries?.length),
     [accept, appinfo, configs],
