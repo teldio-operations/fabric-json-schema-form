@@ -65,8 +65,10 @@ const parseAccept = (accept?: string) => {
     accept
       ?.split(",")
       .map((p) => p.trim())
-      .map((i) => i.split("/"))
-      .map(([type, subtype]) => [type, subtype?.split(";")].flat())
+      .map((i) => i.split(";"))
+      .map(([baseType, ...parameters]) =>
+        [baseType?.split("/"), parameters.map((p) => p.trim())].flat(),
+      )
       .map(([type, subtype, ...parameters]) => ({
         type,
         subtype,
@@ -175,6 +177,7 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
 
   const isValidValue = selectedQueryable || nothingSelected;
 
+  console.log(accept, parseAccept(accept));
   console.log(configs, appinfo, queryableModules);
 
   return (
