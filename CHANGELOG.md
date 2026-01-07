@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.2.1...v0.2.2) (2026-01-07)
+
+
+### Bug Fixes
+
+* Use mui number field for numbers ([ab6d939](https://github.com/teldio-operations/fabric-json-schema-form/commit/ab6d939bfc0bcf454cacda138ffb7b5bad35b5ea))
+
 ## [0.2.1](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.2.0...v0.2.1) (2026-01-06)
 
 
