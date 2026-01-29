@@ -34,7 +34,7 @@ export const SchemaField = (props: FieldProps) => {
   }
 
   if (props.schema.control == "queryable") {
-    uiSchema = { "ui:field": "Queryable", ...uiSchema };
+    uiSchema = { "ui:field": "QueryableField", ...uiSchema };
   }
 
   if (Object.keys(uiSchema).length !== 0) {
