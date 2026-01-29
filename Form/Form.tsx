@@ -3,10 +3,10 @@ import { type FormProps } from "@rjsf/core";
 import RJSFMuiForm from "@rjsf/mui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { CustomTimePicker } from "../components/CustomTimePicker";
-import { validator } from "../utils/validator";
-import { Queryable } from "./Queryable";
-import { SchemaField } from "./SchemaField";
 import NumberField from "../components/NumberField";
+import { validator } from "../utils/validator";
+import { QueryableField } from "./QueryableField";
+import { SchemaField } from "./SchemaField";
 
 export type FabricJsonSchemaFormProps = Omit<FormProps, "validator"> & {
   onCancel?: () => void;
@@ -36,7 +36,7 @@ export const FabricJsonSchemaForm = ({
         disabled={disabled}
         fields={{
           SchemaField,
-          Queryable,
+          QueryableField,
           NumberField,
           ...props.fields,
         }}

@@ -1,14 +1,11 @@
 import { MenuItem, Paper, Stack, Typography } from "@mui/material";
 import type { FieldProps, RJSFSchema } from "@rjsf/utils";
-import { useQuery } from "@tanstack/react-query";
-import {
-  Configuration,
-  ModulesApi,
-  type Queryable as QueryableType,
-} from "../api/src";
+import createFetchClient from "openapi-fetch";
+import createClient from "openapi-react-query";
+import { useMemo } from "react";
 import { LoadingTextField } from "../components/LoadingTextField";
+import type { paths, Queryable } from "../manager-api";
 import { FabricJsonSchemaForm } from "./Form";
-import { useCallback, useMemo } from "react";
 
 const isObject = (value: unknown): value is Record<string, unknown> => {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -32,11 +29,8 @@ const removeEmpty = <T extends Record<string, unknown>>(obj: T): T => {
   return newObj;
 };
 
-const configuration = new Configuration({
-  basePath: "",
-});
-
-const modulesApi = new ModulesApi(configuration);
+const fetchClient = createFetchClient<paths>();
+const client = createClient(fetchClient);
 
 const toValue = (moduleId?: string, name?: string) =>
   moduleId && name ? `${moduleId}/${name}` : undefined;
@@ -80,7 +74,7 @@ const parseAccept = (accept?: string) => {
 const filterQueries = (accept?: string) => {
   const accepted = parseAccept(accept);
 
-  return (q: QueryableType) => {
+  return (q: Queryable) => {
     const [baseType] = q.mediaType.split(";");
     const [type, subtype] = baseType?.split("/") ?? [];
 
@@ -104,7 +98,9 @@ const filterQueries = (accept?: string) => {
   };
 };
 
-export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
+export const QueryableField = (
+  props: FieldProps<QueryRequest, QueryableSchema>,
+) => {
   const {
     schema: { title, description, accept },
     required,
@@ -121,19 +117,13 @@ export const Queryable = (props: FieldProps<QueryRequest, QueryableSchema>) => {
     data: appinfo,
     isPending: isFetchingAppinfo,
     refetch: refetchAppinfo,
-  } = useQuery({
-    queryKey: ["appinfo"],
-    queryFn: () => modulesApi.getAppinfo(),
-  });
+  } = client.useQuery("get", "/api/appinfo");
 
   const {
     data: configs,
     isPending: isFetchingConfigs,
     refetch: refetchConfigs,
-  } = useQuery({
-    queryKey: ["configs"],
-    queryFn: () => modulesApi.getConfigs(),
-  });
+  } = client.useQuery("get", "/api/config");
 
   const refetch = () => {
     refetchAppinfo();
