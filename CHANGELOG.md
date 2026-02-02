@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.2.2...v0.2.3) (2026-02-02)
+
+
+### Bug Fixes
+
+* Use openapi-typescript instead of openapi-generator ([#17](https://github.com/teldio-operations/fabric-json-schema-form/issues/17)) ([ac8c9a9](https://github.com/teldio-operations/fabric-json-schema-form/commit/ac8c9a9dae9c60583a944aac7a0f2f29bda86f8b))
+
 ## [0.2.2](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.2.1...v0.2.2) (2026-01-07)
 
 
