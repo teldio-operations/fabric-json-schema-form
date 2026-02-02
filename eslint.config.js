@@ -23,5 +23,5 @@ export default defineConfig([
       "react/prop-types": "off",
     },
   },
-  globalIgnores(["api"]),
+  globalIgnores(["manager-api.d.ts"]),
 ]);

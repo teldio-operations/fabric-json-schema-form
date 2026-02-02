@@ -11,10 +11,12 @@ if ! curl $URL >/dev/null 2>&1; then
 	exit 1
 fi
 
-TARGET_DIR="./api"
+# Project root
+cd "$(dirname "$(realpath "$0")")/.."
 
-rm -rf "$TARGET_DIR"
-openapi-generator generate -g typescript-fetch \
-	-p=npmName=api \
-	-o "$TARGET_DIR" -i "$URL" \
-	>/dev/null
+bun x openapi-typescript "$URL" \
+	-o "./manager-api.d.ts" \
+	--alphabetize \
+	--immutable \
+	--root-types \
+	--root-types-no-schema-prefix
