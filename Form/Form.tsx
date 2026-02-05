@@ -18,6 +18,7 @@ const queryClient = new QueryClient();
 export const FabricJsonSchemaForm = ({
   onCancel,
   loading,
+  children,
   ...props
 }: FabricJsonSchemaFormProps) => {
   const submitButtonOptions =
@@ -27,6 +28,32 @@ export const FabricJsonSchemaForm = ({
   const showSubmitButton = submitButtonOptions?.norender !== true;
 
   const disabled = props.disabled || loading;
+
+  const submitButton = children ?? (
+    <Stack
+      width="100%"
+      gap={2}
+      direction="row"
+      justifyContent="end"
+      flexWrap={"wrap"}
+    >
+      {onCancel && (
+        <Button disabled={disabled} color="inherit" onClick={onCancel}>
+          Cancel
+        </Button>
+      )}
+
+      <Button
+        loading={loading}
+        disabled={props.disabled}
+        type="submit"
+        variant="contained"
+        {...props.uiSchema?.["ui:submitButtonOptions"]?.props}
+      >
+        {props.uiSchema?.["ui:submitButtonOptions"]?.submitText ?? "Submit"}
+      </Button>
+    </Stack>
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -45,32 +72,7 @@ export const FabricJsonSchemaForm = ({
           ...props.widgets,
         }}
       >
-        {showSubmitButton && (
-          <Stack
-            width="100%"
-            gap={2}
-            direction="row"
-            justifyContent="end"
-            flexWrap={"wrap"}
-          >
-            {onCancel && (
-              <Button disabled={disabled} color="inherit" onClick={onCancel}>
-                Cancel
-              </Button>
-            )}
-
-            <Button
-              loading={loading}
-              disabled={props.disabled}
-              type="submit"
-              variant="contained"
-              {...props.uiSchema?.["ui:submitButtonOptions"]?.props}
-            >
-              {props.uiSchema?.["ui:submitButtonOptions"]?.submitText ??
-                "Submit"}
-            </Button>
-          </Stack>
-        )}
+        {showSubmitButton ? submitButton : undefined}
       </RJSFMuiForm>
     </QueryClientProvider>
   );
