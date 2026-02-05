@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.2.3...v0.2.4) (2026-02-05)
+
+
+### Bug Fixes
+
+* Allow children to override submit button ([372f4aa](https://github.com/teldio-operations/fabric-json-schema-form/commit/372f4aa369daaa4b1a3689cb4d92030ff38aee7a))
+
 ## [0.2.3](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.2.2...v0.2.3) (2026-02-02)
 
 
