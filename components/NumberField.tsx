@@ -119,6 +119,7 @@ export default function NumberField(props: FieldProps) {
     schema,
     uiSchema,
     title,
+    required,
   } = props;
   const { schemaUtils } = registry;
   const displaylabel = schemaUtils.getDisplayLabel(schema);
@@ -136,6 +137,7 @@ export default function NumberField(props: FieldProps) {
       format={{
         useGrouping: false,
       }}
+      required={required}
     />
   );
 }
