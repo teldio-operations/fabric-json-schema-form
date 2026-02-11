@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.5](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.2.4...v0.2.5) (2026-02-11)
+
+
+### Bug Fixes
+
+* Make number field show asterisk when it's a required property ([2e7c25f](https://github.com/teldio-operations/fabric-json-schema-form/commit/2e7c25faa14825d27e8b19893a6e4ac645abe411))
+
 ## [0.2.4](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.2.3...v0.2.4) (2026-02-05)
 
 
