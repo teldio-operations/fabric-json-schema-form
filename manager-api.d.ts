@@ -208,7 +208,7 @@ export interface paths {
             readonly path?: never;
             readonly cookie?: never;
         };
-        /** Get info about the manager */
+        /** Get info about Teldio Fabric */
         readonly get: operations["get-info"];
         readonly put?: never;
         readonly post?: never;
@@ -252,6 +252,40 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
+    readonly "/api/info/update": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** Get info about the latest update */
+        readonly get: operations["get-update-info"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/info/update/installer": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** Get latest installer */
+        readonly get: operations["get-latest-installer"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
     readonly "/api/license": {
         readonly parameters: {
             readonly query?: never;
@@ -264,6 +298,23 @@ export interface paths {
         readonly put?: never;
         /** Register a license */
         readonly post: operations["post-license"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/license/online": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /** Register online */
+        readonly post: operations["register-online"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -423,6 +474,23 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
+    readonly "/api/shutdown": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /** Shutdown */
+        readonly post: operations["shutdown"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
     readonly "/api/users": {
         readonly parameters: {
             readonly query?: never;
@@ -522,11 +590,11 @@ export interface components {
             readonly description?: string;
             readonly disabled?: boolean;
             readonly id: string;
-            readonly isOnline: boolean;
             readonly module: string;
             readonly proxy?: components["schemas"]["ProxyOptions"];
-            readonly running: boolean;
             readonly service?: boolean;
+            /** @enum {string} */
+            readonly status: "disabled" | "stopped" | "offline" | "online";
             readonly statusReason: string;
             readonly title?: string;
         };
@@ -543,6 +611,7 @@ export interface components {
             readonly description?: string;
             readonly id?: string;
             readonly module: string;
+            readonly start?: boolean;
             readonly title?: string;
         };
         readonly "Create-userRequest": {
@@ -697,6 +766,7 @@ export interface components {
              */
             readonly $schema?: string;
             readonly accessFromLoopback: boolean;
+            readonly canRegisterOnline: boolean;
             readonly managerHost: string;
             /** Format: int64 */
             readonly managerPort: number;
@@ -726,8 +796,10 @@ export interface components {
              * @example https://example.com/schemas/GetMeBody.json
              */
             readonly $schema?: string;
-            readonly permissions?: readonly ("settings:manage" | "settings/users:manage" | "modules:manage")[] | null;
+            readonly permissions?: readonly ("modules:manage" | "settings:manage" | "settings/users:manage" | "events:manage" | "updates:manage")[] | null;
             readonly role: string;
+            /** Format: int64 */
+            readonly sessionExpiresAt: number;
             readonly username: string;
         };
         readonly GetUsersOutputBody: {
@@ -811,6 +883,15 @@ export interface components {
             readonly name: string;
             readonly title?: string;
         };
+        readonly "Register-onlineRequest": {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/Register-onlineRequest.json
+             */
+            readonly $schema?: string;
+            readonly token: string;
+        };
         readonly "Register-proxyRequest": {
             /**
              * Format: uri
@@ -832,7 +913,7 @@ export interface components {
         };
         readonly Role: {
             readonly name: string;
-            readonly permissions: readonly ("settings:manage" | "settings/users:manage" | "modules:manage")[] | null;
+            readonly permissions: readonly ("modules:manage" | "settings:manage" | "settings/users:manage" | "events:manage" | "updates:manage")[] | null;
             readonly title: string;
         };
         readonly Schema: {
@@ -954,6 +1035,18 @@ export interface components {
             readonly basename: string;
             readonly path: string;
         };
+        readonly UpdateInfo: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateInfo.json
+             */
+            readonly $schema?: string;
+            readonly currentVersion: string;
+            readonly hasUpdate: boolean;
+            readonly latestVersion?: string;
+            readonly updatesDisabled?: boolean;
+        };
         /** Format: uri */
         readonly URL: string | null;
         readonly UserDetails: {
@@ -991,6 +1084,7 @@ export type PostLoginRequest = components['schemas']['Post-loginRequest'];
 export type PostConfigBody = components['schemas']['PostConfigBody'];
 export type ProxyOptions = components['schemas']['ProxyOptions'];
 export type Queryable = components['schemas']['Queryable'];
+export type RegisterOnlineRequest = components['schemas']['Register-onlineRequest'];
 export type RegisterProxyRequest = components['schemas']['Register-proxyRequest'];
 export type RestartResponseBody = components['schemas']['RestartResponseBody'];
 export type Role = components['schemas']['Role'];
@@ -1000,6 +1094,7 @@ export type SetUserPasswordRequest = components['schemas']['Set-user-passwordReq
 export type SidebarItem = components['schemas']['SidebarItem'];
 export type Theme = components['schemas']['Theme'];
 export type UnapprovedModule = components['schemas']['UnapprovedModule'];
+export type UpdateInfo = components['schemas']['UpdateInfo'];
 export type Url = components['schemas']['URL'];
 export type UserDetails = components['schemas']['UserDetails'];
 export type $defs = Record<string, never>;
@@ -1149,9 +1244,7 @@ export interface operations {
     };
     readonly "download-backup": {
         readonly parameters: {
-            readonly query?: {
-                readonly excludeEvents?: boolean;
-            };
+            readonly query?: never;
             readonly header?: never;
             readonly path?: never;
             readonly cookie?: never;
@@ -2028,6 +2121,62 @@ export interface operations {
             };
         };
     };
+    readonly "get-update-info": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description OK */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["UpdateInfo"];
+                };
+            };
+            /** @description Error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    readonly "get-latest-installer": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description OK */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
     readonly "get-license": {
         readonly parameters: {
             readonly query?: never;
@@ -2067,6 +2216,37 @@ export interface operations {
         readonly requestBody: {
             readonly content: {
                 readonly "application/json": components["schemas"]["Post-licenseRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description No Content */
+            readonly 204: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    readonly "register-online": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["Register-onlineRequest"];
             };
         };
         readonly responses: {
@@ -2355,6 +2535,33 @@ export interface operations {
                 content: {
                     readonly "application/json": components["schemas"]["RestartResponseBody"];
                 };
+            };
+            /** @description Error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    readonly shutdown: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description No Content */
+            readonly 204: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Error */
             readonly default: {

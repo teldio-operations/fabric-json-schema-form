@@ -150,12 +150,21 @@ export const QueryableField = (
     ? configs?.[formData.moduleId]
     : undefined;
 
-  const notRunning = selectedConfig && !selectedConfig.running;
+  const moduleDisabled = selectedConfig && selectedConfig.status === "disabled";
+  const moduleHasErrors = selectedConfig && selectedConfig.status !== "online";
 
-  const severity = notRunning ? "warning" : undefined;
-  const alert = notRunning
-    ? "Module is not running currently, so it will not be able to execute queries"
-    : undefined;
+  const showWarning = moduleDisabled || moduleHasErrors;
+
+  const severity = showWarning ? "warning" : undefined;
+  const alert = useMemo(() => {
+    if (moduleDisabled) {
+      return "Module is disabled, so it will not be able to execute queries";
+    }
+    if (moduleHasErrors) {
+      return "Module reports errors, so it may not be able to execute queries correctly.";
+    }
+    return undefined;
+  }, [moduleDisabled, moduleHasErrors]);
 
   const selectedQueryable = appinfo
     ?.find(({ name }) => name === selectedConfig?.module)
