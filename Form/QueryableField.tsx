@@ -78,9 +78,17 @@ const filterQueries = (accept?: string) => {
     const [baseType] = q.mediaType.split(";");
     const [type, subtype] = baseType?.split("/") ?? [];
 
+    if (type === "*") {
+      return true;
+    }
+
     for (const { type: acceptedType, subtype: acceptedSubtype } of accepted) {
       if (!!acceptedType && acceptedType !== "*" && type !== acceptedType) {
         continue;
+      }
+
+      if (subtype === "*") {
+        return true;
       }
 
       if (
