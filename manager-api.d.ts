@@ -4,644 +4,663 @@
  */
 
 export interface paths {
-    readonly "/api/appinfo": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/appinfo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
         /** Get info about available modules */
-        readonly get: operations["get-appinfo"];
-        readonly put?: never;
-        readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        get: operations["get-appinfo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/appinfo-unapproved": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/appinfo-unapproved": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
         /** Get info about unapproved modules */
-        readonly get: operations["get-unapproved-appinfo"];
-        readonly put?: never;
-        readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        get: operations["get-unapproved-appinfo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/appinfo-unapproved/{path}": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/appinfo-unapproved/{path}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
-        readonly put?: never;
+        get?: never;
+        put?: never;
         /** Approve an unauthorized module */
-        readonly post: operations["approve-module"];
+        post: operations["approve-module"];
         /** Disallow an unauthorized module */
-        readonly delete: operations["disallow-module"];
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        delete: operations["disallow-module"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/appinfo/refresh": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/appinfo/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
-        readonly put?: never;
+        get?: never;
+        put?: never;
         /** Refresh available modules */
-        readonly post: operations["refresh-appinfo"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        post: operations["refresh-appinfo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/backup": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/backup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
         /**
          * Download backup
          * @description Download a snapshot of your system, including module configurations, settings, and past events. Sensitive data will not be included.
          */
-        readonly get: operations["download-backup"];
-        readonly put?: never;
+        get: operations["download-backup"];
+        put?: never;
         /** Restore backup */
-        readonly post: operations["restore-backup"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        post: operations["restore-backup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/config": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
         /** Get configs of running modules */
-        readonly get: operations["get-configs"];
-        readonly put?: never;
+        get: operations["get-configs"];
+        put?: never;
         /** Add or update a module */
-        readonly post: operations["set-config"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        post: operations["set-config"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/config/{id}": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/config/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
-        readonly put?: never;
-        readonly post?: never;
+        get?: never;
+        put?: never;
+        post?: never;
         /** Delete a module */
-        readonly delete: operations["delete-module"];
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        delete: operations["delete-module"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/config/{id}/start": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/config/{id}/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
-        readonly put?: never;
+        get?: never;
+        put?: never;
         /** Start a module */
-        readonly post: operations["start-module"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        post: operations["start-module"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/config/{id}/stop": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/config/{id}/stop": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
-        readonly put?: never;
+        get?: never;
+        put?: never;
         /** Stop a module */
-        readonly post: operations["stop-module"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        post: operations["stop-module"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/events/": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/events/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
         /** Listen to events */
-        readonly get: operations["listen-events"];
-        readonly put?: never;
-        readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        get: operations["listen-events"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/events/{name}": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/events/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
         /** Listen to a specific event */
-        readonly get: operations["listen-event"];
-        readonly put?: never;
+        get: operations["listen-event"];
+        put?: never;
         /**
          * Emit event
          * @description Emit an event and optionally open a stream to listen for a response.
          */
-        readonly post: operations["emit-event"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        post: operations["emit-event"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/info": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/info": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
         /** Get info about Teldio Fabric */
-        readonly get: operations["get-info"];
-        readonly put?: never;
-        readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        get: operations["get-info"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/info/changelog": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/info/changelog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
         /** Get changelog */
-        readonly get: operations["get-changelog"];
-        readonly put?: never;
-        readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        get: operations["get-changelog"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/info/theme": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/info/theme": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
         /** Get theming data */
-        readonly get: operations["get-theme"];
-        readonly put?: never;
-        readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        get: operations["get-theme"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/info/update": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/info/update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
         /** Get info about the latest update */
-        readonly get: operations["get-update-info"];
-        readonly put?: never;
-        readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        get: operations["get-update-info"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/info/update/installer": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/info/update/installer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
         /** Get latest installer */
-        readonly get: operations["get-latest-installer"];
-        readonly put?: never;
-        readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        get: operations["get-latest-installer"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/license": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/license": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
         /** Get the current license */
-        readonly get: operations["get-license"];
-        readonly put?: never;
+        get: operations["get-license"];
+        put?: never;
         /** Register a license */
-        readonly post: operations["post-license"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        post: operations["post-license"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/license/online": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/license/online": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
-        readonly put?: never;
+        get?: never;
+        put?: never;
         /** Register online */
-        readonly post: operations["register-online"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        post: operations["register-online"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/license/request": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/license/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
         /** Get a license request file */
-        readonly get: operations["get-license-request"];
-        readonly put?: never;
-        readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        get: operations["get-license-request"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/login": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
-        readonly put?: never;
+        get?: never;
+        put?: never;
         /** Log in */
-        readonly post: operations["post-login"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        post: operations["post-login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/logout": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
-        readonly put?: never;
+        get?: never;
+        put?: never;
         /** Log out */
-        readonly post: operations["post-logout"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        post: operations["post-logout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/me": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
         /** Get current user info */
-        readonly get: operations["get-me"];
-        readonly put?: never;
-        readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        get: operations["get-me"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/me/password": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/me/password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
+        get?: never;
         /** Set current user password */
-        readonly put: operations["set-user-password"];
-        readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        put: operations["set-user-password"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/proxies/{id}": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/proxies/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
-        readonly put?: never;
+        get?: never;
+        put?: never;
         /** Register proxy */
-        readonly post: operations["register-proxy"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        post: operations["register-proxy"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/restart": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/restart": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
-        readonly put?: never;
+        get?: never;
+        put?: never;
         /** Restart */
-        readonly post: operations["restart"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        post: operations["restart"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/session/refresh": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/session/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
-        readonly put?: never;
+        get?: never;
+        put?: never;
         /** Refresh session */
-        readonly post: operations["refresh-session"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        post: operations["refresh-session"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/settings/url": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/settings/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
-        readonly put?: never;
+        get?: never;
+        put?: never;
         /** Set host and port */
-        readonly post: operations["set-host-and-port"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        post: operations["set-host-and-port"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/shutdown": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/shutdown": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
-        readonly put?: never;
+        get?: never;
+        put?: never;
         /** Shutdown */
-        readonly post: operations["shutdown"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        post: operations["shutdown"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/users": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
         /** Get users */
-        readonly get: operations["get-users"];
-        readonly put?: never;
+        get: operations["get-users"];
+        put?: never;
         /** Create user */
-        readonly post: operations["create-user"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        post: operations["create-user"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/users/{username}": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/users/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
-        readonly put?: never;
-        readonly post?: never;
+        get?: never;
+        put?: never;
+        post?: never;
         /** Delete user */
-        readonly delete: operations["delete-user"];
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        delete: operations["delete-user"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/users/{username}/password": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/users/{username}/password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
+        get?: never;
         /** Change user password */
-        readonly put: operations["change-user-password"];
-        readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        put: operations["change-user-password"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    readonly "/api/users/{username}/role": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "/api/users/{username}/role": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly get?: never;
+        get?: never;
         /** Change user role */
-        readonly put: operations["change-user-role"];
-        readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
+        put: operations["change-user-role"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        readonly "Change-user-passwordRequest": {
+        "Change-user-passwordRequest": {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/Change-user-passwordRequest.json
              */
             readonly $schema?: string;
-            readonly newPassword: string;
+            newPassword: string;
         };
-        readonly "Change-user-roleRequest": {
+        "Change-user-roleRequest": {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/Change-user-roleRequest.json
              */
             readonly $schema?: string;
-            readonly role: string;
+            role: string;
         };
-        readonly Config: {
-            readonly config?: {
-                readonly [key: string]: unknown;
+        Config: {
+            config?: {
+                [key: string]: unknown;
             };
-            readonly configSecrets?: readonly string[] | null;
-            readonly description?: string;
-            readonly disabled?: boolean;
-            readonly id: string;
-            readonly module: string;
-            readonly proxy?: components["schemas"]["ProxyOptions"];
-            readonly service?: boolean;
+            configSecrets?: string[] | null;
+            description?: string;
+            disabled?: boolean;
+            id: string;
+            module: string;
+            proxy?: components["schemas"]["ProxyOptions"];
+            service?: boolean;
             /** @enum {string} */
-            readonly status: "disabled" | "stopped" | "offline" | "online";
-            readonly statusReason: string;
-            readonly title?: string;
+            status: "disabled" | "stopped" | "offline" | "online";
+            statusReason: string;
+            title?: string;
         };
-        readonly ConfigInput: {
+        ConfigInput: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/ConfigInput.json
              */
             readonly $schema?: string;
-            readonly config: {
-                readonly [key: string]: unknown;
+            config: {
+                [key: string]: unknown;
             };
-            readonly description?: string;
-            readonly id?: string;
-            readonly module: string;
-            readonly start?: boolean;
-            readonly title?: string;
+            description?: string;
+            id?: string;
+            module: string;
+            start?: boolean;
+            title?: string;
         };
-        readonly "Create-userRequest": {
+        Cookie: {
+            Domain: string;
+            /** Format: date-time */
+            Expires: string;
+            HttpOnly: boolean;
+            /** Format: int64 */
+            MaxAge: number;
+            Name: string;
+            Partitioned: boolean;
+            Path: string;
+            Quoted: boolean;
+            Raw: string;
+            RawExpires: string;
+            /** Format: int64 */
+            SameSite: number;
+            Secure: boolean;
+            Unparsed: string[] | null;
+            Value: string;
+        };
+        "Create-userRequest": {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/Create-userRequest.json
              */
             readonly $schema?: string;
-            readonly password: string;
-            readonly role: string;
-            readonly username: string;
+            password: string;
+            role: string;
+            username: string;
         };
-        readonly DemoLicense: {
+        DemoLicense: {
             /** Format: date-time */
-            readonly expiry: string;
+            expiry: string;
         };
-        readonly DevelopmentLicense: {
+        DevelopmentLicense: {
             /** Format: date-time */
-            readonly expiry: string;
+            expiry: string;
         };
-        readonly ErrorDetail: {
+        ErrorDetail: {
             /** @description Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id' */
-            readonly location?: string;
+            location?: string;
             /** @description Error message text */
-            readonly message?: string;
+            message?: string;
             /** @description The value at the given location */
-            readonly value?: unknown;
+            value?: unknown;
         };
-        readonly ErrorModel: {
+        ErrorModel: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
@@ -652,128 +671,128 @@ export interface components {
              * @description A human-readable explanation specific to this occurrence of the problem.
              * @example Property foo is required but is missing.
              */
-            readonly detail?: string;
+            detail?: string;
             /** @description Optional list of individual error details */
-            readonly errors?: readonly components["schemas"]["ErrorDetail"][] | null;
+            errors?: components["schemas"]["ErrorDetail"][] | null;
             /**
              * Format: uri
              * @description A URI reference that identifies the specific occurrence of the problem.
              * @example https://example.com/error-log/abc123
              */
-            readonly instance?: string;
+            instance?: string;
             /**
              * Format: int64
              * @description HTTP status code
              * @example 400
              */
-            readonly status?: number;
+            status?: number;
             /**
              * @description A short, human-readable summary of the problem type. This value should not change between occurrences of the error.
              * @example Bad Request
              */
-            readonly title?: string;
+            title?: string;
             /**
              * Format: uri
              * @description A URI reference to human-readable documentation for the error.
              * @default about:blank
              * @example https://example.com/errors/example
              */
-            readonly type: string;
+            type: string;
         };
-        readonly EventInfo: {
-            readonly $anchor?: string;
-            readonly $comment?: string;
-            readonly $defs?: {
-                readonly [key: string]: components["schemas"]["Schema"];
+        EventInfo: {
+            $anchor?: string;
+            $comment?: string;
+            $defs?: {
+                [key: string]: components["schemas"]["Schema"];
             };
-            readonly $dynamicRef?: string;
-            readonly $id?: string;
-            readonly $ref?: string;
-            readonly $schema?: string;
-            readonly additionalProperties?: components["schemas"]["Schema"];
-            readonly allOf?: readonly components["schemas"]["Schema"][] | null;
-            readonly anyOf?: readonly components["schemas"]["Schema"][] | null;
-            readonly const?: unknown;
-            readonly contains?: components["schemas"]["Schema"];
-            readonly contentEncoding?: string;
-            readonly contentMediaType?: string;
-            readonly contentSchema?: components["schemas"]["Schema"];
-            readonly default?: unknown;
-            readonly dependentRequired?: {
-                readonly [key: string]: readonly string[] | null;
+            $dynamicRef?: string;
+            $id?: string;
+            $ref?: string;
+            $schema?: string;
+            additionalProperties?: components["schemas"]["Schema"];
+            allOf?: components["schemas"]["Schema"][] | null;
+            anyOf?: components["schemas"]["Schema"][] | null;
+            const?: unknown;
+            contains?: components["schemas"]["Schema"];
+            contentEncoding?: string;
+            contentMediaType?: string;
+            contentSchema?: components["schemas"]["Schema"];
+            default?: unknown;
+            dependentRequired?: {
+                [key: string]: string[] | null;
             };
-            readonly dependentSchemas?: {
-                readonly [key: string]: components["schemas"]["Schema"];
+            dependentSchemas?: {
+                [key: string]: components["schemas"]["Schema"];
             };
-            readonly deprecated?: boolean;
-            readonly description?: string;
-            readonly else?: components["schemas"]["Schema"];
-            readonly enum?: readonly unknown[] | null;
-            readonly examples?: readonly unknown[] | null;
+            deprecated?: boolean;
+            description?: string;
+            else?: components["schemas"]["Schema"];
+            enum?: unknown[] | null;
+            examples?: unknown[] | null;
             /** Format: double */
-            readonly exclusiveMaximum?: number;
+            exclusiveMaximum?: number;
             /** Format: double */
-            readonly exclusiveMinimum?: number;
-            readonly format?: string;
-            readonly if?: components["schemas"]["Schema"];
-            readonly items?: components["schemas"]["Schema"];
+            exclusiveMinimum?: number;
+            format?: string;
+            if?: components["schemas"]["Schema"];
+            items?: components["schemas"]["Schema"];
             /** Format: int64 */
-            readonly maxContains?: number;
+            maxContains?: number;
             /** Format: double */
-            readonly maximum?: number;
+            maximum?: number;
             /** Format: int64 */
-            readonly maxItems?: number;
+            maxItems?: number;
             /** Format: int64 */
-            readonly maxLength?: number;
+            maxLength?: number;
             /** Format: int64 */
-            readonly maxProperties?: number;
+            maxProperties?: number;
             /** Format: int64 */
-            readonly minContains?: number;
+            minContains?: number;
             /** Format: double */
-            readonly minimum?: number;
+            minimum?: number;
             /** Format: int64 */
-            readonly minItems?: number;
+            minItems?: number;
             /** Format: int64 */
-            readonly minLength?: number;
+            minLength?: number;
             /** Format: int64 */
-            readonly minProperties?: number;
+            minProperties?: number;
             /** Format: double */
-            readonly multipleOf?: number;
-            readonly name: string;
-            readonly not?: components["schemas"]["Schema"];
-            readonly oneOf?: readonly components["schemas"]["Schema"][] | null;
-            readonly pattern?: string;
-            readonly patternProperties?: {
-                readonly [key: string]: components["schemas"]["Schema"];
+            multipleOf?: number;
+            name: string;
+            not?: components["schemas"]["Schema"];
+            oneOf?: components["schemas"]["Schema"][] | null;
+            pattern?: string;
+            patternProperties?: {
+                [key: string]: components["schemas"]["Schema"];
             };
-            readonly prefixItems?: readonly components["schemas"]["Schema"][] | null;
-            readonly properties?: components["schemas"]["OrderedMapStringSchema"];
-            readonly propertyNames?: components["schemas"]["Schema"];
-            readonly readOnly?: boolean;
-            readonly reply?: components["schemas"]["Schema"];
-            readonly required?: readonly string[] | null;
-            readonly then?: components["schemas"]["Schema"];
-            readonly title?: string;
-            readonly type?: string;
-            readonly uniqueItems?: boolean;
-            readonly writeOnly?: boolean;
+            prefixItems?: components["schemas"]["Schema"][] | null;
+            properties?: components["schemas"]["OrderedMapStringSchema"];
+            propertyNames?: components["schemas"]["Schema"];
+            readOnly?: boolean;
+            reply?: components["schemas"]["Schema"];
+            required?: string[] | null;
+            then?: components["schemas"]["Schema"];
+            title?: string;
+            type?: string;
+            uniqueItems?: boolean;
+            writeOnly?: boolean;
         };
-        readonly GetInfoBody: {
+        GetInfoBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/GetInfoBody.json
              */
             readonly $schema?: string;
-            readonly accessFromLoopback: boolean;
-            readonly canRegisterOnline: boolean;
-            readonly managerHost: string;
+            accessFromLoopback: boolean;
+            canRegisterOnline: boolean;
+            managerHost: string;
             /** Format: int64 */
-            readonly managerPort: number;
-            readonly showInitialiseFlow: boolean;
-            readonly version: string;
+            managerPort: number;
+            showInitialiseFlow: boolean;
+            version: string;
         };
-        readonly GetLicenseResponseBody: {
+        GetLicenseResponseBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
@@ -781,277 +800,277 @@ export interface components {
              */
             readonly $schema?: string;
             /** Format: int64 */
-            readonly configuredModules?: number;
+            configuredModules?: number;
             /** Format: date-time */
-            readonly expiry?: string;
-            readonly license?: components["schemas"]["LicenseClaims"];
-            readonly licenseError?: string;
-            readonly licenseWarning?: string;
-            readonly shortError?: string;
+            expiry?: string;
+            license?: components["schemas"]["LicenseClaims"];
+            licenseError?: string;
+            licenseWarning?: string;
+            shortError?: string;
         };
-        readonly GetMeBody: {
+        GetMeBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/GetMeBody.json
              */
             readonly $schema?: string;
-            readonly permissions?: readonly ("modules:manage" | "settings:manage" | "settings/users:manage" | "events:manage" | "updates:manage")[] | null;
-            readonly role: string;
+            permissions?: ("modules:manage" | "settings:manage" | "settings/users:manage" | "events:manage" | "updates:manage")[] | null;
+            role: string;
             /** Format: int64 */
-            readonly sessionExpiresAt: number;
-            readonly username: string;
+            sessionExpiresAt: number;
+            username: string;
         };
-        readonly GetUsersOutputBody: {
+        GetUsersOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/GetUsersOutputBody.json
              */
             readonly $schema?: string;
-            readonly users: readonly components["schemas"]["UserDetails"][] | null;
+            users: components["schemas"]["UserDetails"][] | null;
         };
-        readonly Info: {
-            readonly config?: components["schemas"]["Schema"];
-            readonly description?: string;
-            readonly emits?: readonly components["schemas"]["EventInfo"][] | null;
-            readonly listens?: readonly components["schemas"]["EventInfo"][] | null;
-            readonly name: string;
-            readonly queries?: readonly components["schemas"]["Queryable"][] | null;
-            readonly service?: boolean;
-            readonly title: string;
-            readonly version?: string;
+        Info: {
+            config?: components["schemas"]["Schema"];
+            description?: string;
+            emits?: components["schemas"]["EventInfo"][] | null;
+            listens?: components["schemas"]["EventInfo"][] | null;
+            name: string;
+            queries?: components["schemas"]["Queryable"][] | null;
+            service?: boolean;
+            title: string;
+            version?: string;
         };
-        readonly LicenseClaims: {
-            readonly id: string;
+        LicenseClaims: {
+            id: string;
             /** Format: date-time */
-            readonly issued: string;
-            readonly v1?: components["schemas"]["LicenseV1"];
+            issued: string;
+            v1?: components["schemas"]["LicenseV1"];
             /** Format: int64 */
-            readonly version: number;
+            version: number;
         };
-        readonly LicenseV1: {
-            readonly demo?: components["schemas"]["DemoLicense"];
-            readonly development?: components["schemas"]["DevelopmentLicense"];
-            readonly hardwareId: string;
-            readonly perpetual?: components["schemas"]["PerpetualLicense"];
-            readonly storedToken: string;
+        LicenseV1: {
+            demo?: components["schemas"]["DemoLicense"];
+            development?: components["schemas"]["DevelopmentLicense"];
+            hardwareId: string;
+            perpetual?: components["schemas"]["PerpetualLicense"];
+            storedToken: string;
         };
-        readonly OrderedMapStringSchema: Record<string, never>;
-        readonly PerpetualLicense: {
+        OrderedMapStringSchema: Record<string, never>;
+        PerpetualLicense: {
             /** Format: int64 */
-            readonly configuredModuleLimit: number;
+            configuredModuleLimit: number;
             /** Format: date-time */
-            readonly supportExpiry: string;
+            supportExpiry: string;
         };
-        readonly "Post-licenseRequest": {
+        "Post-licenseRequest": {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/Post-licenseRequest.json
              */
             readonly $schema?: string;
-            readonly license: string;
+            license: string;
         };
-        readonly "Post-loginRequest": {
+        "Post-loginRequest": {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/Post-loginRequest.json
              */
             readonly $schema?: string;
-            readonly password: string;
-            readonly username: string;
+            password: string;
+            username: string;
         };
-        readonly PostConfigBody: {
+        PostConfigBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/PostConfigBody.json
              */
             readonly $schema?: string;
-            readonly id: string;
+            id: string;
         };
-        readonly ProxyOptions: {
-            readonly sidebarItem?: components["schemas"]["SidebarItem"];
-            readonly url: components["schemas"]["URL"];
+        ProxyOptions: {
+            sidebarItem?: components["schemas"]["SidebarItem"];
+            url: components["schemas"]["URL"];
         };
-        readonly Queryable: {
-            readonly description?: string;
-            readonly input?: components["schemas"]["Schema"];
-            readonly mediaType: string;
-            readonly name: string;
-            readonly title?: string;
+        Queryable: {
+            description?: string;
+            input?: components["schemas"]["Schema"];
+            mediaType: string;
+            name: string;
+            title?: string;
         };
-        readonly "Register-onlineRequest": {
+        "Register-onlineRequest": {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/Register-onlineRequest.json
              */
             readonly $schema?: string;
-            readonly token: string;
+            token: string;
         };
-        readonly "Register-proxyRequest": {
+        "Register-proxyRequest": {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/Register-proxyRequest.json
              */
             readonly $schema?: string;
-            readonly sidebarItem?: components["schemas"]["SidebarItem"];
-            readonly url: string;
+            sidebarItem?: components["schemas"]["SidebarItem"];
+            url: string;
         };
-        readonly RestartResponseBody: {
+        RestartResponseBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/RestartResponseBody.json
              */
             readonly $schema?: string;
-            readonly managerUrl: string;
+            managerUrl: string;
         };
-        readonly Role: {
-            readonly name: string;
-            readonly permissions: readonly ("modules:manage" | "settings:manage" | "settings/users:manage" | "events:manage" | "updates:manage")[] | null;
-            readonly title: string;
+        Role: {
+            name: string;
+            permissions: ("modules:manage" | "settings:manage" | "settings/users:manage" | "events:manage" | "updates:manage")[] | null;
+            title: string;
         };
-        readonly Schema: {
-            readonly $anchor?: string;
-            readonly $comment?: string;
-            readonly $defs?: {
-                readonly [key: string]: components["schemas"]["Schema"];
+        Schema: {
+            $anchor?: string;
+            $comment?: string;
+            $defs?: {
+                [key: string]: components["schemas"]["Schema"];
             };
-            readonly $dynamicRef?: string;
-            readonly $id?: string;
-            readonly $ref?: string;
-            readonly $schema?: string;
-            readonly additionalProperties?: components["schemas"]["Schema"];
-            readonly allOf?: readonly components["schemas"]["Schema"][] | null;
-            readonly anyOf?: readonly components["schemas"]["Schema"][] | null;
-            readonly const?: unknown;
-            readonly contains?: components["schemas"]["Schema"];
-            readonly contentEncoding?: string;
-            readonly contentMediaType?: string;
-            readonly contentSchema?: components["schemas"]["Schema"];
-            readonly default?: unknown;
-            readonly dependentRequired?: {
-                readonly [key: string]: readonly string[] | null;
+            $dynamicRef?: string;
+            $id?: string;
+            $ref?: string;
+            $schema?: string;
+            additionalProperties?: components["schemas"]["Schema"];
+            allOf?: components["schemas"]["Schema"][] | null;
+            anyOf?: components["schemas"]["Schema"][] | null;
+            const?: unknown;
+            contains?: components["schemas"]["Schema"];
+            contentEncoding?: string;
+            contentMediaType?: string;
+            contentSchema?: components["schemas"]["Schema"];
+            default?: unknown;
+            dependentRequired?: {
+                [key: string]: string[] | null;
             };
-            readonly dependentSchemas?: {
-                readonly [key: string]: components["schemas"]["Schema"];
+            dependentSchemas?: {
+                [key: string]: components["schemas"]["Schema"];
             };
-            readonly deprecated?: boolean;
-            readonly description?: string;
-            readonly else?: components["schemas"]["Schema"];
-            readonly enum?: readonly unknown[] | null;
-            readonly examples?: readonly unknown[] | null;
+            deprecated?: boolean;
+            description?: string;
+            else?: components["schemas"]["Schema"];
+            enum?: unknown[] | null;
+            examples?: unknown[] | null;
             /** Format: double */
-            readonly exclusiveMaximum?: number;
+            exclusiveMaximum?: number;
             /** Format: double */
-            readonly exclusiveMinimum?: number;
-            readonly format?: string;
-            readonly if?: components["schemas"]["Schema"];
-            readonly items?: components["schemas"]["Schema"];
+            exclusiveMinimum?: number;
+            format?: string;
+            if?: components["schemas"]["Schema"];
+            items?: components["schemas"]["Schema"];
             /** Format: int64 */
-            readonly maxContains?: number;
+            maxContains?: number;
             /** Format: double */
-            readonly maximum?: number;
+            maximum?: number;
             /** Format: int64 */
-            readonly maxItems?: number;
+            maxItems?: number;
             /** Format: int64 */
-            readonly maxLength?: number;
+            maxLength?: number;
             /** Format: int64 */
-            readonly maxProperties?: number;
+            maxProperties?: number;
             /** Format: int64 */
-            readonly minContains?: number;
+            minContains?: number;
             /** Format: double */
-            readonly minimum?: number;
+            minimum?: number;
             /** Format: int64 */
-            readonly minItems?: number;
+            minItems?: number;
             /** Format: int64 */
-            readonly minLength?: number;
+            minLength?: number;
             /** Format: int64 */
-            readonly minProperties?: number;
+            minProperties?: number;
             /** Format: double */
-            readonly multipleOf?: number;
-            readonly not?: components["schemas"]["Schema"];
-            readonly oneOf?: readonly components["schemas"]["Schema"][] | null;
-            readonly pattern?: string;
-            readonly patternProperties?: {
-                readonly [key: string]: components["schemas"]["Schema"];
+            multipleOf?: number;
+            not?: components["schemas"]["Schema"];
+            oneOf?: components["schemas"]["Schema"][] | null;
+            pattern?: string;
+            patternProperties?: {
+                [key: string]: components["schemas"]["Schema"];
             };
-            readonly prefixItems?: readonly components["schemas"]["Schema"][] | null;
-            readonly properties?: components["schemas"]["OrderedMapStringSchema"];
-            readonly propertyNames?: components["schemas"]["Schema"];
-            readonly readOnly?: boolean;
-            readonly required?: readonly string[] | null;
-            readonly then?: components["schemas"]["Schema"];
-            readonly title?: string;
-            readonly type?: string;
-            readonly uniqueItems?: boolean;
-            readonly writeOnly?: boolean;
+            prefixItems?: components["schemas"]["Schema"][] | null;
+            properties?: components["schemas"]["OrderedMapStringSchema"];
+            propertyNames?: components["schemas"]["Schema"];
+            readOnly?: boolean;
+            required?: string[] | null;
+            then?: components["schemas"]["Schema"];
+            title?: string;
+            type?: string;
+            uniqueItems?: boolean;
+            writeOnly?: boolean;
         };
-        readonly "Set-host-and-portRequest": {
+        "Set-host-and-portRequest": {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/Set-host-and-portRequest.json
              */
             readonly $schema?: string;
-            readonly host: string;
+            host: string;
             /** Format: int64 */
-            readonly port: number;
+            port: number;
         };
-        readonly "Set-user-passwordRequest": {
+        "Set-user-passwordRequest": {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/Set-user-passwordRequest.json
              */
             readonly $schema?: string;
-            readonly currentPassword: string;
-            readonly newPassword: string;
+            currentPassword: string;
+            newPassword: string;
         };
-        readonly SidebarItem: {
-            readonly category?: string;
-            readonly icon: string;
-            readonly title: string;
+        SidebarItem: {
+            category?: string;
+            icon: string;
+            title: string;
         };
-        readonly Theme: {
+        Theme: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/Theme.json
              */
             readonly $schema?: string;
-            readonly logoURI?: string;
-            readonly smallLogoURI?: string;
-            readonly themeOptions: {
-                readonly [key: string]: unknown;
+            logoURI?: string;
+            smallLogoURI?: string;
+            themeOptions: {
+                [key: string]: unknown;
             };
         };
-        readonly UnapprovedModule: {
-            readonly basename: string;
-            readonly path: string;
+        UnapprovedModule: {
+            basename: string;
+            path: string;
         };
-        readonly UpdateInfo: {
+        UpdateInfo: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              * @example https://example.com/schemas/UpdateInfo.json
              */
             readonly $schema?: string;
-            readonly currentVersion: string;
-            readonly hasUpdate: boolean;
-            readonly latestVersion?: string;
-            readonly updatesDisabled?: boolean;
+            currentVersion: string;
+            hasUpdate: boolean;
+            latestVersion?: string;
+            updatesDisabled?: boolean;
         };
         /** Format: uri */
-        readonly URL: string | null;
-        readonly UserDetails: {
-            readonly role?: components["schemas"]["Role"];
-            readonly username: string;
+        URL: string | null;
+        UserDetails: {
+            role?: components["schemas"]["Role"];
+            username: string;
         };
     };
     responses: never;
@@ -1064,6 +1083,7 @@ export type ChangeUserPasswordRequest = components['schemas']['Change-user-passw
 export type ChangeUserRoleRequest = components['schemas']['Change-user-roleRequest'];
 export type Config = components['schemas']['Config'];
 export type ConfigInput = components['schemas']['ConfigInput'];
+export type Cookie = components['schemas']['Cookie'];
 export type CreateUserRequest = components['schemas']['Create-userRequest'];
 export type DemoLicense = components['schemas']['DemoLicense'];
 export type DevelopmentLicense = components['schemas']['DevelopmentLicense'];
@@ -1099,1633 +1119,1579 @@ export type Url = components['schemas']['URL'];
 export type UserDetails = components['schemas']['UserDetails'];
 export type $defs = Record<string, never>;
 export interface operations {
-    readonly "get-appinfo": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "get-appinfo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": readonly components["schemas"]["Info"][] | null;
+                    "application/json": components["schemas"]["Info"][] | null;
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "get-unapproved-appinfo": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "get-unapproved-appinfo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": readonly components["schemas"]["UnapprovedModule"][] | null;
+                    "application/json": components["schemas"]["UnapprovedModule"][] | null;
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "approve-module": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path: {
-                readonly path: string;
+    "approve-module": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                path: string;
             };
-            readonly cookie?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "disallow-module": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path: {
-                readonly path: string;
+    "disallow-module": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                path: string;
             };
-            readonly cookie?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "refresh-appinfo": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "refresh-appinfo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "download-backup": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "download-backup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly "Content-Disposition"?: string;
-                    readonly "Content-Length"?: number;
-                    readonly [name: string]: unknown;
+                    "Content-Disposition"?: string;
+                    "Content-Length"?: number;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": string;
+                    "application/json": string;
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "restore-backup": {
-        readonly parameters: {
-            readonly query?: {
-                readonly protectExistingConfigs?: boolean;
+    "restore-backup": {
+        parameters: {
+            query?: {
+                protectExistingConfigs?: boolean;
             };
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/zip": string;
+        requestBody: {
+            content: {
+                "application/zip": string;
             };
         };
-        readonly responses: {
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["RestartResponseBody"];
+                    "application/json": components["schemas"]["RestartResponseBody"];
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "get-configs": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "get-configs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": {
-                        readonly [key: string]: components["schemas"]["Config"];
+                    "application/json": {
+                        [key: string]: components["schemas"]["Config"];
                     };
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "set-config": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "set-config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["ConfigInput"];
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConfigInput"];
             };
         };
-        readonly responses: {
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["PostConfigBody"];
+                    "application/json": components["schemas"]["PostConfigBody"];
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "delete-module": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path: {
-                readonly id: string;
+    "delete-module": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
             };
-            readonly cookie?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "start-module": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path: {
-                readonly id: string;
+    "start-module": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
             };
-            readonly cookie?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "stop-module": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path: {
-                readonly id: string;
+    "stop-module": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
             };
-            readonly cookie?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "listen-events": {
-        readonly parameters: {
-            readonly query?: {
+    "listen-events": {
+        parameters: {
+            query?: {
                 /** @description Maximum number of past events to include. Only relevant if LastEventID is set to ALL_EVENTS. Limit MAY return fewer events than the limit even if more matching events exists in the database. */
-                readonly limit?: number;
-                /**
-                 * @description Events to listen to. If not specified, will return all events.
-                 * @example test-event,test-event2
-                 */
-                readonly names?: string;
-                /**
-                 * @description Retrieves events raised after this. In RFC3339 format.
-                 * @example 1985-04-12T23:20:50.52Z
-                 */
-                readonly since?: string;
-                /**
-                 * @description Only returns events from this module ID. Use * to retrieve events regardless of which module ID they are targeting.
-                 * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
-                 */
-                readonly "target-id"?: string;
-                /**
-                 * @description Only returns events from this module name. Use * to retrieve events regardless of which module name they are targeting.
-                 * @example module-name
-                 */
-                readonly "target-name"?: string;
-                /**
-                 * @description Events to which you will reply. This means emitting an event with reply-to-id set as the ID of the event you receive here.
-                 * @example test-event,test-event2
-                 */
-                readonly "will-reply"?: string;
+                limit?: number;
+                /** @description Events to listen to. If not specified, will return all events. */
+                names?: string;
+                /** @description Retrieves events raised after this. In RFC3339 format. */
+                since?: string;
+                /** @description Only returns events from this module ID. Use * to retrieve events regardless of which module ID they are targeting. */
+                "target-id"?: string;
+                /** @description Only returns events from this module name. Use * to retrieve events regardless of which module name they are targeting. */
+                "target-name"?: string;
+                /** @description Events to which you will reply. This means emitting an event with reply-to-id set as the ID of the event you receive here. */
+                "will-reply"?: string;
             };
-            readonly header?: {
-                /**
-                 * @description Type of stream to accept, see the return details for specifications.
-                 * @example application/x-ndjson,text/event-stream
-                 */
-                readonly Accept?: string;
+            header?: {
+                /** @description Type of stream to accept, see the return details for specifications. */
+                Accept?: string;
                 /** @description Defines which events to retrieve. You may use the special value `ALL_EVENTS` to retrieve all events. */
-                readonly "Last-Event-ID"?: string | null;
-                /**
-                 * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
-                 * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
-                 */
-                readonly "Module-ID"?: string;
+                "Last-Event-ID"?: string | null;
+                /** @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important. */
+                "Module-ID"?: string;
                 /** @description Name of your module */
-                readonly "Module-Name"?: string;
+                "Module-Name"?: string;
             };
-            readonly path?: never;
-            readonly cookie?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description Stream established */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": {
+                    "application/json": {
                         /** @description An event's metadata */
-                        readonly meta: {
+                        meta: {
                             /**
                              * @description The ID of this event as UUIDv4.
                              * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                              */
-                            readonly eventId: string;
-                            readonly eventName: string;
+                            eventId: string;
+                            eventName: string;
                             /**
                              * @description The ID of another event that this one is a reply to.
                              * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                              */
-                            readonly replyToId?: string;
+                            replyToId?: string;
                             /**
                              * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                              * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                              */
-                            readonly sourceModuleId?: string;
+                            sourceModuleId?: string;
                             /** @example module-name */
-                            readonly sourceModuleName?: string;
+                            sourceModuleName?: string;
                             /**
                              * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                              * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                              */
-                            readonly targetModuleId?: string;
+                            targetModuleId?: string;
                             /** @example module-name */
-                            readonly targetModuleName?: string;
+                            targetModuleName?: string;
                             /**
                              * Format: date-time
                              * @example 1985-04-12T23:20:50.52Z
                              */
-                            readonly time: string;
+                            time: string;
                         };
                     };
-                    readonly "application/x-ndjson": readonly {
+                    "application/x-ndjson": {
                         /** @description An event's metadata */
-                        readonly meta: {
+                        meta: {
                             /**
                              * @description The ID of this event as UUIDv4.
                              * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                              */
-                            readonly eventId: string;
-                            readonly eventName: string;
+                            eventId: string;
+                            eventName: string;
                             /**
                              * @description The ID of another event that this one is a reply to.
                              * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                              */
-                            readonly replyToId?: string;
+                            replyToId?: string;
                             /**
                              * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                              * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                              */
-                            readonly sourceModuleId?: string;
+                            sourceModuleId?: string;
                             /** @example module-name */
-                            readonly sourceModuleName?: string;
+                            sourceModuleName?: string;
                             /**
                              * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                              * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                              */
-                            readonly targetModuleId?: string;
+                            targetModuleId?: string;
                             /** @example module-name */
-                            readonly targetModuleName?: string;
+                            targetModuleName?: string;
                             /**
                              * Format: date-time
                              * @example 1985-04-12T23:20:50.52Z
                              */
-                            readonly time: string;
+                            time: string;
                         };
                     }[];
-                    readonly "text/event-stream": readonly {
+                    "text/event-stream": {
                         /** @description The event body. */
-                        readonly data?: {
+                        data?: {
                             /** @description An event's metadata */
-                            readonly meta: {
+                            meta: {
                                 /**
                                  * @description The ID of this event as UUIDv4.
                                  * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                                  */
-                                readonly eventId: string;
-                                readonly eventName: string;
+                                eventId: string;
+                                eventName: string;
                                 /**
                                  * @description The ID of another event that this one is a reply to.
                                  * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                                  */
-                                readonly replyToId?: string;
+                                replyToId?: string;
                                 /**
                                  * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                                  * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                                  */
-                                readonly sourceModuleId?: string;
+                                sourceModuleId?: string;
                                 /** @example module-name */
-                                readonly sourceModuleName?: string;
+                                sourceModuleName?: string;
                                 /**
                                  * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                                  * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                                  */
-                                readonly targetModuleId?: string;
+                                targetModuleId?: string;
                                 /** @example module-name */
-                                readonly targetModuleName?: string;
+                                targetModuleName?: string;
                                 /**
                                  * Format: date-time
                                  * @example 1985-04-12T23:20:50.52Z
                                  */
-                                readonly time: string;
+                                time: string;
                             };
                         };
                         /**
                          * @deprecated
                          * @description The event name. Deprecated because EventSource doesn't allow reading all messages. Use the `meta.eventName` field instead.
                          */
-                        readonly event?: string;
+                        event?: string;
                         /**
                          * @description The event ID.
                          * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                          */
-                        readonly id?: string;
+                        id?: string;
                         /** @description The retry time in milliseconds. */
-                        readonly retry?: number;
+                        retry?: number;
                     }[];
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "listen-event": {
-        readonly parameters: {
-            readonly query?: {
+    "listen-event": {
+        parameters: {
+            query?: {
                 /** @description Maximum number of past events to include. Only relevant if LastEventID is set to ALL_EVENTS. Limit MAY return fewer events than the limit even if more matching events exists in the database. */
-                readonly limit?: number;
-                /**
-                 * @description Retrieves events raised after this. In RFC3339 format.
-                 * @example 1985-04-12T23:20:50.52Z
-                 */
-                readonly since?: string;
-                /**
-                 * @description Only returns events from this module ID. Use * to retrieve events even if they are targetting a specific module.
-                 * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
-                 */
-                readonly "target-id"?: string;
-                /**
-                 * @description Only returns events from this module name. Use * to retrieve events even if they are targetting a specific module.
-                 * @example module-name
-                 */
-                readonly "target-name"?: string;
+                limit?: number;
+                /** @description Retrieves events raised after this. In RFC3339 format. */
+                since?: string;
+                /** @description Only returns events from this module ID. Use * to retrieve events even if they are targetting a specific module. */
+                "target-id"?: string;
+                /** @description Only returns events from this module name. Use * to retrieve events even if they are targetting a specific module. */
+                "target-name"?: string;
                 /** @description Indicates you will emit a reply to this event. This means emitting an event with reply-to-id set as the ID of the event you receive here. */
-                readonly "will-reply"?: boolean;
+                "will-reply"?: boolean;
             };
-            readonly header?: {
-                /**
-                 * @description Type of stream to accept, see the return details for specifications.
-                 * @example application/x-ndjson,text/event-stream
-                 */
-                readonly Accept?: string;
+            header?: {
+                /** @description Type of stream to accept, see the return details for specifications. */
+                Accept?: string;
                 /** @description Defines which events to retrieve. You may use the special value `ALL_EVENTS` to retrieve all events. */
-                readonly "Last-Event-ID"?: string | null;
-                /**
-                 * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
-                 * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
-                 */
-                readonly "Module-ID"?: string;
+                "Last-Event-ID"?: string | null;
+                /** @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important. */
+                "Module-ID"?: string;
                 /** @description Name of your module */
-                readonly "Module-Name"?: string;
+                "Module-Name"?: string;
             };
-            readonly path: {
-                /**
-                 * @description Event to listen to.
-                 * @example test-event
-                 */
-                readonly name: string;
+            path: {
+                /** @description Event to listen to. */
+                name: string;
             };
-            readonly cookie?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description Stream established */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": {
+                    "application/json": {
                         /** @description An event's metadata */
-                        readonly meta: {
+                        meta: {
                             /**
                              * @description The ID of this event as UUIDv4.
                              * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                              */
-                            readonly eventId: string;
-                            readonly eventName: string;
+                            eventId: string;
+                            eventName: string;
                             /**
                              * @description The ID of another event that this one is a reply to.
                              * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                              */
-                            readonly replyToId?: string;
+                            replyToId?: string;
                             /**
                              * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                              * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                              */
-                            readonly sourceModuleId?: string;
+                            sourceModuleId?: string;
                             /** @example module-name */
-                            readonly sourceModuleName?: string;
+                            sourceModuleName?: string;
                             /**
                              * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                              * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                              */
-                            readonly targetModuleId?: string;
+                            targetModuleId?: string;
                             /** @example module-name */
-                            readonly targetModuleName?: string;
+                            targetModuleName?: string;
                             /**
                              * Format: date-time
                              * @example 1985-04-12T23:20:50.52Z
                              */
-                            readonly time: string;
+                            time: string;
                         };
                     };
-                    readonly "application/x-ndjson": readonly {
+                    "application/x-ndjson": {
                         /** @description An event's metadata */
-                        readonly meta: {
+                        meta: {
                             /**
                              * @description The ID of this event as UUIDv4.
                              * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                              */
-                            readonly eventId: string;
-                            readonly eventName: string;
+                            eventId: string;
+                            eventName: string;
                             /**
                              * @description The ID of another event that this one is a reply to.
                              * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                              */
-                            readonly replyToId?: string;
+                            replyToId?: string;
                             /**
                              * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                              * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                              */
-                            readonly sourceModuleId?: string;
+                            sourceModuleId?: string;
                             /** @example module-name */
-                            readonly sourceModuleName?: string;
+                            sourceModuleName?: string;
                             /**
                              * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                              * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                              */
-                            readonly targetModuleId?: string;
+                            targetModuleId?: string;
                             /** @example module-name */
-                            readonly targetModuleName?: string;
+                            targetModuleName?: string;
                             /**
                              * Format: date-time
                              * @example 1985-04-12T23:20:50.52Z
                              */
-                            readonly time: string;
+                            time: string;
                         };
                     }[];
-                    readonly "text/event-stream": readonly {
+                    "text/event-stream": {
                         /** @description The event body. */
-                        readonly data?: {
+                        data?: {
                             /** @description An event's metadata */
-                            readonly meta: {
+                            meta: {
                                 /**
                                  * @description The ID of this event as UUIDv4.
                                  * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                                  */
-                                readonly eventId: string;
-                                readonly eventName: string;
+                                eventId: string;
+                                eventName: string;
                                 /**
                                  * @description The ID of another event that this one is a reply to.
                                  * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                                  */
-                                readonly replyToId?: string;
+                                replyToId?: string;
                                 /**
                                  * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                                  * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                                  */
-                                readonly sourceModuleId?: string;
+                                sourceModuleId?: string;
                                 /** @example module-name */
-                                readonly sourceModuleName?: string;
+                                sourceModuleName?: string;
                                 /**
                                  * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                                  * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                                  */
-                                readonly targetModuleId?: string;
+                                targetModuleId?: string;
                                 /** @example module-name */
-                                readonly targetModuleName?: string;
+                                targetModuleName?: string;
                                 /**
                                  * Format: date-time
                                  * @example 1985-04-12T23:20:50.52Z
                                  */
-                                readonly time: string;
+                                time: string;
                             };
                         };
                         /**
                          * @deprecated
                          * @description The event name. Deprecated because EventSource doesn't allow reading all messages. Use the `meta.eventName` field instead.
                          */
-                        readonly event?: string;
+                        event?: string;
                         /**
                          * @description The event ID.
                          * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                          */
-                        readonly id?: string;
+                        id?: string;
                         /** @description The retry time in milliseconds. */
-                        readonly retry?: number;
+                        retry?: number;
                     }[];
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "emit-event": {
-        readonly parameters: {
-            readonly query?: {
+    "emit-event": {
+        parameters: {
+            query?: {
                 /** @description When set, the server will keep the connection alive and return any events with the reply ID set to this event. */
-                readonly "expect-reply"?: boolean;
+                "expect-reply"?: boolean;
                 /** @description Marks this event as the reply to another. */
-                readonly "reply-to-id"?: string;
-                /**
-                 * @description Only modules with this ID will receive this event.
-                 * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
-                 */
-                readonly "target-id"?: string;
-                /**
-                 * @description Only modules with this name will receive this event.
-                 * @example module-name
-                 */
-                readonly "target-name"?: string;
+                "reply-to-id"?: string;
+                /** @description Only modules with this ID will receive this event. */
+                "target-id"?: string;
+                /** @description Only modules with this name will receive this event. */
+                "target-name"?: string;
             };
-            readonly header?: {
-                /**
-                 * @description Type of stream to accept, see the return details for specifications. **Only relevant when expect-reply is set.**
-                 * @example application/x-ndjson,text/event-stream
-                 */
-                readonly Accept?: string;
-                /**
-                 * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
-                 * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
-                 */
-                readonly "Module-ID"?: string;
+            header?: {
+                /** @description Type of stream to accept, see the return details for specifications. **Only relevant when expect-reply is set.** */
+                Accept?: string;
+                /** @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important. */
+                "Module-ID"?: string;
                 /** @description Name of your module */
-                readonly "Module-Name"?: string;
+                "Module-Name"?: string;
             };
-            readonly path: {
-                /**
-                 * @description Name of event to emit.
-                 * @example test-event
-                 */
-                readonly name: string;
+            path: {
+                /** @description Name of event to emit. */
+                name: string;
             };
-            readonly cookie?: never;
+            cookie?: never;
         };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": {
-                    readonly [key: string]: unknown;
+        requestBody: {
+            content: {
+                "application/json": {
+                    [key: string]: unknown;
                 };
             };
         };
-        readonly responses: {
+        responses: {
             /** @description Stream established */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": {
+                    "application/json": {
                         /** @description An event's metadata */
-                        readonly meta: {
+                        meta: {
                             /**
                              * @description The ID of this event as UUIDv4.
                              * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                              */
-                            readonly eventId: string;
-                            readonly eventName: string;
+                            eventId: string;
+                            eventName: string;
                             /**
                              * @description The ID of another event that this one is a reply to.
                              * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                              */
-                            readonly replyToId?: string;
+                            replyToId?: string;
                             /**
                              * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                              * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                              */
-                            readonly sourceModuleId?: string;
+                            sourceModuleId?: string;
                             /** @example module-name */
-                            readonly sourceModuleName?: string;
+                            sourceModuleName?: string;
                             /**
                              * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                              * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                              */
-                            readonly targetModuleId?: string;
+                            targetModuleId?: string;
                             /** @example module-name */
-                            readonly targetModuleName?: string;
+                            targetModuleName?: string;
                             /**
                              * Format: date-time
                              * @example 1985-04-12T23:20:50.52Z
                              */
-                            readonly time: string;
+                            time: string;
                         };
                     };
-                    readonly "application/x-ndjson": readonly {
+                    "application/x-ndjson": {
                         /** @description An event's metadata */
-                        readonly meta: {
+                        meta: {
                             /**
                              * @description The ID of this event as UUIDv4.
                              * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                              */
-                            readonly eventId: string;
-                            readonly eventName: string;
+                            eventId: string;
+                            eventName: string;
                             /**
                              * @description The ID of another event that this one is a reply to.
                              * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                              */
-                            readonly replyToId?: string;
+                            replyToId?: string;
                             /**
                              * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                              * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                              */
-                            readonly sourceModuleId?: string;
+                            sourceModuleId?: string;
                             /** @example module-name */
-                            readonly sourceModuleName?: string;
+                            sourceModuleName?: string;
                             /**
                              * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                              * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                              */
-                            readonly targetModuleId?: string;
+                            targetModuleId?: string;
                             /** @example module-name */
-                            readonly targetModuleName?: string;
+                            targetModuleName?: string;
                             /**
                              * Format: date-time
                              * @example 1985-04-12T23:20:50.52Z
                              */
-                            readonly time: string;
+                            time: string;
                         };
                     }[];
-                    readonly "text/event-stream": readonly {
+                    "text/event-stream": {
                         /** @description The event body. */
-                        readonly data?: {
+                        data?: {
                             /** @description An event's metadata */
-                            readonly meta: {
+                            meta: {
                                 /**
                                  * @description The ID of this event as UUIDv4.
                                  * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                                  */
-                                readonly eventId: string;
-                                readonly eventName: string;
+                                eventId: string;
+                                eventName: string;
                                 /**
                                  * @description The ID of another event that this one is a reply to.
                                  * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                                  */
-                                readonly replyToId?: string;
+                                replyToId?: string;
                                 /**
                                  * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                                  * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                                  */
-                                readonly sourceModuleId?: string;
+                                sourceModuleId?: string;
                                 /** @example module-name */
-                                readonly sourceModuleName?: string;
+                                sourceModuleName?: string;
                                 /**
                                  * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
                                  * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
                                  */
-                                readonly targetModuleId?: string;
+                                targetModuleId?: string;
                                 /** @example module-name */
-                                readonly targetModuleName?: string;
+                                targetModuleName?: string;
                                 /**
                                  * Format: date-time
                                  * @example 1985-04-12T23:20:50.52Z
                                  */
-                                readonly time: string;
+                                time: string;
                             };
                         };
                         /**
                          * @deprecated
                          * @description The event name. Deprecated because EventSource doesn't allow reading all messages. Use the `meta.eventName` field instead.
                          */
-                        readonly event?: string;
+                        event?: string;
                         /**
                          * @description The event ID.
                          * @example 0c780f99-8fdd-42b9-a936-1650aa95f6c8
                          */
-                        readonly id?: string;
+                        id?: string;
                         /** @description The retry time in milliseconds. */
-                        readonly retry?: number;
+                        retry?: number;
                     }[];
                 };
             };
             /** @description No content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "get-info": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "get-info": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["GetInfoBody"];
+                    "application/json": components["schemas"]["GetInfoBody"];
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "get-changelog": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "get-changelog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": string;
+                    "application/json": string;
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "get-theme": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "get-theme": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["Theme"];
+                    "application/json": components["schemas"]["Theme"];
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "get-update-info": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "get-update-info": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["UpdateInfo"];
+                    "application/json": components["schemas"]["UpdateInfo"];
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "get-latest-installer": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "get-latest-installer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "get-license": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "get-license": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["GetLicenseResponseBody"];
+                    "application/json": components["schemas"]["GetLicenseResponseBody"];
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "post-license": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "post-license": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["Post-licenseRequest"];
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Post-licenseRequest"];
             };
         };
-        readonly responses: {
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "register-online": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "register-online": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["Register-onlineRequest"];
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Register-onlineRequest"];
             };
         };
-        readonly responses: {
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "get-license-request": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "get-license-request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": string;
+                    "application/json": string;
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "post-login": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "post-login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["Post-loginRequest"];
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Post-loginRequest"];
             };
         };
-        readonly responses: {
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly "Set-Cookie"?: string;
-                    readonly [name: string]: unknown;
+                    "Set-Cookie"?: string;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "post-logout": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "post-logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly "Set-Cookie"?: string;
-                    readonly [name: string]: unknown;
+                    "Set-Cookie"?: string;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "get-me": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: {
-                readonly "fabric-user"?: string;
+    "get-me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                "fabric-user"?: components["schemas"]["Cookie"];
             };
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly "Set-Cookie"?: string;
-                    readonly [name: string]: unknown;
+                    "Set-Cookie"?: string;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["GetMeBody"];
+                    "application/json": components["schemas"]["GetMeBody"];
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "set-user-password": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: {
-                readonly "fabric-user"?: string;
+    "set-user-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                "fabric-user"?: components["schemas"]["Cookie"];
             };
         };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["Set-user-passwordRequest"];
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Set-user-passwordRequest"];
             };
         };
-        readonly responses: {
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "register-proxy": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path: {
-                readonly id: string;
+    "register-proxy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
             };
-            readonly cookie?: never;
+            cookie?: never;
         };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["Register-proxyRequest"];
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Register-proxyRequest"];
             };
         };
-        readonly responses: {
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly restart: {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    restart: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["RestartResponseBody"];
+                    "application/json": components["schemas"]["RestartResponseBody"];
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "refresh-session": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: {
-                readonly "fabric-user"?: string;
+    "refresh-session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                "fabric-user"?: components["schemas"]["Cookie"];
             };
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly "Set-Cookie"?: string;
-                    readonly [name: string]: unknown;
+                    "Set-Cookie"?: string;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "set-host-and-port": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "set-host-and-port": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["Set-host-and-portRequest"];
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Set-host-and-portRequest"];
             };
         };
-        readonly responses: {
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["RestartResponseBody"];
+                    "application/json": components["schemas"]["RestartResponseBody"];
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly shutdown: {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    shutdown: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "get-users": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "get-users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description OK */
-            readonly 200: {
+            200: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["GetUsersOutputBody"];
+                    "application/json": components["schemas"]["GetUsersOutputBody"];
                 };
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "create-user": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
+    "create-user": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["Create-userRequest"];
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Create-userRequest"];
             };
         };
-        readonly responses: {
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly "Set-Cookie"?: string;
-                    readonly [name: string]: unknown;
+                    "Set-Cookie"?: string;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "delete-user": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path: {
-                readonly username: string;
+    "delete-user": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
             };
-            readonly cookie?: never;
+            cookie?: never;
         };
-        readonly requestBody?: never;
-        readonly responses: {
+        requestBody?: never;
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "change-user-password": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path: {
-                readonly username: string;
+    "change-user-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
             };
-            readonly cookie?: never;
+            cookie?: never;
         };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["Change-user-passwordRequest"];
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Change-user-passwordRequest"];
             };
         };
-        readonly responses: {
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
     };
-    readonly "change-user-role": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path: {
-                readonly username: string;
+    "change-user-role": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
             };
-            readonly cookie?: never;
+            cookie?: never;
         };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["Change-user-roleRequest"];
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Change-user-roleRequest"];
             };
         };
-        readonly responses: {
+        responses: {
             /** @description No Content */
-            readonly 204: {
+            204: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content?: never;
             };
             /** @description Error */
-            readonly default: {
+            default: {
                 headers: {
-                    readonly [name: string]: unknown;
+                    [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                    "application/problem+json": components["schemas"]["ErrorModel"];
                 };
             };
         };
