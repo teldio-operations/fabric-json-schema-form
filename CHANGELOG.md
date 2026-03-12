@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.6](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.2.5...v0.2.6) (2026-03-12)
+
+
+### Bug Fixes
+
+* Run updateapi to get the correct module status ([#25](https://github.com/teldio-operations/fabric-json-schema-form/issues/25)) ([135b64d](https://github.com/teldio-operations/fabric-json-schema-form/commit/135b64d59706a2f91edf8f58c2c811fa18e8df5a))
+
 ## [0.2.5](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.2.4...v0.2.5) (2026-02-11)
 
 
