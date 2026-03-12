@@ -61,7 +61,7 @@ const parseAccept = (accept?: string) => {
       .map((p) => p.trim())
       .map((i) => i.split(";"))
       .map(([baseType, ...parameters]) =>
-        [baseType?.split("/"), parameters.map((p) => p.trim())].flat(),
+        [baseType?.split("/", 2), parameters.map((p) => p.trim())].flat(),
       )
       .map(([type, subtype, ...parameters]) => ({
         type,
