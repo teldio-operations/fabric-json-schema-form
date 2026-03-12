@@ -71,35 +71,45 @@ const parseAccept = (accept?: string) => {
   );
 };
 
+const matches = (
+  provide: { type?: string; subtype?: string },
+  accepted: { type?: string; subtype?: string },
+) => {
+  if (provide.type === "*" || accepted.type === "*") {
+    return true;
+  }
+
+  if (provide.type !== accepted.type) {
+    return false;
+  }
+
+  if (
+    provide.subtype === "*" ||
+    accepted.subtype === "*" ||
+    !accepted.subtype
+  ) {
+    return true;
+  }
+
+  if (provide.subtype !== accepted.subtype) {
+    return false;
+  }
+
+  return true;
+};
+
 const filterQueries = (accept?: string) => {
-  const accepted = parseAccept(accept);
+  const accepts = parseAccept(accept);
 
   return (q: Queryable) => {
-    const [baseType] = q.mediaType.split(";");
-    const [type, subtype] = baseType?.split("/") ?? [];
+    const provides = parseAccept(q.mediaType);
 
-    if (type === "*") {
-      return true;
-    }
-
-    for (const { type: acceptedType, subtype: acceptedSubtype } of accepted) {
-      if (!!acceptedType && acceptedType !== "*" && type !== acceptedType) {
-        continue;
+    for (const accept of accepts) {
+      for (const provide of provides) {
+        if (matches(provide, accept)) {
+          return true;
+        }
       }
-
-      if (subtype === "*") {
-        return true;
-      }
-
-      if (
-        !!acceptedSubtype &&
-        acceptedSubtype !== "*" &&
-        subtype !== acceptedSubtype
-      ) {
-        continue;
-      }
-
-      return true;
     }
 
     return false;
