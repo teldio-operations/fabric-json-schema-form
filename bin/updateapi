@@ -17,6 +17,5 @@ cd "$(dirname "$(realpath "$0")")/.."
 bun x openapi-typescript "$URL" \
 	-o "./manager-api.d.ts" \
 	--alphabetize \
-	--immutable \
 	--root-types \
 	--root-types-no-schema-prefix

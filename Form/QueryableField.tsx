@@ -1,10 +1,11 @@
 import { MenuItem, Paper, Stack, Typography } from "@mui/material";
 import type { FieldProps, RJSFSchema } from "@rjsf/utils";
-import createFetchClient from "openapi-fetch";
-import createClient from "openapi-react-query";
 import { useMemo } from "react";
+import { api } from "../api";
 import { LoadingTextField } from "../components/LoadingTextField";
 import type { paths } from "../manager-api";
+import type { Queryable } from "../manager-api";
+import { useAppinfo } from "../utils/appinfo";
 import { FabricJsonSchemaForm } from "./Form";
 import { filterQueries } from "./mediaType";
 
@@ -29,9 +30,6 @@ const removeEmpty = <T extends Record<string, unknown>>(obj: T): T => {
   }
   return newObj;
 };
-
-const fetchClient = createFetchClient<paths>();
-const client = createClient(fetchClient);
 
 const toValue = (moduleId?: string, name?: string) =>
   moduleId && name ? `${moduleId}/${name}` : undefined;
@@ -67,23 +65,23 @@ export const QueryableField = (
   } = props;
 
   const {
-    data: appinfo,
-    isPending: isFetchingAppinfo,
+    getInfo,
+    isLoading: isLoadingAppinfo,
     refetch: refetchAppinfo,
-  } = client.useQuery("get", "/api/appinfo");
+  } = useAppinfo();
 
   const {
     data: configs,
     isPending: isFetchingConfigs,
     refetch: refetchConfigs,
-  } = client.useQuery("get", "/api/config");
+  } = api.useQuery("get", "/api/config");
 
   const refetch = () => {
     refetchAppinfo();
     refetchConfigs();
   };
 
-  const isFetching = isFetchingAppinfo || isFetchingConfigs;
+  const isFetching = isLoadingAppinfo || isFetchingConfigs;
 
   const queryableModules = useMemo(
     () =>
@@ -91,12 +89,12 @@ export const QueryableField = (
         .map(([id, config]) => ({
           id,
           config,
-          queries: appinfo
-            ?.find(({ name }) => name === config.module)
-            ?.queries?.filter(filterQueries(accept)),
+          queries: getInfo({ id, name: config.module })?.queries?.filter(
+            filterQueries(accept),
+          ),
         }))
         .filter(({ queries }) => !!queries?.length),
-    [accept, appinfo, configs],
+    [accept, getInfo, configs],
   );
 
   const selectedConfig = formData?.moduleId
@@ -119,9 +117,10 @@ export const QueryableField = (
     return undefined;
   }, [moduleDisabled, moduleHasErrors]);
 
-  const selectedQueryable = appinfo
-    ?.find(({ name }) => name === selectedConfig?.module)
-    ?.queries?.find((q) => q.name === formData?.name);
+  const selectedQueryable = getInfo({
+    id: selectedConfig?.id,
+    name: selectedConfig?.module,
+  })?.queries?.find((q) => q.name === formData?.name);
 
   const value = toValue(formData?.moduleId, formData?.name) ?? "";
 
