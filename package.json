@@ -1,5 +1,5 @@
 {
-  "name": "@teldio/fabric-json-schema-form",
+  "name": "@teldio-operations/fabric-json-schema-form",
   "version": "0.3.0",
   "repository": {
     "type": "git",

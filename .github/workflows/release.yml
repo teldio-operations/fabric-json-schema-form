@@ -4,7 +4,6 @@ on:
       - main
 
 permissions:
-  id-token: write # Required for OIDC
   contents: write
   pull-requests: write
   issues: write # For labels
@@ -12,8 +11,6 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
     steps:
       - id: release
         uses: googleapis/release-please-action@v4
