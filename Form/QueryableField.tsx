@@ -3,8 +3,6 @@ import type { FieldProps, RJSFSchema } from "@rjsf/utils";
 import { useMemo } from "react";
 import { api } from "../api";
 import { LoadingTextField } from "../components/LoadingTextField";
-import type { paths } from "../manager-api";
-import type { Queryable } from "../manager-api";
 import { useAppinfo } from "../utils/appinfo";
 import { FabricJsonSchemaForm } from "./Form";
 import { filterQueries } from "./mediaType";
