@@ -11,7 +11,10 @@ export interface paths {
             readonly path?: never;
             readonly cookie?: never;
         };
-        /** Get info about available modules */
+        /**
+         * Get info about available modules
+         * @description Returns generic info about available modules. Use `/api/appinfo/configured` to get info about configured modules.
+         */
         readonly get: operations["get-appinfo"];
         readonly put?: never;
         readonly post?: never;
@@ -38,7 +41,7 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/api/appinfo-unapproved/{path}": {
+    readonly "/api/appinfo-unapproved/{fileName}": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -51,6 +54,40 @@ export interface paths {
         readonly post: operations["approve-module"];
         /** Disallow an unauthorized module */
         readonly delete: operations["disallow-module"];
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/appinfo/configured": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** Get info about configured modules */
+        readonly get: operations["get-configured-appinfo"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/appinfo/configured/{id}": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /** Set info for a configured module */
+        readonly post: operations["set-configured-appinfo"];
+        readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
         readonly patch?: never;
@@ -244,6 +281,74 @@ export interface paths {
         };
         /** Get theming data */
         readonly get: operations["get-theme"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/info/theme/logo-dark": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** Get dark-mode logo */
+        readonly get: operations["get-theme-logo-dark"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/info/theme/logo-light": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** Get light-mode logo */
+        readonly get: operations["get-theme-logo-light"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/info/theme/logo-small-dark": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** Get dark-mode small logo */
+        readonly get: operations["get-theme-logo-small-dark"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/info/theme/logo-small-light": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** Get light-mode small logo */
+        readonly get: operations["get-theme-logo-small-light"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -613,6 +718,25 @@ export interface components {
             readonly module: string;
             readonly start?: boolean;
             readonly title?: string;
+        };
+        readonly Cookie: {
+            readonly Domain: string;
+            /** Format: date-time */
+            readonly Expires: string;
+            readonly HttpOnly: boolean;
+            /** Format: int64 */
+            readonly MaxAge: number;
+            readonly Name: string;
+            readonly Partitioned: boolean;
+            readonly Path: string;
+            readonly Quoted: boolean;
+            readonly Raw: string;
+            readonly RawExpires: string;
+            /** Format: int64 */
+            readonly SameSite: number;
+            readonly Secure: boolean;
+            readonly Unparsed: readonly string[] | null;
+            readonly Value: string;
         };
         readonly "Create-userRequest": {
             /**
@@ -1025,15 +1149,9 @@ export interface components {
              * @example https://example.com/schemas/Theme.json
              */
             readonly $schema?: string;
-            readonly logoURI?: string;
-            readonly smallLogoURI?: string;
             readonly themeOptions: {
                 readonly [key: string]: unknown;
             };
-        };
-        readonly UnapprovedModule: {
-            readonly basename: string;
-            readonly path: string;
         };
         readonly UpdateInfo: {
             /**
@@ -1064,6 +1182,7 @@ export type ChangeUserPasswordRequest = components['schemas']['Change-user-passw
 export type ChangeUserRoleRequest = components['schemas']['Change-user-roleRequest'];
 export type Config = components['schemas']['Config'];
 export type ConfigInput = components['schemas']['ConfigInput'];
+export type Cookie = components['schemas']['Cookie'];
 export type CreateUserRequest = components['schemas']['Create-userRequest'];
 export type DemoLicense = components['schemas']['DemoLicense'];
 export type DevelopmentLicense = components['schemas']['DevelopmentLicense'];
@@ -1093,7 +1212,6 @@ export type SetHostAndPortRequest = components['schemas']['Set-host-and-portRequ
 export type SetUserPasswordRequest = components['schemas']['Set-user-passwordRequest'];
 export type SidebarItem = components['schemas']['SidebarItem'];
 export type Theme = components['schemas']['Theme'];
-export type UnapprovedModule = components['schemas']['UnapprovedModule'];
 export type UpdateInfo = components['schemas']['UpdateInfo'];
 export type Url = components['schemas']['URL'];
 export type UserDetails = components['schemas']['UserDetails'];
@@ -1143,7 +1261,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": readonly components["schemas"]["UnapprovedModule"][] | null;
+                    readonly "application/json": readonly string[] | null;
                 };
             };
             /** @description Error */
@@ -1162,7 +1280,7 @@ export interface operations {
             readonly query?: never;
             readonly header?: never;
             readonly path: {
-                readonly path: string;
+                readonly fileName: string;
             };
             readonly cookie?: never;
         };
@@ -1191,11 +1309,79 @@ export interface operations {
             readonly query?: never;
             readonly header?: never;
             readonly path: {
-                readonly path: string;
+                readonly fileName: string;
             };
             readonly cookie?: never;
         };
         readonly requestBody?: never;
+        readonly responses: {
+            /** @description No Content */
+            readonly 204: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    readonly "get-configured-appinfo": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description OK */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": {
+                        readonly [key: string]: components["schemas"]["Info"];
+                    };
+                };
+            };
+            /** @description Error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    readonly "set-configured-appinfo": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: {
+                readonly Authorization?: string;
+            };
+            readonly path: {
+                readonly id: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": {
+                    readonly [key: string]: unknown;
+                };
+            };
+        };
         readonly responses: {
             /** @description No Content */
             readonly 204: {
@@ -1462,46 +1648,25 @@ export interface operations {
     readonly "listen-events": {
         readonly parameters: {
             readonly query?: {
-                /** @description Maximum number of past events to include. Only relevant if LastEventID is set to ALL_EVENTS. Limit MAY return fewer events than the limit even if more matching events exists in the database. */
-                readonly limit?: number;
-                /**
-                 * @description Events to listen to. If not specified, will return all events.
-                 * @example test-event,test-event2
-                 */
+                /** @description Number of past events to include. Specified number is the absolute maximum, the actual number of events returned may be less. */
+                readonly backfill?: number;
+                /** @description Events to listen to. If not specified, will return all events. */
                 readonly names?: string;
-                /**
-                 * @description Retrieves events raised after this. In RFC3339 format.
-                 * @example 1985-04-12T23:20:50.52Z
-                 */
+                /** @description Retrieves events raised after this. In RFC3339 format. */
                 readonly since?: string;
-                /**
-                 * @description Only returns events from this module ID. Use * to retrieve events regardless of which module ID they are targeting.
-                 * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
-                 */
+                /** @description Only returns events from this module ID. Use * to retrieve events even if they are targetting a specific module. */
                 readonly "target-id"?: string;
-                /**
-                 * @description Only returns events from this module name. Use * to retrieve events regardless of which module name they are targeting.
-                 * @example module-name
-                 */
+                /** @description Only returns events from this module name. Use * to retrieve events even if they are targetting a specific module. */
                 readonly "target-name"?: string;
-                /**
-                 * @description Events to which you will reply. This means emitting an event with reply-to-id set as the ID of the event you receive here.
-                 * @example test-event,test-event2
-                 */
+                /** @description Events to which you will reply. This means emitting an event with reply-to-id set as the ID of the event you receive here. */
                 readonly "will-reply"?: string;
             };
             readonly header?: {
-                /**
-                 * @description Type of stream to accept, see the return details for specifications.
-                 * @example application/x-ndjson,text/event-stream
-                 */
+                /** @description Type of stream to accept, see the return details for specifications. */
                 readonly Accept?: string;
-                /** @description Defines which events to retrieve. You may use the special value `ALL_EVENTS` to retrieve all events. */
+                /** @description Return all events after the event with this ID. */
                 readonly "Last-Event-ID"?: string | null;
-                /**
-                 * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
-                 * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
-                 */
+                /** @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important. */
                 readonly "Module-ID"?: string;
                 /** @description Name of your module */
                 readonly "Module-Name"?: string;
@@ -1653,47 +1818,29 @@ export interface operations {
     readonly "listen-event": {
         readonly parameters: {
             readonly query?: {
-                /** @description Maximum number of past events to include. Only relevant if LastEventID is set to ALL_EVENTS. Limit MAY return fewer events than the limit even if more matching events exists in the database. */
-                readonly limit?: number;
-                /**
-                 * @description Retrieves events raised after this. In RFC3339 format.
-                 * @example 1985-04-12T23:20:50.52Z
-                 */
+                /** @description Number of past events to include. Specified number is the absolute maximum, the actual number of events returned may be less. */
+                readonly backfill?: number;
+                /** @description Retrieves events raised after this. In RFC3339 format. */
                 readonly since?: string;
-                /**
-                 * @description Only returns events from this module ID. Use * to retrieve events even if they are targetting a specific module.
-                 * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
-                 */
+                /** @description Only returns events from this module ID. Use * to retrieve events even if they are targetting a specific module. */
                 readonly "target-id"?: string;
-                /**
-                 * @description Only returns events from this module name. Use * to retrieve events even if they are targetting a specific module.
-                 * @example module-name
-                 */
+                /** @description Only returns events from this module name. Use * to retrieve events even if they are targetting a specific module. */
                 readonly "target-name"?: string;
                 /** @description Indicates you will emit a reply to this event. This means emitting an event with reply-to-id set as the ID of the event you receive here. */
                 readonly "will-reply"?: boolean;
             };
             readonly header?: {
-                /**
-                 * @description Type of stream to accept, see the return details for specifications.
-                 * @example application/x-ndjson,text/event-stream
-                 */
+                /** @description Type of stream to accept, see the return details for specifications. */
                 readonly Accept?: string;
-                /** @description Defines which events to retrieve. You may use the special value `ALL_EVENTS` to retrieve all events. */
+                /** @description Return all events after the event with this ID. */
                 readonly "Last-Event-ID"?: string | null;
-                /**
-                 * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
-                 * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
-                 */
+                /** @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important. */
                 readonly "Module-ID"?: string;
                 /** @description Name of your module */
                 readonly "Module-Name"?: string;
             };
             readonly path: {
-                /**
-                 * @description Event to listen to.
-                 * @example test-event
-                 */
+                /** @description Event to listen to. */
                 readonly name: string;
             };
             readonly cookie?: never;
@@ -1846,36 +1993,21 @@ export interface operations {
                 readonly "expect-reply"?: boolean;
                 /** @description Marks this event as the reply to another. */
                 readonly "reply-to-id"?: string;
-                /**
-                 * @description Only modules with this ID will receive this event.
-                 * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
-                 */
+                /** @description Only modules with this ID will receive this event. */
                 readonly "target-id"?: string;
-                /**
-                 * @description Only modules with this name will receive this event.
-                 * @example module-name
-                 */
+                /** @description Only modules with this name will receive this event. */
                 readonly "target-name"?: string;
             };
             readonly header?: {
-                /**
-                 * @description Type of stream to accept, see the return details for specifications. **Only relevant when expect-reply is set.**
-                 * @example application/x-ndjson,text/event-stream
-                 */
+                /** @description Type of stream to accept, see the return details for specifications. **Only relevant when expect-reply is set.** */
                 readonly Accept?: string;
-                /**
-                 * @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important.
-                 * @example a036c3be-3f9e-461d-8913-78709cd7e8a4
-                 */
+                /** @description A module's unique identifier. UUIDv4 should be used when the identity of a module is not important. */
                 readonly "Module-ID"?: string;
                 /** @description Name of your module */
                 readonly "Module-Name"?: string;
             };
             readonly path: {
-                /**
-                 * @description Name of event to emit.
-                 * @example test-event
-                 */
+                /** @description Name of event to emit. */
                 readonly name: string;
             };
             readonly cookie?: never;
@@ -2109,6 +2241,114 @@ export interface operations {
                 content: {
                     readonly "application/json": components["schemas"]["Theme"];
                 };
+            };
+            /** @description Error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    readonly "get-theme-logo-dark": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description OK */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    readonly "get-theme-logo-light": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description OK */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    readonly "get-theme-logo-small-dark": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description OK */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/problem+json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    readonly "get-theme-logo-small-light": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description OK */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Error */
             readonly default: {
@@ -2363,7 +2603,7 @@ export interface operations {
             readonly header?: never;
             readonly path?: never;
             readonly cookie?: {
-                readonly "fabric-user"?: string;
+                readonly "fabric-user"?: components["schemas"]["Cookie"];
             };
         };
         readonly requestBody?: never;
@@ -2395,7 +2635,7 @@ export interface operations {
             readonly header?: never;
             readonly path?: never;
             readonly cookie?: {
-                readonly "fabric-user"?: string;
+                readonly "fabric-user"?: components["schemas"]["Cookie"];
             };
         };
         readonly requestBody: {
@@ -2490,7 +2730,7 @@ export interface operations {
             readonly header?: never;
             readonly path?: never;
             readonly cookie?: {
-                readonly "fabric-user"?: string;
+                readonly "fabric-user"?: components["schemas"]["Cookie"];
             };
         };
         readonly requestBody?: never;
