@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.2.6...v0.3.0) (2026-03-25)
+
+
+### Features
+
+* Respect dynamic appinfo ([#29](https://github.com/teldio-operations/fabric-json-schema-form/issues/29)) ([326b1cf](https://github.com/teldio-operations/fabric-json-schema-form/commit/326b1cfa1b3f847531618c5293118baa8766d576))
+
+
+### Bug Fixes
+
+* Handle wildcard queryables ([#28](https://github.com/teldio-operations/fabric-json-schema-form/issues/28)) ([4bfd6b2](https://github.com/teldio-operations/fabric-json-schema-form/commit/4bfd6b2b43f4b0054b85f67faaabfe7272aedf58))
+
 ## [0.2.6](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.2.5...v0.2.6) (2026-03-12)
 
 
