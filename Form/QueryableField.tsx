@@ -4,8 +4,9 @@ import createFetchClient from "openapi-fetch";
 import createClient from "openapi-react-query";
 import { useMemo } from "react";
 import { LoadingTextField } from "../components/LoadingTextField";
-import type { paths, Queryable } from "../manager-api";
+import type { paths } from "../manager-api";
 import { FabricJsonSchemaForm } from "./Form";
+import { filterQueries } from "./mediaType";
 
 const isObject = (value: unknown): value is Record<string, unknown> => {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -48,54 +49,6 @@ type QueryRequest = {
 
 type QueryableSchema = RJSFSchema & {
   accept?: string;
-};
-
-const notNullOrUndefined = <T,>(value: T): value is NonNullable<T> => {
-  return value !== null && value !== undefined;
-};
-
-const parseAccept = (accept?: string) => {
-  return (
-    accept
-      ?.split(",")
-      .map((p) => p.trim())
-      .map((i) => i.split(";"))
-      .map(([baseType, ...parameters]) =>
-        [baseType?.split("/"), parameters.map((p) => p.trim())].flat(),
-      )
-      .map(([type, subtype, ...parameters]) => ({
-        type,
-        subtype,
-        parameters: parameters.filter(notNullOrUndefined),
-      })) ?? []
-  );
-};
-
-const filterQueries = (accept?: string) => {
-  const accepted = parseAccept(accept);
-
-  return (q: Queryable) => {
-    const [baseType] = q.mediaType.split(";");
-    const [type, subtype] = baseType?.split("/") ?? [];
-
-    for (const { type: acceptedType, subtype: acceptedSubtype } of accepted) {
-      if (!!acceptedType && acceptedType !== "*" && type !== acceptedType) {
-        continue;
-      }
-
-      if (
-        !!acceptedSubtype &&
-        acceptedSubtype !== "*" &&
-        subtype !== acceptedSubtype
-      ) {
-        continue;
-      }
-
-      return true;
-    }
-
-    return false;
-  };
 };
 
 export const QueryableField = (
