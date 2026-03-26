@@ -1,21 +1,29 @@
+name: Release Please
+
 on:
   push:
     branches:
       - main
 
 permissions:
-  id-token: write # Required for OIDC
   contents: write
   pull-requests: write
   issues: write # For labels
 
 jobs:
-  release:
-    runs-on: ubuntu-latest
-    outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
+  release-please:
+    name: Release Please
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
+      - name: Create GitHub App Token
+        id: create-github-app-token
+        uses: actions/create-github-app-token@v3.0.0
+        with:
+          app-id: ${{ secrets.FABRIC_RELEASE_APP_ID }}
+          private-key: ${{ secrets.FABRIC_RELEASE_APP_PRIVATE_KEY }}
+
       - id: release
         uses: googleapis/release-please-action@v4
         with:
+          token: ${{ steps.create-github-app-token.outputs.token }}
           release-type: node
