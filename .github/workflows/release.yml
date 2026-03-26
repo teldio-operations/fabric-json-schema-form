@@ -26,4 +26,4 @@ jobs:
         uses: googleapis/release-please-action@v4
         with:
           token: ${{ steps.create-github-app-token.outputs.token }}
-          release-type: go
+          release-type: node
