@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.3.0...v0.3.1) (2026-03-26)
+
+
+### Bug Fixes
+
+* Publish to NPM ([#30](https://github.com/teldio-operations/fabric-json-schema-form/issues/30)) ([bec340a](https://github.com/teldio-operations/fabric-json-schema-form/commit/bec340ac72c3e0a5864825a96cf79f186c1f4585))
+
 ## [0.3.0](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.2.6...v0.3.0) (2026-03-25)
 
 
