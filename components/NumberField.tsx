@@ -6,7 +6,9 @@ import InputAdornment from "@mui/material/InputAdornment";
 import InputLabel from "@mui/material/InputLabel";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { getUiOptions, type FieldProps } from "@rjsf/utils";
+import { getUiOptions, optionsList, type FieldProps } from "@rjsf/utils";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 /**
  * This component is a placeholder for FormControl to correctly set the shrink label state on SSR.
@@ -125,6 +127,30 @@ export default function NumberField(props: FieldProps) {
   const displaylabel = schemaUtils.getDisplayLabel(schema);
   const uiOptions = getUiOptions(uiSchema);
   const label = uiOptions.title ?? title ?? schema.title;
+  const optList = optionsList(schema, uiSchema);
+
+  if (optList && optList.length > 0) {
+    return (
+      <FormControl fullWidth>
+        <InputLabel id={itemID}>{displaylabel ? label : null}</InputLabel>
+        <Select
+          id={itemID}
+          label={displaylabel ? label : null}
+          value={formData}
+          onChange={(event) => onChange(event.target.value, fieldPathId.path)}
+          disabled={disabled || readonly}
+          error={rawErrors && rawErrors.length > 0}
+          required={required}
+        >
+          {optList.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    );
+  }
 
   return (
     <BNumberField
