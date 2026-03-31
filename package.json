@@ -1,6 +1,6 @@
 {
   "name": "@teldio-operations/fabric-json-schema-form",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/teldio-operations/fabric-json-schema-form"

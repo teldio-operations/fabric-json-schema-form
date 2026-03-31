@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.3.1...v0.3.2) (2026-03-31)
+
+
+### Bug Fixes
+
+* Render Select if number field is constrained to set of options ([60fa924](https://github.com/teldio-operations/fabric-json-schema-form/commit/60fa924802cc18a229f1507728f9d47928e4a092))
+
 ## [0.3.1](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.3.0...v0.3.1) (2026-03-26)
 
 
