@@ -147,7 +147,7 @@ export const QueryableField = (
         onChange={(e) => {
           const { moduleId, name } = fromValue(e.target.value);
           if (moduleId && name) {
-            onChange({ ...formData, moduleId, name }, path);
+            onChange({ moduleId, name }, path);
           }
         }}
         slotProps={{
