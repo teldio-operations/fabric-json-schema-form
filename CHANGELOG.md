@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.3.2...v0.3.3) (2026-04-01)
+
+
+### Bug Fixes
+
+* Clear queryable field data when queryable type changes ([ddf137b](https://github.com/teldio-operations/fabric-json-schema-form/commit/ddf137be3e8d3b3297f77e299003eaacf5874715))
+
 ## [0.3.2](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.3.1...v0.3.2) (2026-03-31)
 
 
