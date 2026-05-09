@@ -164,6 +164,8 @@ export default function NumberField(props: FieldProps) {
         useGrouping: false,
       }}
       required={required}
+      min={schema.minimum}
+      max={schema.maximum}
     />
   );
 }
