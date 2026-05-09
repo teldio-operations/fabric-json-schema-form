@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.3.3...v0.4.0) (2026-05-09)
+
+
+### Features
+
+* Add min and max support ([#37](https://github.com/teldio-operations/fabric-json-schema-form/issues/37)) ([1c08aab](https://github.com/teldio-operations/fabric-json-schema-form/commit/1c08aabd13836da6181d295024d11209290db1d7))
+
 ## [0.3.3](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.3.2...v0.3.3) (2026-04-01)
 
 
