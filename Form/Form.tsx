@@ -2,6 +2,7 @@ import { Button, Stack } from "@mui/material";
 import { type FormProps } from "@rjsf/core";
 import RJSFMuiForm from "@rjsf/mui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ComboboxWidget } from "../components/ComboboxWidget";
 import { CustomTimePicker } from "../components/CustomTimePicker";
 import NumberField from "../components/NumberField";
 import { validator } from "../utils/validator";
@@ -69,6 +70,7 @@ export const FabricJsonSchemaForm = ({
         }}
         widgets={{
           TimeWidget: CustomTimePicker,
+          combobox: ComboboxWidget,
           ...props.widgets,
         }}
       >
