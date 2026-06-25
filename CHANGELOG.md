@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.4.0...v0.5.0) (2026-06-24)
+
+
+### Features
+
+* add combobox widget for searchable dropdowns ([#39](https://github.com/teldio-operations/fabric-json-schema-form/issues/39)) ([29d98f4](https://github.com/teldio-operations/fabric-json-schema-form/commit/29d98f4a8ce449413f209fa183426c1fcf760c25))
+
+
+### Bug Fixes
+
+* apply schema maxLength to text inputs ([#41](https://github.com/teldio-operations/fabric-json-schema-form/issues/41)) ([11260fb](https://github.com/teldio-operations/fabric-json-schema-form/commit/11260fb7c66ef2d5491376197dedfb49077c174d))
+
 ## [0.4.0](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.3.3...v0.4.0) (2026-05-09)
 
 
