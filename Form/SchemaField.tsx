@@ -1,5 +1,6 @@
 import { getDefaultRegistry } from "@rjsf/core";
 import type { FieldProps } from "@rjsf/utils";
+import { ComboboxMultiSchemaField } from "./ComboboxMultiSchemaField";
 
 const {
   fields: { SchemaField: DefaultSchemaField },
@@ -31,6 +32,13 @@ const withMaxLength = (uiSchema: UiSchema, maxLength: number): UiSchema => {
 export const SchemaField = (props: FieldProps) => {
   if (!DefaultSchemaField) {
     return null;
+  }
+
+  if (
+    props.schema.control === "combobox" &&
+    (Array.isArray(props.schema.oneOf) || Array.isArray(props.schema.anyOf))
+  ) {
+    return <ComboboxMultiSchemaField {...props} />;
   }
 
   if (props.schema.type === "string" && props.schema.format === "time") {
