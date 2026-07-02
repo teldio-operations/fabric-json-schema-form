@@ -17,13 +17,13 @@ jobs:
     steps:
       - name: Create GitHub App Token
         id: create-github-app-token
-        uses: actions/create-github-app-token@v3.0.0
+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
         with:
           app-id: ${{ secrets.FABRIC_RELEASE_APP_ID }}
           private-key: ${{ secrets.FABRIC_RELEASE_APP_PRIVATE_KEY }}
 
       - id: release
-        uses: googleapis/release-please-action@v4
+        uses: googleapis/release-please-action@5c625bfb5d1ff62eadeeb3772007f7f66fdcf071 # v4
         with:
           token: ${{ steps.create-github-app-token.outputs.token }}
           release-type: node
