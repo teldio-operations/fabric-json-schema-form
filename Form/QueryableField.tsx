@@ -1,6 +1,6 @@
 import { MenuItem, Paper, Stack, Typography } from "@mui/material";
 import type { FieldProps, RJSFSchema } from "@rjsf/utils";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { api } from "../api";
 import { LoadingTextField } from "../components/LoadingTextField";
 import { useAppinfo } from "../utils/appinfo";
@@ -122,6 +122,8 @@ export const QueryableField = (
 
   const value = toValue(formData?.moduleId, formData?.name) ?? "";
 
+  const inputDrafts = useRef(new Map<string, QueryRequest["input"]>());
+
   const nothingSelected = !formData?.moduleId && !formData?.name;
 
   const isValidValue = selectedQueryable || nothingSelected;
@@ -145,9 +147,22 @@ export const QueryableField = (
         disabled={disabled}
         value={value}
         onChange={(e) => {
-          const { moduleId, name } = fromValue(e.target.value);
+          if (value && formData?.input !== undefined) {
+            inputDrafts.current.set(value, formData.input);
+          }
+
+          const nextValue = e.target.value;
+          const { moduleId, name } = fromValue(nextValue);
+
           if (moduleId && name) {
-            onChange({ moduleId, name }, path);
+            const input = inputDrafts.current.get(nextValue);
+
+            onChange(
+              input === undefined
+                ? { moduleId, name }
+                : { moduleId, name, input },
+              path,
+            );
           }
         }}
         slotProps={{
@@ -194,12 +209,16 @@ export const QueryableField = (
 
       {selectedQueryable?.input && (
         <FabricJsonSchemaForm
+          key={value}
           tagName="div"
           schema={removeEmpty(selectedQueryable.input) as RJSFSchema}
           formData={formData?.input}
-          onChange={(data) =>
-            formData && onChange({ ...formData, input: data.formData }, path)
-          }
+          onChange={(data) => {
+            if (formData) {
+              inputDrafts.current.set(value, data.formData);
+              onChange({ ...formData, input: data.formData }, path);
+            }
+          }}
           fields={SchemaField && { SchemaField }}
           uiSchema={{
             "ui:submitButtonOptions": {
