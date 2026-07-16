@@ -6,7 +6,10 @@
     "url": "https://github.com/teldio-operations/fabric-json-schema-form"
   },
   "scripts": {
-    "check": "bun tsc --noEmit && bun eslint . && bun prettier --check ."
+    "check:tsc": "bun tsc --noEmit",
+    "check:oxlint": "bun --bun oxlint",
+    "check:oxfmt": "bun --bun oxfmt --check",
+    "check": "bun run check:tsc && bun run check:oxlint && bun run check:oxfmt"
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
@@ -26,14 +29,9 @@
   },
   "type": "module",
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
-    "eslint": "^9.39.1",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-react-refresh": "^0.4.24",
     "openapi-typescript": "^7.10.1",
-    "prettier": "^3.7.4",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.49.0"
+    "oxfmt": "^0.59.0",
+    "oxlint": "^1.74.0",
+    "typescript": "^7.0.2"
   }
 }
