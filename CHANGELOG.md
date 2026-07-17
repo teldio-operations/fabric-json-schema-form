@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.5.0...v0.5.1) (2026-07-16)
+
+
+### Bug Fixes
+
+* preserve queryable input when switching options ([#44](https://github.com/teldio-operations/fabric-json-schema-form/issues/44)) ([0c5c80c](https://github.com/teldio-operations/fabric-json-schema-form/commit/0c5c80cfd999b576763750f6c92a588994c6dd89))
+
 ## [0.5.0](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.4.0...v0.5.0) (2026-06-24)
 
 
