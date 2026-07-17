@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.5.1...v0.5.2) (2026-07-17)
+
+
+### Bug Fixes
+
+* Combobox widget displays a hint to filter, and a better error message ([#47](https://github.com/teldio-operations/fabric-json-schema-form/issues/47)) ([63b1765](https://github.com/teldio-operations/fabric-json-schema-form/commit/63b1765d34f2826462816d86a9c88a5528c8ef05))
+
 ## [0.5.1](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.5.0...v0.5.1) (2026-07-16)
 
 
