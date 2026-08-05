@@ -6,6 +6,7 @@ import { ComboboxWidget } from "../components/ComboboxWidget";
 import { CustomTimePicker } from "../components/CustomTimePicker";
 import NumberField from "../components/NumberField";
 import { validator } from "../utils/validator";
+import { PreventSubmitOnEnter } from "./PreventSubmitOnEnter";
 import { QueryableField } from "./QueryableField";
 import { SchemaField } from "./SchemaField";
 
@@ -58,24 +59,26 @@ export const FabricJsonSchemaForm = ({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <RJSFMuiForm
-        {...props}
-        validator={validator}
-        disabled={disabled}
-        fields={{
-          SchemaField,
-          QueryableField,
-          NumberField,
-          ...props.fields,
-        }}
-        widgets={{
-          TimeWidget: CustomTimePicker,
-          combobox: ComboboxWidget,
-          ...props.widgets,
-        }}
-      >
-        {showSubmitButton ? submitButton : undefined}
-      </RJSFMuiForm>
+      <PreventSubmitOnEnter>
+        <RJSFMuiForm
+          {...props}
+          validator={validator}
+          disabled={disabled}
+          fields={{
+            SchemaField,
+            QueryableField,
+            NumberField,
+            ...props.fields,
+          }}
+          widgets={{
+            TimeWidget: CustomTimePicker,
+            combobox: ComboboxWidget,
+            ...props.widgets,
+          }}
+        >
+          {showSubmitButton ? submitButton : undefined}
+        </RJSFMuiForm>
+      </PreventSubmitOnEnter>
     </QueryClientProvider>
   );
 };
