@@ -3,9 +3,11 @@ import { type FormProps } from "@rjsf/core";
 import RJSFMuiForm from "@rjsf/mui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import { useCallback } from "react";
 import { ComboboxWidget } from "../components/ComboboxWidget";
 import { CustomTimePicker } from "../components/CustomTimePicker";
 import NumberField from "../components/NumberField";
+import { omitNulls } from "../utils/data";
 import { validator } from "../utils/validator";
 import { PreventSubmitOnEnter } from "./PreventSubmitOnEnter";
 import { QueryableField } from "./QueryableField";
@@ -60,6 +62,20 @@ export const FabricJsonSchemaForm = ({
     </Stack>
   );
 
+  const onChange: FabricJsonSchemaFormProps["onChange"] = useCallback(
+    ({ formData, ...data }, id) => {
+      props.onChange?.({ ...data, formData: omitNulls(formData) }, id);
+    },
+    [props],
+  );
+
+  const onSubmit: FabricJsonSchemaFormProps["onSubmit"] = useCallback(
+    ({ formData, ...data }, id) => {
+      props.onSubmit?.({ ...data, formData: omitNulls(formData) }, id);
+    },
+    [props],
+  );
+
   return (
     <QueryClientProvider client={queryClient}>
       <PreventSubmitOnEnter disableSubmitOnEnter={disableSubmitOnEnter}>
@@ -67,6 +83,8 @@ export const FabricJsonSchemaForm = ({
           {...props}
           validator={validator}
           disabled={disabled}
+          onChange={onChange}
+          onSubmit={onSubmit}
           fields={{
             SchemaField,
             QueryableField,
