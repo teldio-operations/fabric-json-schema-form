@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.3](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.5.2...v0.5.3) (2026-08-06)
+
+
+### Bug Fixes
+
+* Pressing enter when editing a field in a simulator should not trigger the simulator ([#50](https://github.com/teldio-operations/fabric-json-schema-form/issues/50)) ([0da7e11](https://github.com/teldio-operations/fabric-json-schema-form/commit/0da7e116f7411df23033e3f719e1a7432619cffb))
+
 ## [0.5.2](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.5.1...v0.5.2) (2026-07-17)
 
 
