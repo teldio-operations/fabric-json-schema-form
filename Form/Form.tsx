@@ -2,6 +2,7 @@ import { Button, Stack } from "@mui/material";
 import { type FormProps } from "@rjsf/core";
 import RJSFMuiForm from "@rjsf/mui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 import { ComboboxWidget } from "../components/ComboboxWidget";
 import { CustomTimePicker } from "../components/CustomTimePicker";
 import NumberField from "../components/NumberField";
@@ -13,6 +14,7 @@ import { SchemaField } from "./SchemaField";
 export type FabricJsonSchemaFormProps = Omit<FormProps, "validator"> & {
   onCancel?: () => void;
   loading?: boolean;
+  disableSubmitOnEnter?: boolean;
 };
 
 const queryClient = new QueryClient();
@@ -21,6 +23,7 @@ export const FabricJsonSchemaForm = ({
   onCancel,
   loading,
   children,
+  disableSubmitOnEnter,
   ...props
 }: FabricJsonSchemaFormProps) => {
   const submitButtonOptions =
@@ -59,7 +62,7 @@ export const FabricJsonSchemaForm = ({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <PreventSubmitOnEnter>
+      <PreventSubmitOnEnter disableSubmitOnEnter={disableSubmitOnEnter}>
         <RJSFMuiForm
           {...props}
           validator={validator}

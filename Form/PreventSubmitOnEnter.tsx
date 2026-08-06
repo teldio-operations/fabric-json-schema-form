@@ -1,22 +1,34 @@
-import type { KeyboardEvent, ReactNode } from "react";
+import { type KeyboardEvent, type ReactNode, useCallback } from "react";
 
-function preventSubmitOnEnter(ev: KeyboardEvent<HTMLDivElement>) {
-  if (ev.key !== "Enter") {
-    return;
-  }
+type PreventSubmitOnEnterProps = {
+  disableSubmitOnEnter?: boolean;
+  children: ReactNode;
+};
 
-  if (!(ev.target instanceof HTMLInputElement)) {
-    return;
-  }
+export function PreventSubmitOnEnter(props: PreventSubmitOnEnterProps) {
+  const onKeyDown = useCallback(
+    (ev: KeyboardEvent<HTMLDivElement>) => {
+      if (!props.disableSubmitOnEnter) {
+        return;
+      }
 
-  if (ev.target.hasAttribute("aria-autocomplete")) {
-    return;
-  }
+      if (ev.key !== "Enter") {
+        return;
+      }
 
-  ev.preventDefault();
-  ev.target.blur();
-}
+      if (!(ev.target instanceof HTMLInputElement)) {
+        return;
+      }
 
-export function PreventSubmitOnEnter(props: { children: ReactNode }) {
-  return <div onKeyDown={preventSubmitOnEnter}>{props.children}</div>;
+      if (ev.target.hasAttribute("aria-autocomplete")) {
+        return;
+      }
+
+      ev.preventDefault();
+      ev.target.blur();
+    },
+    [props.disableSubmitOnEnter],
+  );
+
+  return <div onKeyDown={onKeyDown}>{props.children}</div>;
 }
