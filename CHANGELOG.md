@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.4](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.5.3...v0.5.4) (2026-08-07)
+
+
+### Bug Fixes
+
+* Set json to undefined when number fields are cleared by backspace in the simulator ([#52](https://github.com/teldio-operations/fabric-json-schema-form/issues/52)) ([a59d06a](https://github.com/teldio-operations/fabric-json-schema-form/commit/a59d06a53456fb93db60e44c6d9b0a804b539198))
+
 ## [0.5.3](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.5.2...v0.5.3) (2026-08-06)
 
 
