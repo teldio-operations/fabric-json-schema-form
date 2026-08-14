@@ -1,13 +1,18 @@
 import { Button, Stack } from "@mui/material";
 import { type FormProps } from "@rjsf/core";
 import RJSFMuiForm from "@rjsf/mui";
+import { ErrorSchemaBuilder, type FieldPathList } from "@rjsf/utils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { ComboboxWidget } from "../components/ComboboxWidget";
 import { CustomTimePicker } from "../components/CustomTimePicker";
-import NumberField from "../components/NumberField";
+import { NumberField } from "../components/NumberField";
 import { omitNulls } from "../utils/data";
+import {
+  FieldErrorContext,
+  type SetFieldError,
+} from "../utils/fieldErrorContext";
 import { validator } from "../utils/validator";
 import { PreventSubmitOnEnter } from "./PreventSubmitOnEnter";
 import { QueryableField } from "./QueryableField";
@@ -36,6 +41,40 @@ export const FabricJsonSchemaForm = ({
 
   const disabled = props.disabled || loading;
 
+  const [fieldErrors, setFieldErrors] = useState<
+    Record<string, { path: FieldPathList; message: string }>
+  >({});
+
+  const setFieldError = useCallback<SetFieldError>((path, message) => {
+    const key = path.join(".");
+    setFieldErrors((prev) => {
+      if (message === undefined) {
+        if (!(key in prev)) {
+          return prev;
+        }
+        const { [key]: _removed, ...rest } = prev;
+        return rest;
+      }
+      if (prev[key]?.message === message) {
+        return prev;
+      }
+      return { ...prev, [key]: { path, message } };
+    });
+  }, []);
+
+  const hasFieldErrors = Object.keys(fieldErrors).length > 0;
+
+  const extraErrors = useMemo(() => {
+    if (!hasFieldErrors) {
+      return props.extraErrors;
+    }
+    const builder = new ErrorSchemaBuilder(props.extraErrors);
+    for (const { path, message } of Object.values(fieldErrors)) {
+      builder.setErrors([message], path);
+    }
+    return builder.ErrorSchema;
+  }, [fieldErrors, hasFieldErrors, props.extraErrors]);
+
   const submitButton = children ?? (
     <Stack
       width="100%"
@@ -52,7 +91,7 @@ export const FabricJsonSchemaForm = ({
 
       <Button
         loading={loading}
-        disabled={props.disabled}
+        disabled={props.disabled || hasFieldErrors}
         type="submit"
         variant="contained"
         {...props.uiSchema?.["ui:submitButtonOptions"]?.props}
@@ -77,29 +116,36 @@ export const FabricJsonSchemaForm = ({
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <PreventSubmitOnEnter disableSubmitOnEnter={disableSubmitOnEnter}>
-        <RJSFMuiForm
-          {...props}
-          validator={validator}
-          disabled={disabled}
-          onChange={onChange}
-          onSubmit={onSubmit}
-          fields={{
-            SchemaField,
-            QueryableField,
-            NumberField,
-            ...props.fields,
-          }}
-          widgets={{
-            TimeWidget: CustomTimePicker,
-            combobox: ComboboxWidget,
-            ...props.widgets,
-          }}
-        >
-          {showSubmitButton ? submitButton : undefined}
-        </RJSFMuiForm>
-      </PreventSubmitOnEnter>
-    </QueryClientProvider>
+    <FieldErrorContext.Provider value={setFieldError}>
+      <QueryClientProvider client={queryClient}>
+        <PreventSubmitOnEnter disableSubmitOnEnter={disableSubmitOnEnter}>
+          <RJSFMuiForm
+            {...props}
+            validator={validator}
+            disabled={disabled}
+            onChange={onChange}
+            onSubmit={onSubmit}
+            extraErrors={extraErrors}
+            showErrorList={false}
+            extraErrorsBlockSubmit={
+              hasFieldErrors || props.extraErrorsBlockSubmit
+            }
+            fields={{
+              SchemaField,
+              QueryableField,
+              NumberField,
+              ...props.fields,
+            }}
+            widgets={{
+              TimeWidget: CustomTimePicker,
+              combobox: ComboboxWidget,
+              ...props.widgets,
+            }}
+          >
+            {showSubmitButton ? submitButton : undefined}
+          </RJSFMuiForm>
+        </PreventSubmitOnEnter>
+      </QueryClientProvider>
+    </FieldErrorContext.Provider>
   );
 };
