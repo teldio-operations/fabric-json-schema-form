@@ -65,6 +65,10 @@ export const SchemaField = (props: FieldProps) => {
     uiSchema = { "ui:field": "QueryableField", ...uiSchema };
   }
 
+  if (props.schema.control == "rawjson") {
+    uiSchema = { "ui:field": "RawJsonField", ...uiSchema };
+  }
+
   if (Object.keys(uiSchema).length !== 0) {
     return <DefaultSchemaField {...props} uiSchema={uiSchema} />;
   }
