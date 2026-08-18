@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.5](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.5.4...v0.5.5) (2026-08-18)
+
+
+### Bug Fixes
+
+* Number field truncates values that have commas in them ([#54](https://github.com/teldio-operations/fabric-json-schema-form/issues/54)) ([d159547](https://github.com/teldio-operations/fabric-json-schema-form/commit/d1595479d3779d6d414b66ed27d504e654523491))
+
 ## [0.5.4](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.5.3...v0.5.4) (2026-08-07)
 
 
