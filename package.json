@@ -5,6 +5,20 @@
     "type": "git",
     "url": "https://github.com/teldio-operations/fabric-json-schema-form"
   },
+  "description": "React components that render Fabric module config, event, and query JSON Schemas as forms.",
+  "exports": {
+    ".": "./index.ts",
+    "./utils/validator": "./utils/validator.ts"
+  },
+  "files": [
+    "Form",
+    "components",
+    "utils",
+    "api.ts",
+    "index.ts",
+    "manager-api.d.ts",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "check:tsc": "bun tsc --noEmit",
     "check:oxlint": "bun --bun oxlint",
