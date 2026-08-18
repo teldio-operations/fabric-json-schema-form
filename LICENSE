@@ -1,0 +1,33 @@
+Copyright (C) 2025-2026 Teldio Corporation. All rights reserved.
+
+This software is proprietary to Teldio Corporation.
+
+The source code in this repository is published for reference and for
+transparency. Publication is not an open-source release, and it grants no
+license.
+
+NO LICENSE GRANTED. Teldio Corporation grants no license to any copyright,
+patent, trademark, trade secret, or other intellectual property right in this
+software, whether by this notice, by implication, by estoppel, or otherwise.
+Without a separate written agreement signed by Teldio Corporation, you may not
+use, copy, reproduce, modify, adapt, translate, merge, publish, distribute,
+sublicense, sell, or create derivative works of this software, and you may not
+remove or alter this notice.
+
+Availability of this software in a public package registry, such as npm, grants
+no license. It only permits the registry to host the package and to serve it.
+
+Third-party components that this software depends on stay under their own
+licenses. This notice covers only the code in this repository.
+
+For licensing inquiries, contact Teldio Corporation at https://teldio.com.
+
+DISCLAIMER OF WARRANTY. THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NONINFRINGEMENT.
+
+LIMITATION OF LIABILITY. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW,
+TELDIO CORPORATION SHALL NOT BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
+OUT OF, OR IN CONNECTION WITH THIS SOFTWARE, OR THE USE OF OR OTHER DEALINGS IN
+THIS SOFTWARE.
