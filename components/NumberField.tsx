@@ -1,133 +1,73 @@
-import { NumberField as BaseNumberField } from "@base-ui/react/number-field";
-import IconButton from "@mui/material/IconButton";
+import {
+  NumberField as BaseUINumberField,
+  type NumberFieldRootChangeEventDetails,
+} from "@base-ui/react/number-field";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import FormControl from "@mui/material/FormControl";
-import OutlinedInput from "@mui/material/OutlinedInput";
+import FormHelperText from "@mui/material/FormHelperText";
+import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import InputLabel from "@mui/material/InputLabel";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { getUiOptions, optionsList, type FieldProps } from "@rjsf/utils";
-import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import Select from "@mui/material/Select";
+import { getUiOptions, optionsList, type FieldProps } from "@rjsf/utils";
+import { useCallback, useEffect, useRef } from "react";
 
-/**
- * This component is a placeholder for FormControl to correctly set the shrink label state on SSR.
- */
-// eslint-disable-next-line
-function SSRInitialFilled(_: BaseNumberField.Root.Props) {
-  return null;
-}
-SSRInitialFilled.muiName = "Input";
+import { useSetFieldError } from "../utils/fieldErrorContext";
 
-const BNumberField = ({
-  id: idProp,
-  label,
-  error,
-  size = "medium",
-  ...other
-}: BaseNumberField.Root.Props & {
-  label?: React.ReactNode;
-  size?: "small" | "medium";
-  error?: boolean;
-}) => {
-  const id = idProp;
-  return (
-    <BaseNumberField.Root
-      {...other}
-      render={(props, state) => (
-        <FormControl
-          size={size}
-          ref={props.ref}
-          disabled={state.disabled}
-          required={state.required}
-          error={error}
-          variant="outlined"
-        >
-          {props.children}
-        </FormControl>
-      )}
-    >
-      <SSRInitialFilled {...other} />
-      <InputLabel htmlFor={id}>{label}</InputLabel>
-      <BaseNumberField.Input
-        id={id}
-        render={(props, state) => (
-          <OutlinedInput
-            label={label}
-            inputRef={props.ref}
-            value={state.inputValue}
-            onBlur={props.onBlur}
-            onChange={props.onChange}
-            onKeyUp={props.onKeyUp}
-            onKeyDown={props.onKeyDown}
-            onFocus={props.onFocus}
-            slotProps={{
-              input: props,
-            }}
-            endAdornment={
-              <InputAdornment
-                position="end"
-                sx={{
-                  flexDirection: "column",
-                  maxHeight: "unset",
-                  alignSelf: "stretch",
-                  borderLeft: "1px solid",
-                  borderColor: "divider",
-                  ml: 0,
-                  "& button": {
-                    py: 0,
-                    flex: 1,
-                    borderRadius: 0.5,
-                  },
-                }}
-              >
-                <BaseNumberField.Increment
-                  render={<IconButton size={size} aria-label="Increase" />}
-                >
-                  <KeyboardArrowUpIcon
-                    fontSize={size}
-                    sx={{ transform: "translateY(2px)" }}
-                  />
-                </BaseNumberField.Increment>
+const GROUP_SEPARATOR =
+  new Intl.NumberFormat()
+    .formatToParts(1_000_000.1)
+    .find((part) => part.type === "group")?.value || ",";
 
-                <BaseNumberField.Decrement
-                  render={<IconButton size={size} aria-label="Decrease" />}
-                >
-                  <KeyboardArrowDownIcon
-                    fontSize={size}
-                    sx={{ transform: "translateY(-2px)" }}
-                  />
-                </BaseNumberField.Decrement>
-              </InputAdornment>
-            }
-            sx={{ pr: 0 }}
-          />
-        )}
-      />
-    </BaseNumberField.Root>
-  );
-};
+const GROUP_SEPARATOR_ERROR = `Group separators (e.g. "${GROUP_SEPARATOR}") are not allowed`;
 
-export default function NumberField(props: FieldProps) {
-  const {
-    formData,
-    onChange,
-    disabled,
-    readonly,
-    rawErrors,
-    itemID,
-    fieldPathId,
-    registry,
-    schema,
-    uiSchema,
-    title,
-    required,
-  } = props;
-  const { schemaUtils } = registry;
+export function NumberField({
+  formData,
+  onChange,
+  disabled,
+  readonly,
+  rawErrors,
+  itemID,
+  fieldPathId,
+  registry: { schemaUtils },
+  schema,
+  uiSchema,
+  title,
+  required,
+}: FieldProps) {
+  const setFieldError = useSetFieldError();
+
   const displaylabel = schemaUtils.getDisplayLabel(schema);
   const uiOptions = getUiOptions(uiSchema);
   const label = uiOptions.title ?? title ?? schema.title;
   const optList = optionsList(schema, uiSchema);
+  const path = fieldPathId.path;
+  const pathKey = path.join(".");
+  const pathRef = useRef(path);
+  pathRef.current = path;
+
+  const onValueChange = useCallback(
+    (val: number | null, evDetails: NumberFieldRootChangeEventDetails) => {
+      const target = evDetails.event?.target;
+      const rawValue = target instanceof HTMLInputElement ? target.value : "";
+
+      const hasSeparator = rawValue.includes(GROUP_SEPARATOR);
+      setFieldError(path, hasSeparator ? GROUP_SEPARATOR_ERROR : undefined);
+      if (hasSeparator) {
+        return;
+      }
+
+      onChange(val, path);
+    },
+    [onChange, path, setFieldError],
+  );
+
+  useEffect(() => {
+    return () => setFieldError(pathRef.current, undefined);
+  }, [pathKey, setFieldError]);
 
   if (optList && optList.length > 0) {
     return (
@@ -157,15 +97,109 @@ export default function NumberField(props: FieldProps) {
       id={itemID}
       label={displaylabel ? label : null}
       value={formData}
-      onValueChange={(value) => onChange(value, fieldPathId.path)}
+      onValueChange={onValueChange}
       disabled={disabled || readonly}
       error={rawErrors && rawErrors.length > 0}
-      format={{
-        useGrouping: false,
-      }}
+      format={{ useGrouping: false }}
       required={required}
       min={schema.minimum}
       max={schema.maximum}
     />
   );
 }
+
+const BNumberField = ({
+  id,
+  label,
+  error,
+  helperText,
+  size = "medium",
+  ...other
+}: BaseUINumberField.Root.Props & {
+  label?: React.ReactNode;
+  size?: "small" | "medium";
+  error?: boolean;
+  helperText?: React.ReactNode;
+}) => {
+  return (
+    <BaseUINumberField.Root
+      {...other}
+      render={(props, state) => (
+        <FormControl
+          size={size}
+          ref={props.ref}
+          disabled={state.disabled}
+          required={state.required}
+          error={error}
+          variant="outlined"
+        >
+          {props.children}
+          {helperText && <FormHelperText>{helperText}</FormHelperText>}
+        </FormControl>
+      )}
+    >
+      <InputLabel htmlFor={id}>{label}</InputLabel>
+      <BaseUINumberField.Input
+        id={id}
+        render={(props, state) => (
+          <OutlinedInput
+            label={label}
+            inputRef={props.ref}
+            value={state.inputValue}
+            sx={{ pr: 0 }}
+            onBlur={(event) => {
+              // base-ui reformats/truncates the raw text on blur.
+              // Skip the commit and let the invalid text stay visible.
+              if (event.target.value.includes(GROUP_SEPARATOR)) {
+                event.preventDefault();
+              }
+              props.onBlur?.(event);
+            }}
+            onChange={props.onChange}
+            onKeyUp={props.onKeyUp}
+            onKeyDown={props.onKeyDown}
+            onFocus={props.onFocus}
+            slotProps={{
+              input: props,
+            }}
+            endAdornment={
+              <InputAdornment
+                position="end"
+                sx={{
+                  flexDirection: "column",
+                  maxHeight: "unset",
+                  alignSelf: "stretch",
+                  borderLeft: "1px solid",
+                  borderColor: "divider",
+                  ml: 0,
+                  "& button": {
+                    py: 0,
+                    flex: 1,
+                    borderRadius: 0.5,
+                  },
+                }}
+              >
+                <BaseUINumberField.Increment
+                  render={<IconButton size={size} aria-label="Increase" />}
+                >
+                  <KeyboardArrowUpIcon
+                    fontSize={size}
+                    sx={{ transform: "translateY(2px)" }}
+                  />
+                </BaseUINumberField.Increment>
+                <BaseUINumberField.Decrement
+                  render={<IconButton size={size} aria-label="Decrease" />}
+                >
+                  <KeyboardArrowDownIcon
+                    fontSize={size}
+                    sx={{ transform: "translateY(-2px)" }}
+                  />
+                </BaseUINumberField.Decrement>
+              </InputAdornment>
+            }
+          />
+        )}
+      />
+    </BaseUINumberField.Root>
+  );
+};
