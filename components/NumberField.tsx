@@ -13,7 +13,7 @@ import MenuItem from "@mui/material/MenuItem";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Select from "@mui/material/Select";
 import { getUiOptions, optionsList, type FieldProps } from "@rjsf/utils";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, type FocusEvent } from "react";
 
 import { useSetFieldError } from "../utils/fieldErrorContext";
 
@@ -147,13 +147,13 @@ const BNumberField = ({
             inputRef={props.ref}
             value={state.inputValue}
             sx={{ pr: 0 }}
-            onBlur={(event) => {
+            onBlur={(ev: FocusEvent<HTMLInputElement>) => {
               // base-ui reformats/truncates the raw text on blur.
               // Skip the commit and let the invalid text stay visible.
-              if (event.target.value.includes(GROUP_SEPARATOR)) {
-                event.preventDefault();
+              if (ev.target.value.includes(GROUP_SEPARATOR)) {
+                ev.preventDefault();
               }
-              props.onBlur?.(event);
+              props.onBlur?.(ev);
             }}
             onChange={props.onChange}
             onKeyUp={props.onKeyUp}
