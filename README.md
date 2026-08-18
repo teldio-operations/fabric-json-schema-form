@@ -102,6 +102,5 @@ bin/updateapi
 
 ## License
 
-Proprietary. Copyright (C) 2025-2026 Teldio Corporation. All rights reserved.
-The source is public so that you can read it. Publication grants no license. See
-[LICENSE](LICENSE).
+UNLICENSED. Copyright (C) 2025-2026 Teldio Corporation. All rights reserved. The
+source is public so that you can read it. Publication grants no license.

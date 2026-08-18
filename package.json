@@ -6,7 +6,7 @@
     "url": "https://github.com/teldio-operations/fabric-json-schema-form"
   },
   "description": "React components that render Fabric module config, event, and query JSON Schemas as forms.",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "UNLICENSED",
   "exports": {
     ".": "./index.ts",
     "./utils/validator": "./utils/validator.ts"
