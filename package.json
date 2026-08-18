@@ -12,7 +12,7 @@
     "check": "bun run check:tsc && bun run check:oxlint && bun run check:oxfmt"
   },
   "dependencies": {
-    "@base-ui/react": "^1.0.0",
+    "@base-ui/react": "^1.7.0",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
     "@mui/x-date-pickers": "^8.21.0",
