@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.6](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.5.5...v0.5.6) (2026-08-18)
+
+
+### Bug Fixes
+
+* Upgrade @base-ui/react to the latest v1.7.0 and fix typings ([95f7654](https://github.com/teldio-operations/fabric-json-schema-form/commit/95f7654f9152039bcda71fcdf3bab65282e277c6))
+
 ## [0.5.5](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.5.4...v0.5.5) (2026-08-18)
 
 
