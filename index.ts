@@ -1,3 +1,5 @@
-export * from "./Form/Form";
-export * from "./Form/SchemaField";
-export * from "./components/ComboboxWidget";
+export {
+  FabricJsonSchemaForm,
+  type FabricJsonSchemaFormProps,
+} from "./Form/Form";
+export { SchemaField } from "./Form/SchemaField";
