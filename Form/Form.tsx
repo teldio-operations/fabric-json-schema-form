@@ -16,6 +16,7 @@ import {
 import { validator } from "../utils/validator";
 import { PreventSubmitOnEnter } from "./PreventSubmitOnEnter";
 import { QueryableField } from "./QueryableField";
+import { RawJsonField } from "./RawJsonField";
 import { SchemaField } from "./SchemaField";
 
 export type FabricJsonSchemaFormProps = Omit<FormProps, "validator"> & {
@@ -133,6 +134,7 @@ export const FabricJsonSchemaForm = ({
             fields={{
               SchemaField,
               QueryableField,
+              RawJsonField,
               NumberField,
               ...props.fields,
             }}
