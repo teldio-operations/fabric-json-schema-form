@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.0](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.5.6...v1.0.0) (2026-08-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* `ComboboxWidget` is no longer exported, and internal paths such as `utils/data` and `api` no longer resolve. `FabricJsonSchemaForm`, `FabricJsonSchemaFormProps`, `SchemaField`, and `utils/validator` are unchanged.
+
+### Features
+
+* add raw JSON field rendering ([#55](https://github.com/teldio-operations/fabric-json-schema-form/issues/55)) ([a5450c4](https://github.com/teldio-operations/fabric-json-schema-form/commit/a5450c4543eb81e9479428dfb74eff39cc101f97))
+
+
+### Bug Fixes
+
+* Clean up the public API and README for the public repo ([#56](https://github.com/teldio-operations/fabric-json-schema-form/issues/56)) ([7367ab1](https://github.com/teldio-operations/fabric-json-schema-form/commit/7367ab1a0bb23cb8454e10c7a393f13f91f24b5f))
+* Refresh the dependency tree to clear stale transitive versions ([#61](https://github.com/teldio-operations/fabric-json-schema-form/issues/61)) ([ae53f6c](https://github.com/teldio-operations/fabric-json-schema-form/commit/ae53f6c86cc8308ca89c3810042c6911689c9156))
+
 ## [0.5.6](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.5.5...v0.5.6) (2026-08-18)
 
 
