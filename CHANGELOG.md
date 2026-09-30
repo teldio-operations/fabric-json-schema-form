@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/teldio-operations/fabric-json-schema-form/compare/v1.0.0...v1.0.1) (2026-09-30)
+
+
+### Bug Fixes
+
+* Number fields show a stale value when the form data changes ([#62](https://github.com/teldio-operations/fabric-json-schema-form/issues/62)) ([41b2dc7](https://github.com/teldio-operations/fabric-json-schema-form/commit/41b2dc7f367e86213870ba4ee293bf59bb7849cb))
+
 ## [1.0.0](https://github.com/teldio-operations/fabric-json-schema-form/compare/v0.5.6...v1.0.0) (2026-08-25)
 
 
