@@ -76,7 +76,7 @@ export function NumberField({
         <Select
           id={itemID}
           label={displaylabel ? label : null}
-          value={formData}
+          value={formData ?? ""}
           onChange={(event) => onChange(event.target.value, fieldPathId.path)}
           disabled={disabled || readonly}
           error={rawErrors && rawErrors.length > 0}
@@ -96,7 +96,7 @@ export function NumberField({
     <BNumberField
       id={itemID}
       label={displaylabel ? label : null}
-      value={formData}
+      value={formData ?? null}
       onValueChange={onValueChange}
       disabled={disabled || readonly}
       error={rawErrors && rawErrors.length > 0}
