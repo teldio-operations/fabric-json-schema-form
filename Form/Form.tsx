@@ -5,9 +5,12 @@ import { ErrorSchemaBuilder, type FieldPathList } from "@rjsf/utils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 
+import { ArrayFieldItemTemplate } from "../components/ArrayFieldItemTemplate";
 import { ComboboxWidget } from "../components/ComboboxWidget";
 import { CustomTimePicker } from "../components/CustomTimePicker";
 import { NumberField } from "../components/NumberField";
+import { PasswordWidget } from "../components/PasswordWidget";
+import { RemoveButton } from "../components/RemoveButton";
 import { omitNulls } from "../utils/data";
 import {
   FieldErrorContext,
@@ -141,7 +144,16 @@ export const FabricJsonSchemaForm = ({
             widgets={{
               TimeWidget: CustomTimePicker,
               combobox: ComboboxWidget,
+              password: PasswordWidget,
               ...props.widgets,
+            }}
+            templates={{
+              ArrayFieldItemTemplate,
+              ...props.templates,
+              ButtonTemplates: {
+                RemoveButton,
+                ...props.templates?.ButtonTemplates,
+              },
             }}
           >
             {showSubmitButton ? submitButton : undefined}
