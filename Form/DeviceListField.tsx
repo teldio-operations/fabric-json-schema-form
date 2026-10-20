@@ -19,7 +19,14 @@ import {
   type FieldProps,
   type RJSFSchema,
 } from "@rjsf/utils";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import {
+  memo,
+  type ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { Queryable } from "../manager-api";
 import { removeEmpty } from "../utils/data";
 import { type QueryRequest, useQueryableModules } from "../utils/queryables";
@@ -260,6 +267,74 @@ const DeviceRow = memo(function DeviceRow({
   );
 }, deepEquals);
 
+const unavailableNote = (count: number) =>
+  count > 0 && (
+    <Typography component="span" variant="body2" color="warning.main">
+      {" "}
+      · {count} unavailable
+    </Typography>
+  );
+
+type DeviceSectionProps = {
+  title: string;
+  subtitle: ReactNode;
+  checkbox?: ReactNode;
+  searching: boolean;
+  hasErrors: boolean;
+  children: ReactNode;
+};
+
+const DeviceSection = ({
+  title,
+  subtitle,
+  checkbox,
+  searching,
+  hasErrors,
+  children,
+}: DeviceSectionProps) => {
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    if (hasErrors) {
+      setExpanded(true);
+    }
+  }, [hasErrors]);
+
+  const open = expanded || searching;
+
+  return (
+    <Stack>
+      <Stack direction="row" alignItems="center" gap={1} minHeight={42}>
+        {checkbox}
+        <Stack
+          flex={1}
+          minWidth={0}
+          pl={checkbox ? 0 : 1.5}
+          sx={{ cursor: "pointer" }}
+          onClick={() => setExpanded(!open)}
+        >
+          <Typography noWrap>{title}</Typography>
+          <Typography variant="body2" color="text.secondary" noWrap>
+            {subtitle}
+          </Typography>
+        </Stack>
+        <IconButton
+          aria-label={open ? "Collapse" : "Expand"}
+          onClick={() => setExpanded(!open)}
+        >
+          {open ? <ExpandLess /> : <ExpandMore />}
+        </IconButton>
+      </Stack>
+
+      <Divider />
+
+      <Collapse in={open} unmountOnExit>
+        {children}
+      </Collapse>
+    </Stack>
+  );
+};
+
 export const DeviceListField = (
   props: FieldProps<Device[], DeviceListSchema>,
 ) => {
@@ -376,6 +451,9 @@ export const DeviceListField = (
 
   const needle = search.trim().toLowerCase();
 
+  const hasErrors = (devices: Device[]) =>
+    devices.some((device) => errorMessages(errorsFor(device)).length > 0);
+
   return (
     <Paper component={Stack} p={2} gap={2}>
       <Stack gap={0.5}>
@@ -426,9 +504,25 @@ export const DeviceListField = (
 
         const selectedCount = options.filter(selected).length;
 
+        const sourceUnavailable = unavailable.filter((device) =>
+          isFromSource(device, source),
+        );
+
         return (
-          <Stack key={`${source.moduleId}/${source.queryable.name}`}>
-            <Stack direction="row" alignItems="center" gap={1}>
+          <DeviceSection
+            key={`${source.moduleId}/${source.queryable.name}`}
+            title={source.queryable.title || source.queryable.name}
+            subtitle={
+              <>
+                {source.title} · {selectedCount} of {options.length} selected
+                {unavailableNote(sourceUnavailable.length)}
+              </>
+            }
+            searching={needle !== ""}
+            hasErrors={hasErrors(
+              devices.filter((device) => isFromSource(device, source)),
+            )}
+            checkbox={
               <Checkbox
                 disabled={isDisabled || options.length === 0}
                 checked={options.length > 0 && selectedCount === options.length}
@@ -444,18 +538,8 @@ export const DeviceListField = (
                       )
                 }
               />
-              <Stack flex={1} minWidth={0}>
-                <Typography noWrap>
-                  {source.queryable.title || source.queryable.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" noWrap>
-                  {source.title} · {selectedCount} of {options.length} selected
-                </Typography>
-              </Stack>
-            </Stack>
-
-            <Divider />
-
+            }
+          >
             {options.map((option) => (
               <DeviceRow
                 key={JSON.stringify(option.value)}
@@ -470,12 +554,8 @@ export const DeviceListField = (
               />
             ))}
 
-            {unavailable
-              .filter(
-                (device) =>
-                  isFromSource(device, source) &&
-                  device.name.toLowerCase().includes(needle),
-              )
+            {sourceUnavailable
+              .filter((device) => device.name.toLowerCase().includes(needle))
               .map((device) => (
                 <DeviceRow
                   key={JSON.stringify(device.query)}
@@ -489,7 +569,7 @@ export const DeviceListField = (
                   actions={actions}
                 />
               ))}
-          </Stack>
+          </DeviceSection>
         );
       })}
 
@@ -498,18 +578,18 @@ export const DeviceListField = (
         const config = configs?.[moduleId];
 
         return (
-          <Stack key={key}>
-            <Stack direction="row" alignItems="center" gap={1} minHeight={42}>
-              <Stack flex={1} minWidth={0} pl={1.5}>
-                <Typography noWrap>{name}</Typography>
-                <Typography variant="body2" color="warning.main" noWrap>
-                  {config?.title || config?.module || moduleId} · Unavailable
-                </Typography>
-              </Stack>
-            </Stack>
-
-            <Divider />
-
+          <DeviceSection
+            key={key}
+            title={name}
+            subtitle={
+              <>
+                {config?.title || config?.module || moduleId}
+                {unavailableNote(missing.length)}
+              </>
+            }
+            searching={needle !== ""}
+            hasErrors={hasErrors(missing)}
+          >
             {missing
               .filter((device) => device.name.toLowerCase().includes(needle))
               .map((device) => (
@@ -523,7 +603,7 @@ export const DeviceListField = (
                   actions={actions}
                 />
               ))}
-          </Stack>
+          </DeviceSection>
         );
       })}
     </Paper>
