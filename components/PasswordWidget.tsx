@@ -12,12 +12,16 @@ export const PasswordWidget = (props: WidgetProps) => {
     props.options,
   );
 
+  if (props.disabled) {
+    return <BaseInputTemplate {...props} type="password" />;
+  }
+
   return (
     <BaseInputTemplate
       {...props}
-      type={visible && !props.disabled ? "text" : "password"}
+      type={visible ? "text" : "password"}
       InputProps={{
-        endAdornment: props.disabled ? undefined : (
+        endAdornment: (
           <InputAdornment position="end">
             <IconButton
               aria-label={visible ? "Hide value" : "Show value"}
