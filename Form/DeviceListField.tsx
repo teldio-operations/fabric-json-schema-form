@@ -372,6 +372,7 @@ const unavailableNote = (count: number) =>
 type DeviceSectionProps = {
   title: string;
   subtitle: ReactNode;
+  count?: string;
   checkbox?: ReactNode;
   searching: boolean;
   hasErrors: boolean;
@@ -381,6 +382,7 @@ type DeviceSectionProps = {
 const DeviceSection = ({
   title,
   subtitle,
+  count,
   checkbox,
   searching,
   hasErrors,
@@ -412,6 +414,11 @@ const DeviceSection = ({
             {subtitle}
           </Typography>
         </Stack>
+        {count && (
+          <Typography variant="body2" color="text.secondary" noWrap>
+            {count}
+          </Typography>
+        )}
         <IconButton
           aria-label={open ? "Collapse" : "Expand"}
           onClick={() => setExpanded(!open)}
@@ -619,10 +626,11 @@ export const DeviceListField = (
             title={source.queryable.title || source.queryable.name}
             subtitle={
               <>
-                {source.title} · {selectedCount} of {options.length} selected
+                {source.title}
                 {unavailableNote(sourceUnavailable.length)}
               </>
             }
+            count={`${selectedCount}/${options.length}`}
             searching={needle !== ""}
             hasErrors={hasErrors(
               devices.filter((device) => isFromSource(device, source)),
