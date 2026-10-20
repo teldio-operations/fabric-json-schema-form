@@ -1,11 +1,16 @@
 import "./mock";
 
+import { DarkMode, LightMode } from "@mui/icons-material";
 import {
   Box,
+  createTheme,
   CssBaseline,
   GlobalStyles,
+  IconButton,
   Stack,
+  ThemeProvider,
   Typography,
+  useColorScheme,
 } from "@mui/material";
 import type { RJSFSchema } from "@rjsf/utils";
 import { useState } from "react";
@@ -66,8 +71,12 @@ const initialFormData = {
   ],
 };
 
+const theme = createTheme({ colorSchemes: { dark: true } });
+
 const Preview = () => {
   const [formData, setFormData] = useState<unknown>(initialFormData);
+  const { mode, systemMode, setMode } = useColorScheme();
+  const dark = (mode === "system" ? systemMode : mode) === "dark";
 
   return (
     <Stack direction="row" gap={2} p={2} height="100%">
@@ -79,7 +88,17 @@ const Preview = () => {
         />
       </Box>
       <Box component="pre" flex={1} minWidth={0} m={0} overflow="auto">
-        <Typography variant="subtitle2">formData</Typography>
+        <Stack direction="row" alignItems="center">
+          <Typography variant="subtitle2" flex={1}>
+            formData
+          </Typography>
+          <IconButton
+            aria-label={dark ? "Use light mode" : "Use dark mode"}
+            onClick={() => setMode(dark ? "light" : "dark")}
+          >
+            {dark ? <LightMode /> : <DarkMode />}
+          </IconButton>
+        </Stack>
         {JSON.stringify(formData, null, 2)}
       </Box>
     </Stack>
@@ -89,10 +108,10 @@ const Preview = () => {
 const root = document.getElementById("root");
 if (root) {
   createRoot(root).render(
-    <>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       <GlobalStyles styles={{ "html, body, #root": { height: "100%" } }} />
       <Preview />
-    </>,
+    </ThemeProvider>,
   );
 }
