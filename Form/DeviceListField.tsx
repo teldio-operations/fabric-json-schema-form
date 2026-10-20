@@ -1,4 +1,4 @@
-import { ExpandLess, ExpandMore, Search } from "@mui/icons-material";
+import { ExpandLess, ExpandMore, Search, Warning } from "@mui/icons-material";
 import {
   Checkbox,
   Collapse,
@@ -9,6 +9,7 @@ import {
   Paper,
   Stack,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import {
@@ -84,6 +85,8 @@ const withoutProperty = (
   };
 };
 
+const sourceKey = ({ moduleId, name }: QueryRequest) => `${moduleId}/${name}`;
+
 const isFromSource = (device: Device, source: Source) =>
   device.query.moduleId === source.moduleId &&
   device.query.name === source.queryable.name;
@@ -112,6 +115,7 @@ type DeviceRowProps = {
   source?: Source;
   option?: DeviceOption;
   errors?: ErrorSchema<Device>;
+  unavailable?: boolean;
   disabled?: boolean;
   SchemaField?: Field;
   actions: Actions;
@@ -123,6 +127,7 @@ const DeviceRow = memo(function DeviceRow({
   source,
   option,
   errors,
+  unavailable,
   disabled,
   SchemaField,
   actions,
@@ -162,11 +167,28 @@ const DeviceRow = memo(function DeviceRow({
   const { [property ?? ""]: deviceValue, ...input } = device?.query.input ?? {};
 
   return (
-    <Stack>
+    <Stack
+      sx={
+        unavailable
+          ? { border: 1, borderColor: "warning.main", borderRadius: 1, my: 0.5 }
+          : undefined
+      }
+    >
       <Stack direction="row" alignItems="center" gap={1} minHeight={48}>
         <Checkbox checked={!!device} disabled={disabled} onChange={onToggle} />
 
-        <Typography flex={1} minWidth={0} noWrap>
+        {unavailable && (
+          <Tooltip title="The module no longer offers this device. Uncheck it to remove it.">
+            <Warning color="warning" />
+          </Tooltip>
+        )}
+
+        <Typography
+          flex={1}
+          minWidth={0}
+          noWrap
+          color={unavailable ? "warning.main" : undefined}
+        >
           {label}
         </Typography>
 
@@ -262,7 +284,7 @@ export const DeviceListField = (
     device &&
     (errorSchema?.[devices.indexOf(device)] as ErrorSchema<Device> | undefined);
 
-  const { queryableModules, isFetching } = useQueryableModules(accept);
+  const { queryableModules, configs, isFetching } = useQueryableModules(accept);
 
   const [search, setSearch] = useState("");
 
@@ -302,6 +324,13 @@ export const DeviceListField = (
             source.options.some((option) => isDevice(device, source, option)),
           ),
       );
+
+  const missingSources = Map.groupBy(
+    unavailable.filter(
+      (device) => !sources.some((source) => isFromSource(device, source)),
+    ),
+    (device) => sourceKey(device.query),
+  );
 
   const latest = useRef({ devices, onChange, path });
   latest.current = { devices, onChange, path };
@@ -381,7 +410,7 @@ export const DeviceListField = (
 
       {isFetching && <LinearProgress />}
 
-      {!isFetching && sources.length === 0 && (
+      {!isFetching && sources.length === 0 && missingSources.size === 0 && (
         <Typography color="text.secondary">
           No module provides devices for this list.
         </Typography>
@@ -440,26 +469,63 @@ export const DeviceListField = (
                 actions={actions}
               />
             ))}
+
+            {unavailable
+              .filter(
+                (device) =>
+                  isFromSource(device, source) &&
+                  device.name.toLowerCase().includes(needle),
+              )
+              .map((device) => (
+                <DeviceRow
+                  key={JSON.stringify(device.query)}
+                  label="Unavailable"
+                  device={device}
+                  errors={errorsFor(device)}
+                  source={source}
+                  unavailable
+                  disabled={isDisabled}
+                  SchemaField={SchemaField}
+                  actions={actions}
+                />
+              ))}
           </Stack>
         );
       })}
 
-      {unavailable.length > 0 && (
-        <Stack>
-          <Typography color="warning.main">Unavailable devices</Typography>
-          <Divider />
-          {unavailable.map((device) => (
-            <DeviceRow
-              key={JSON.stringify(device.query)}
-              label="Unavailable"
-              device={device}
-              errors={errorsFor(device)}
-              disabled={isDisabled}
-              actions={actions}
-            />
-          ))}
-        </Stack>
-      )}
+      {[...missingSources].map(([key, missing]) => {
+        const { moduleId, name } = missing[0]!.query;
+        const config = configs?.[moduleId];
+
+        return (
+          <Stack key={key}>
+            <Stack direction="row" alignItems="center" gap={1} minHeight={42}>
+              <Stack flex={1} minWidth={0} pl={1.5}>
+                <Typography noWrap>{name}</Typography>
+                <Typography variant="body2" color="warning.main" noWrap>
+                  {config?.title || config?.module || moduleId} · Unavailable
+                </Typography>
+              </Stack>
+            </Stack>
+
+            <Divider />
+
+            {missing
+              .filter((device) => device.name.toLowerCase().includes(needle))
+              .map((device) => (
+                <DeviceRow
+                  key={JSON.stringify(device.query)}
+                  label="Unavailable"
+                  device={device}
+                  errors={errorsFor(device)}
+                  unavailable
+                  disabled={isDisabled}
+                  actions={actions}
+                />
+              ))}
+          </Stack>
+        );
+      })}
     </Paper>
   );
 };

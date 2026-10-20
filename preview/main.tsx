@@ -55,6 +55,14 @@ const initialFormData = {
         input: { camera_id: "gone" },
       },
     },
+    {
+      name: "Old NVR - Parking",
+      query: {
+        moduleId: "old-nvr",
+        name: "video-stream",
+        input: { camera_id: "parking" },
+      },
+    },
   ],
 };
 
