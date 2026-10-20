@@ -109,8 +109,15 @@ const root = document.getElementById("root");
 if (root) {
   createRoot(root).render(
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <GlobalStyles styles={{ "html, body, #root": { height: "100%" } }} />
+      <CssBaseline enableColorScheme />
+      <GlobalStyles
+        styles={(theme) => ({
+          "html, body, #root": { height: "100%" },
+          "*": {
+            scrollbarColor: `${theme.palette.action.disabled} transparent`,
+          },
+        })}
+      />
       <Preview />
     </ThemeProvider>,
   );
