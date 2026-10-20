@@ -65,6 +65,10 @@ export const SchemaField = (props: FieldProps) => {
     uiSchema = { "ui:field": "QueryableField", ...uiSchema };
   }
 
+  if (props.schema.control == "device-list") {
+    uiSchema = { "ui:field": "DeviceListField", ...uiSchema };
+  }
+
   if (props.schema.control == "rawjson") {
     uiSchema = { "ui:field": "RawJsonField", ...uiSchema };
   }
