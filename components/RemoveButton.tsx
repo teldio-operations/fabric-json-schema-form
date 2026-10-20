@@ -15,11 +15,7 @@ export const RemoveButton = ({
     size="small"
     startIcon={<DeleteIcon />}
     disabled={disabled}
-    onClick={(event) => {
-      if (window.confirm("Remove this item?")) {
-        onClick?.(event);
-      }
-    }}
+    onClick={onClick}
   >
     Remove
   </Button>

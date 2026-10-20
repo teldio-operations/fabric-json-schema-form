@@ -15,14 +15,13 @@ export const PasswordWidget = (props: WidgetProps) => {
   return (
     <BaseInputTemplate
       {...props}
-      type={visible ? "text" : "password"}
+      type={visible && !props.disabled ? "text" : "password"}
       InputProps={{
-        endAdornment: (
+        endAdornment: props.disabled ? undefined : (
           <InputAdornment position="end">
             <IconButton
               aria-label={visible ? "Hide value" : "Show value"}
               edge="end"
-              disabled={props.disabled}
               onClick={() => setVisible((shown) => !shown)}
             >
               {visible ? <VisibilityOff /> : <Visibility />}

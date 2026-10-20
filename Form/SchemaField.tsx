@@ -79,7 +79,8 @@ export const SchemaField = (props: FieldProps) => {
   if (
     props.schema.type === "array" &&
     isRecord(props.schema.items) &&
-    typeof props.schema.items.title === "string"
+    typeof props.schema.items.title === "string" &&
+    !props.registry.schemaUtils.isMultiSelect(props.schema)
   ) {
     uiSchema = {
       ...props.uiSchema,

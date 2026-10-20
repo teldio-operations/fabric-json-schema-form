@@ -5,6 +5,8 @@ import {
   type ArrayFieldItemTemplateProps,
 } from "@rjsf/utils";
 
+import { RemoveButton } from "./RemoveButton";
+
 export const ArrayFieldItemTemplate = ({
   children,
   buttonsProps,
@@ -17,6 +19,13 @@ export const ArrayFieldItemTemplate = ({
     registry,
     getUiOptions(uiSchema),
   );
+  const buttonsRegistry = {
+    ...registry,
+    templates: {
+      ...registry.templates,
+      ButtonTemplates: { ...registry.templates.ButtonTemplates, RemoveButton },
+    },
+  };
 
   return (
     <Paper elevation={2} sx={{ mb: 2, p: 2 }}>
@@ -25,7 +34,10 @@ export const ArrayFieldItemTemplate = ({
         <Box
           sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 1 }}
         >
-          <ArrayFieldItemButtonsTemplate {...buttonsProps} />
+          <ArrayFieldItemButtonsTemplate
+            {...buttonsProps}
+            registry={buttonsRegistry}
+          />
         </Box>
       )}
     </Paper>

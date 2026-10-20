@@ -10,7 +10,6 @@ import { ComboboxWidget } from "../components/ComboboxWidget";
 import { CustomTimePicker } from "../components/CustomTimePicker";
 import { NumberField } from "../components/NumberField";
 import { PasswordWidget } from "../components/PasswordWidget";
-import { RemoveButton } from "../components/RemoveButton";
 import { omitNulls } from "../utils/data";
 import {
   FieldErrorContext,
@@ -150,10 +149,6 @@ export const FabricJsonSchemaForm = ({
             templates={{
               ArrayFieldItemTemplate,
               ...props.templates,
-              ButtonTemplates: {
-                RemoveButton,
-                ...props.templates?.ButtonTemplates,
-              },
             }}
           >
             {showSubmitButton ? submitButton : undefined}
