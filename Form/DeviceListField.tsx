@@ -41,6 +41,7 @@ import { FabricJsonSchemaForm } from "./Form";
 type Device = {
   name: string;
   query: QueryRequest;
+  [setting: string]: unknown;
 };
 
 type DeviceListSchema = RJSFSchema & {
@@ -59,6 +60,7 @@ type Source = {
   property: string;
   options: DeviceOption[];
   inputSchema?: RJSFSchema;
+  inputDefaults: object;
 };
 
 const findDeviceProperty = (input: RJSFSchema) => {
@@ -81,11 +83,15 @@ const findDeviceProperty = (input: RJSFSchema) => {
   return undefined;
 };
 
-const withoutProperty = (
+const withoutProperties = (
   schema: RJSFSchema,
-  property: string,
+  removed: string[],
 ): RJSFSchema | undefined => {
-  const { [property]: _removed, ...properties } = schema.properties ?? {};
+  const properties = Object.fromEntries(
+    Object.entries(schema.properties ?? {}).filter(
+      ([name]) => !removed.includes(name),
+    ),
+  );
 
   if (Object.keys(properties).length === 0) {
     return undefined;
@@ -94,7 +100,7 @@ const withoutProperty = (
   return {
     ...schema,
     properties,
-    required: schema.required?.filter((name) => name !== property),
+    required: schema.required?.filter((name) => !removed.includes(name)),
   };
 };
 
@@ -121,8 +127,8 @@ const errorMessages = (errors: unknown): string[] =>
 type Actions = {
   add: (source: Source, options: DeviceOption[]) => void;
   remove: (source: Source, options: DeviceOption[]) => void;
-  removeDevice: (device: Device) => void;
-  replace: (previous: Device, next: Device) => void;
+  removeAt: (index: number) => void;
+  updateAt: (index: number, change: (device: Device) => Device) => void;
 };
 
 type DeviceNameProps = {
@@ -223,8 +229,10 @@ const DeviceName = ({
 type DeviceRowProps = {
   label: string;
   device?: Device;
+  index?: number;
   source?: Source;
   option?: DeviceOption;
+  settingsSchema?: RJSFSchema;
   errors?: ErrorSchema<Device>;
   unavailable?: boolean;
   disabled?: boolean;
@@ -235,8 +243,10 @@ type DeviceRowProps = {
 const DeviceRow = memo(function DeviceRow({
   label,
   device,
+  index,
   source,
   option,
+  settingsSchema,
   errors,
   unavailable,
   disabled,
@@ -247,35 +257,46 @@ const DeviceRow = memo(function DeviceRow({
 
   const nameErrors = errors?.name?.__errors;
   const inputErrors = errors?.query?.input;
-  const otherErrors = errorMessages({
-    ...errors,
-    name: undefined,
-    query: { ...errors?.query, input: undefined },
-  });
+  const { name: _name, query: _query, ...settingsErrors } = errors ?? {};
+  const otherErrors = errorMessages({ ...errors?.query, input: undefined });
 
-  const hasInputErrors = errorMessages(inputErrors).length > 0;
+  const hasPanelErrors =
+    errorMessages(inputErrors).length > 0 ||
+    errorMessages(settingsErrors).length > 0;
   useEffect(() => {
-    if (hasInputErrors) {
+    if (hasPanelErrors) {
       setExpanded(true);
     }
-  }, [hasInputErrors]);
+  }, [hasPanelErrors]);
 
   const inputSchema = source?.inputSchema;
   const property = source?.property;
 
   const onToggle = () => {
-    if (device) {
-      actions.removeDevice(device);
+    if (index !== undefined) {
+      actions.removeAt(index);
     } else if (source && option) {
       actions.add(source, [option]);
     }
   };
 
-  const onChange = (next: Device) => device && actions.replace(device, next);
+  const change = (update: (device: Device) => Device) =>
+    index !== undefined && actions.updateAt(index, update);
 
-  const showInput = device && inputSchema && property;
+  const showInputs = device && inputSchema && property;
+  const showSettings = device && settingsSchema;
+  const showHeadings = showInputs && showSettings;
 
-  const { [property ?? ""]: deviceValue, ...input } = device?.query.input ?? {};
+  const { [property ?? ""]: _deviceValue, ...input } =
+    device?.query.input ?? {};
+  const { name: _deviceName, query: _deviceQuery, ...settings } = device ?? {};
+
+  const nestedForm = {
+    tagName: "div" as const,
+    disabled,
+    fields: SchemaField && { SchemaField },
+    uiSchema: { "ui:submitButtonOptions": { norender: true } },
+  };
 
   return (
     <Stack
@@ -307,12 +328,12 @@ const DeviceRow = memo(function DeviceRow({
           error={nameErrors?.[0]}
           warning={unavailable}
           editable={!!device && !disabled}
-          onRename={(name) => device && onChange({ ...device, name })}
+          onRename={(name) => change((device) => ({ ...device, name }))}
         />
 
-        {showInput && (
+        {(showInputs || showSettings) && (
           <IconButton
-            aria-label={expanded ? "Hide inputs" : "Show inputs"}
+            aria-label={expanded ? "Hide settings" : "Show settings"}
             onClick={() => setExpanded(!expanded)}
           >
             {expanded ? <ExpandLess /> : <ExpandMore />}
@@ -320,34 +341,59 @@ const DeviceRow = memo(function DeviceRow({
         )}
       </Stack>
 
-      {showInput && (
+      {(showInputs || showSettings) && (
         <Collapse in={expanded} unmountOnExit>
-          <Stack pl={6} py={1}>
-            <FabricJsonSchemaForm
-              tagName="div"
-              disabled={disabled}
-              schema={inputSchema}
-              formData={input}
-              extraErrors={inputErrors}
-              onChange={({ formData }) =>
-                onChange({
-                  ...device,
-                  query: {
-                    ...device.query,
-                    input: {
+          <Stack pl={6} py={1} gap={1}>
+            {showSettings && (
+              <>
+                {showHeadings && (
+                  <Typography variant="overline" color="text.secondary">
+                    Settings
+                  </Typography>
+                )}
+                <FabricJsonSchemaForm
+                  {...nestedForm}
+                  schema={settingsSchema}
+                  formData={settings}
+                  extraErrors={settingsErrors as ErrorSchema}
+                  onChange={({ formData }) =>
+                    change((device) => ({
                       ...formData,
-                      [property]: deviceValue,
-                    },
-                  },
-                })
-              }
-              fields={SchemaField && { SchemaField }}
-              uiSchema={{
-                "ui:submitButtonOptions": {
-                  norender: true,
-                },
-              }}
-            />
+                      name: device.name,
+                      query: device.query,
+                    }))
+                  }
+                />
+              </>
+            )}
+
+            {showInputs && (
+              <>
+                {showHeadings && (
+                  <Typography variant="overline" color="text.secondary">
+                    {source.queryable.title || source.queryable.name} inputs
+                  </Typography>
+                )}
+                <FabricJsonSchemaForm
+                  {...nestedForm}
+                  schema={inputSchema}
+                  formData={input}
+                  extraErrors={inputErrors}
+                  onChange={({ formData }) =>
+                    change((device) => ({
+                      ...device,
+                      query: {
+                        ...device.query,
+                        input: {
+                          ...formData,
+                          [property]: device.query.input?.[property],
+                        },
+                      },
+                    }))
+                  }
+                />
+              </>
+            )}
           </Stack>
         </Collapse>
       )}
@@ -448,7 +494,7 @@ export const DeviceListField = (
   props: FieldProps<Device[], DeviceListSchema>,
 ) => {
   const {
-    schema: { title, description, accept },
+    schema: { title, description, accept, items },
     disabled,
     readonly,
     rawErrors,
@@ -458,11 +504,34 @@ export const DeviceListField = (
     fieldPathId: { path },
     registry: {
       fields: { SchemaField },
+      schemaUtils,
     },
   } = props;
 
   const devices = formData ?? [];
   const isDisabled = disabled || readonly;
+
+  const settingsSchema = useMemo(
+    () =>
+      typeof items === "object" && !Array.isArray(items)
+        ? withoutProperties(schemaUtils.retrieveSchema(items), [
+            "name",
+            "query",
+          ])
+        : undefined,
+    [items, schemaUtils],
+  );
+
+  const settingsDefaults = useMemo(
+    () =>
+      settingsSchema
+        ? ((schemaUtils.getDefaultFormState(settingsSchema) as unknown) ?? {})
+        : {},
+    [settingsSchema, schemaUtils],
+  );
+
+  const indexOf = (device?: Device) =>
+    device ? devices.indexOf(device) : undefined;
 
   const errorsFor = (device?: Device) =>
     device &&
@@ -486,18 +555,24 @@ export const DeviceListField = (
             return [];
           }
 
+          const inputSchema = withoutProperties(input, [device.property]);
+
           return [
             {
               moduleId: id,
               title: config.title || config.module,
               queryable,
               ...device,
-              inputSchema: withoutProperty(input, device.property),
+              inputSchema,
+              inputDefaults: inputSchema
+                ? ((schemaUtils.getDefaultFormState(inputSchema) as unknown) ??
+                  {})
+                : {},
             },
           ];
         }),
       ),
-    [queryableModules],
+    [queryableModules, schemaUtils],
   );
 
   const unavailable = isFetching
@@ -516,13 +591,15 @@ export const DeviceListField = (
     (device) => sourceKey(device.query),
   );
 
-  const latest = useRef({ devices, onChange, path });
-  latest.current = { devices, onChange, path };
+  const latest = useRef({ devices, onChange, path, settingsDefaults });
+  latest.current = { devices, onChange, path, settingsDefaults };
 
   const actions = useMemo((): Actions => {
     const update = (change: (devices: Device[]) => Device[]) => {
       const { devices, onChange, path } = latest.current;
-      onChange(change(devices), path);
+      const next = change(devices);
+      latest.current.devices = next;
+      onChange(next, path);
     };
 
     return {
@@ -530,11 +607,15 @@ export const DeviceListField = (
         update((devices) => [
           ...devices,
           ...options.map((option) => ({
+            ...structuredClone(latest.current.settingsDefaults),
             name: defaultName(source, option.label),
             query: {
               moduleId: source.moduleId,
               name: source.queryable.name,
-              input: { [source.property]: option.value },
+              input: {
+                ...structuredClone(source.inputDefaults),
+                [source.property]: option.value,
+              },
             },
           })),
         ]),
@@ -545,15 +626,11 @@ export const DeviceListField = (
               !options.some((option) => isDevice(device, source, option)),
           ),
         ),
-      removeDevice: (removed) =>
+      removeAt: (index) =>
+        update((devices) => devices.filter((_, i) => i !== index)),
+      updateAt: (index, change) =>
         update((devices) =>
-          devices.filter((device) => !deepEquals(device, removed)),
-        ),
-      replace: (previous, next) =>
-        update((devices) =>
-          devices.map((device) =>
-            deepEquals(device, previous) ? next : device,
-          ),
+          devices.map((device, i) => (i === index ? change(device) : device)),
         ),
     };
   }, []);
@@ -666,6 +743,8 @@ export const DeviceListField = (
                 key={JSON.stringify(option.value)}
                 label={option.label}
                 device={selected(option)}
+                index={indexOf(selected(option))}
+                settingsSchema={settingsSchema}
                 errors={errorsFor(selected(option))}
                 source={source}
                 option={option}
@@ -680,6 +759,8 @@ export const DeviceListField = (
                 key={JSON.stringify(device.query)}
                 label={device.name}
                 device={device}
+                index={indexOf(device)}
+                settingsSchema={settingsSchema}
                 errors={errorsFor(device)}
                 source={source}
                 unavailable
@@ -723,6 +804,8 @@ export const DeviceListField = (
                 key={JSON.stringify(device.query)}
                 label={device.name}
                 device={device}
+                index={indexOf(device)}
+                settingsSchema={settingsSchema}
                 errors={errorsFor(device)}
                 unavailable
                 disabled={isDisabled}

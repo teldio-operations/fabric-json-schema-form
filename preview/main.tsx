@@ -36,6 +36,12 @@ const schema = {
             control: "queryable",
             accept: "video/*",
           },
+          ptz: {
+            type: "boolean",
+            title: "PTZ controls",
+            description: "Show pan, tilt and zoom controls for this camera",
+            default: false,
+          },
         },
       },
     },
