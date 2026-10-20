@@ -13,11 +13,12 @@ import {
 } from "@mui/material";
 import {
   deepEquals,
+  type ErrorSchema,
   type Field,
   type FieldProps,
   type RJSFSchema,
 } from "@rjsf/utils";
-import { memo, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import type { Queryable } from "../manager-api";
 import { removeEmpty } from "../utils/data";
 import { type QueryRequest, useQueryableModules } from "../utils/queryables";
@@ -91,6 +92,13 @@ const isDevice = (device: Device, source: Source, option: DeviceOption) =>
   isFromSource(device, source) &&
   device.query.input?.[source.property] === option.value;
 
+const errorMessages = (errors: unknown): string[] =>
+  typeof errors === "object" && errors !== null
+    ? Object.entries(errors).flatMap(([key, value]) =>
+        key === "__errors" ? (value as string[]) : errorMessages(value),
+      )
+    : [];
+
 type Actions = {
   add: (source: Source, options: DeviceOption[]) => void;
   remove: (source: Source, options: DeviceOption[]) => void;
@@ -103,6 +111,7 @@ type DeviceRowProps = {
   device?: Device;
   source?: Source;
   option?: DeviceOption;
+  errors?: ErrorSchema<Device>;
   disabled?: boolean;
   SchemaField?: Field;
   actions: Actions;
@@ -113,11 +122,27 @@ const DeviceRow = memo(function DeviceRow({
   device,
   source,
   option,
+  errors,
   disabled,
   SchemaField,
   actions,
 }: DeviceRowProps) {
   const [expanded, setExpanded] = useState(false);
+
+  const nameErrors = errors?.name?.__errors;
+  const inputErrors = errors?.query?.input;
+  const otherErrors = errorMessages({
+    ...errors,
+    name: undefined,
+    query: { ...errors?.query, input: undefined },
+  });
+
+  const hasInputErrors = errorMessages(inputErrors).length > 0;
+  useEffect(() => {
+    if (hasInputErrors) {
+      setExpanded(true);
+    }
+  }, [hasInputErrors]);
 
   const inputSchema = source?.inputSchema;
   const property = source?.property;
@@ -150,6 +175,8 @@ const DeviceRow = memo(function DeviceRow({
             size="small"
             key={device.name}
             label="Name"
+            error={!!nameErrors?.length}
+            helperText={nameErrors?.[0]}
             disabled={disabled}
             defaultValue={device.name}
             onBlur={(e) =>
@@ -178,6 +205,7 @@ const DeviceRow = memo(function DeviceRow({
               disabled={disabled}
               schema={inputSchema}
               formData={input}
+              extraErrors={inputErrors}
               onChange={({ formData }) =>
                 onChange({
                   ...device,
@@ -200,6 +228,12 @@ const DeviceRow = memo(function DeviceRow({
           </Stack>
         </Collapse>
       )}
+
+      {otherErrors.map((error) => (
+        <Typography key={error} variant="body2" color="error" pl={6}>
+          {error}
+        </Typography>
+      ))}
     </Stack>
   );
 }, deepEquals);
@@ -212,6 +246,7 @@ export const DeviceListField = (
     disabled,
     readonly,
     rawErrors,
+    errorSchema,
     onChange,
     formData,
     fieldPathId: { path },
@@ -222,6 +257,10 @@ export const DeviceListField = (
 
   const devices = formData ?? [];
   const isDisabled = disabled || readonly;
+
+  const errorsFor = (device?: Device) =>
+    device &&
+    (errorSchema?.[devices.indexOf(device)] as ErrorSchema<Device> | undefined);
 
   const { queryableModules, isFetching } = useQueryableModules(accept);
 
@@ -393,6 +432,7 @@ export const DeviceListField = (
                 key={JSON.stringify(option.value)}
                 label={option.label}
                 device={selected(option)}
+                errors={errorsFor(selected(option))}
                 source={source}
                 option={option}
                 disabled={isDisabled}
@@ -413,6 +453,7 @@ export const DeviceListField = (
               key={JSON.stringify(device.query)}
               label="Unavailable"
               device={device}
+              errors={errorsFor(device)}
               disabled={isDisabled}
               actions={actions}
             />

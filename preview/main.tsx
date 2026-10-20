@@ -1,6 +1,12 @@
 import "./mock";
 
-import { Box, CssBaseline, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  CssBaseline,
+  GlobalStyles,
+  Stack,
+  Typography,
+} from "@mui/material";
 import type { RJSFSchema } from "@rjsf/utils";
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
@@ -56,24 +62,15 @@ const Preview = () => {
   const [formData, setFormData] = useState<unknown>(initialFormData);
 
   return (
-    <Stack direction="row" gap={2} p={2} alignItems="flex-start">
-      <Box flex={1} minWidth={0}>
+    <Stack direction="row" gap={2} p={2} height="100%">
+      <Box flex={1} minWidth={0} overflow="auto">
         <FabricJsonSchemaForm
           schema={schema}
           formData={formData}
           onChange={({ formData }) => setFormData(formData)}
         />
       </Box>
-      <Box
-        component="pre"
-        flex={1}
-        minWidth={0}
-        m={0}
-        position="sticky"
-        top={16}
-        maxHeight="calc(100vh - 32px)"
-        overflow="auto"
-      >
+      <Box component="pre" flex={1} minWidth={0} m={0} overflow="auto">
         <Typography variant="subtitle2">formData</Typography>
         {JSON.stringify(formData, null, 2)}
       </Box>
@@ -86,6 +83,7 @@ if (root) {
   createRoot(root).render(
     <>
       <CssBaseline />
+      <GlobalStyles styles={{ "html, body, #root": { height: "100%" } }} />
       <Preview />
     </>,
   );
