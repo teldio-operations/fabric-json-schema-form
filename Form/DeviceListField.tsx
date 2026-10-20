@@ -3,6 +3,7 @@ import {
   ExpandLess,
   ExpandMore,
   Search,
+  Tune,
   Warning,
 } from "@mui/icons-material";
 import {
@@ -21,7 +22,6 @@ import {
 import {
   deepEquals,
   type ErrorSchema,
-  type Field,
   type FieldProps,
   type RJSFSchema,
 } from "@rjsf/utils";
@@ -36,13 +36,14 @@ import {
 import type { Queryable } from "../manager-api";
 import { removeEmpty } from "../utils/data";
 import { type QueryRequest, useQueryableModules } from "../utils/queryables";
-import { FabricJsonSchemaForm } from "./Form";
-
-type Device = {
-  name: string;
-  query: QueryRequest;
-  [setting: string]: unknown;
-};
+import {
+  configOf,
+  type Device,
+  type DeviceConfig,
+  DeviceConfigDialog,
+  mostCommonConfig,
+  withConfig,
+} from "./DeviceConfigDialog";
 
 type DeviceListSchema = RJSFSchema & {
   accept?: string;
@@ -109,6 +110,15 @@ const defaultName = (source: Source, label: string) =>
 
 const sourceKey = ({ moduleId, name }: QueryRequest) => `${moduleId}/${name}`;
 
+const keyOf = (source: Source) =>
+  sourceKey({ moduleId: source.moduleId, name: source.queryable.name });
+
+const revealOnHover = {
+  opacity: 0,
+  "&:focus-visible": { opacity: 1 },
+  "@media (hover: none)": { opacity: 1 },
+};
+
 const isFromSource = (device: Device, source: Source) =>
   device.query.moduleId === source.moduleId &&
   device.query.name === source.queryable.name;
@@ -128,7 +138,9 @@ type Actions = {
   add: (source: Source, options: DeviceOption[]) => void;
   remove: (source: Source, options: DeviceOption[]) => void;
   removeAt: (index: number) => void;
+  update: (change: (devices: Device[]) => Device[]) => void;
   updateAt: (index: number, change: (device: Device) => Device) => void;
+  configure: (index: number) => void;
 };
 
 type DeviceNameProps = {
@@ -180,14 +192,7 @@ const DeviceName = ({
   }
 
   return (
-    <Stack
-      direction="row"
-      alignItems="center"
-      gap={0.5}
-      flex={1}
-      minWidth={0}
-      sx={{ "&:hover .edit-name": { opacity: 1 } }}
-    >
+    <Stack direction="row" alignItems="center" gap={0.5} flex={1} minWidth={0}>
       <Stack minWidth={0}>
         <Typography
           noWrap
@@ -209,15 +214,10 @@ const DeviceName = ({
 
       {editable && (
         <IconButton
-          className="edit-name"
           size="small"
           aria-label="Edit name"
           onClick={() => setEditing(true)}
-          sx={{
-            opacity: 0,
-            "&:focus-visible": { opacity: 1 },
-            "@media (hover: none)": { opacity: 1 },
-          }}
+          sx={revealOnHover}
         >
           <Edit fontSize="small" />
         </IconButton>
@@ -232,11 +232,11 @@ type DeviceRowProps = {
   index?: number;
   source?: Source;
   option?: DeviceOption;
-  settingsSchema?: RJSFSchema;
+  configurable?: boolean;
+  overridden?: boolean;
   errors?: ErrorSchema<Device>;
   unavailable?: boolean;
   disabled?: boolean;
-  SchemaField?: Field;
   actions: Actions;
 };
 
@@ -246,31 +246,15 @@ const DeviceRow = memo(function DeviceRow({
   index,
   source,
   option,
-  settingsSchema,
+  configurable,
+  overridden,
   errors,
   unavailable,
   disabled,
-  SchemaField,
   actions,
 }: DeviceRowProps) {
-  const [expanded, setExpanded] = useState(false);
-
   const nameErrors = errors?.name?.__errors;
-  const inputErrors = errors?.query?.input;
-  const { name: _name, query: _query, ...settingsErrors } = errors ?? {};
-  const otherErrors = errorMessages({ ...errors?.query, input: undefined });
-
-  const hasPanelErrors =
-    errorMessages(inputErrors).length > 0 ||
-    errorMessages(settingsErrors).length > 0;
-  useEffect(() => {
-    if (hasPanelErrors) {
-      setExpanded(true);
-    }
-  }, [hasPanelErrors]);
-
-  const inputSchema = source?.inputSchema;
-  const property = source?.property;
+  const otherErrors = errorMessages({ ...errors, name: undefined });
 
   const onToggle = () => {
     if (index !== undefined) {
@@ -280,31 +264,17 @@ const DeviceRow = memo(function DeviceRow({
     }
   };
 
-  const change = (update: (device: Device) => Device) =>
-    index !== undefined && actions.updateAt(index, update);
-
-  const showInputs = device && inputSchema && property;
-  const showSettings = device && settingsSchema;
-  const showHeadings = showInputs && showSettings;
-
-  const { [property ?? ""]: _deviceValue, ...input } =
-    device?.query.input ?? {};
-  const { name: _deviceName, query: _deviceQuery, ...settings } = device ?? {};
-
-  const nestedForm = {
-    tagName: "div" as const,
-    disabled,
-    fields: SchemaField && { SchemaField },
-    uiSchema: { "ui:submitButtonOptions": { norender: true } },
-  };
-
   return (
     <Stack
-      sx={
-        unavailable
-          ? { border: 1, borderColor: "warning.main", borderRadius: 1, my: 0.5 }
-          : undefined
-      }
+      sx={{
+        "&:hover .MuiIconButton-root": { opacity: 1 },
+        ...(unavailable && {
+          border: 1,
+          borderColor: "warning.main",
+          borderRadius: 1,
+          my: 0.5,
+        }),
+      }}
     >
       <Stack direction="row" alignItems="center" gap={1} minHeight={48}>
         <Checkbox checked={!!device} disabled={disabled} onChange={onToggle} />
@@ -328,75 +298,40 @@ const DeviceRow = memo(function DeviceRow({
           error={nameErrors?.[0]}
           warning={unavailable}
           editable={!!device && !disabled}
-          onRename={(name) => change((device) => ({ ...device, name }))}
+          onRename={(name) =>
+            index !== undefined &&
+            actions.updateAt(index, (device) => ({ ...device, name }))
+          }
         />
 
-        {(showInputs || showSettings) && (
-          <IconButton
-            aria-label={expanded ? "Hide settings" : "Show settings"}
-            onClick={() => setExpanded(!expanded)}
+        {configurable && index !== undefined && (
+          <Tooltip
+            title={
+              overridden
+                ? "This device overrides the module configuration"
+                : "Configure this device"
+            }
           >
-            {expanded ? <ExpandLess /> : <ExpandMore />}
-          </IconButton>
+            <IconButton
+              aria-label="Configure device"
+              disabled={disabled}
+              color={
+                otherErrors.length > 0
+                  ? "error"
+                  : overridden
+                    ? "primary"
+                    : "default"
+              }
+              onClick={() => actions.configure(index)}
+              sx={
+                overridden || otherErrors.length > 0 ? undefined : revealOnHover
+              }
+            >
+              <Tune />
+            </IconButton>
+          </Tooltip>
         )}
       </Stack>
-
-      {(showInputs || showSettings) && (
-        <Collapse in={expanded} unmountOnExit>
-          <Stack pl={6} py={1} gap={1}>
-            {showSettings && (
-              <>
-                {showHeadings && (
-                  <Typography variant="overline" color="text.secondary">
-                    Settings
-                  </Typography>
-                )}
-                <FabricJsonSchemaForm
-                  {...nestedForm}
-                  schema={settingsSchema}
-                  formData={settings}
-                  extraErrors={settingsErrors as ErrorSchema}
-                  onChange={({ formData }) =>
-                    change((device) => ({
-                      ...formData,
-                      name: device.name,
-                      query: device.query,
-                    }))
-                  }
-                />
-              </>
-            )}
-
-            {showInputs && (
-              <>
-                {showHeadings && (
-                  <Typography variant="overline" color="text.secondary">
-                    {source.queryable.title || source.queryable.name} inputs
-                  </Typography>
-                )}
-                <FabricJsonSchemaForm
-                  {...nestedForm}
-                  schema={inputSchema}
-                  formData={input}
-                  extraErrors={inputErrors}
-                  onChange={({ formData }) =>
-                    change((device) => ({
-                      ...device,
-                      query: {
-                        ...device.query,
-                        input: {
-                          ...formData,
-                          [property]: device.query.input?.[property],
-                        },
-                      },
-                    }))
-                  }
-                />
-              </>
-            )}
-          </Stack>
-        </Collapse>
-      )}
 
       {otherErrors.map((error) => (
         <Typography key={error} variant="body2" color="error" pl={6}>
@@ -420,6 +355,7 @@ type DeviceSectionProps = {
   subtitle: ReactNode;
   count?: string;
   checkbox?: ReactNode;
+  action?: ReactNode;
   searching: boolean;
   hasErrors: boolean;
   children: ReactNode;
@@ -430,6 +366,7 @@ const DeviceSection = ({
   subtitle,
   count,
   checkbox,
+  action,
   searching,
   hasErrors,
   children,
@@ -469,6 +406,7 @@ const DeviceSection = ({
             {subtitle}
           </Typography>
         </Stack>
+        {action}
         {count && (
           <Typography variant="body2" color="text.secondary" noWrap>
             {count}
@@ -508,7 +446,7 @@ export const DeviceListField = (
     },
   } = props;
 
-  const devices = formData ?? [];
+  const devices = useMemo(() => formData ?? [], [formData]);
   const isDisabled = disabled || readonly;
 
   const settingsSchema = useMemo(
@@ -591,8 +529,47 @@ export const DeviceListField = (
     (device) => sourceKey(device.query),
   );
 
-  const latest = useRef({ devices, onChange, path, settingsDefaults });
-  latest.current = { devices, onChange, path, settingsDefaults };
+  const [pinnedConfigs, setPinnedConfigs] = useState(
+    new Map<string, DeviceConfig>(),
+  );
+
+  const moduleConfigs = useMemo(
+    () =>
+      new Map(
+        sources.map((source) => [
+          keyOf(source),
+          pinnedConfigs.get(keyOf(source)) ??
+            mostCommonConfig(
+              devices
+                .filter((device) => isFromSource(device, source))
+                .map((device) => configOf(device, source.property)),
+            ) ?? {
+              settings: settingsDefaults as Record<string, unknown>,
+              input: source.inputDefaults as Record<string, unknown>,
+            },
+        ]),
+      ),
+    [sources, devices, pinnedConfigs, settingsDefaults],
+  );
+
+  const moduleConfig = (source: Source) => moduleConfigs.get(keyOf(source))!;
+
+  const pinModuleConfig = (source: Source, config = moduleConfig(source)) =>
+    setPinnedConfigs((pinned) => new Map(pinned).set(keyOf(source), config));
+
+  const isOverridden = (device: Device | undefined, source: Source) =>
+    !!device &&
+    !deepEquals(configOf(device, source.property), moduleConfig(source));
+
+  const isConfigurable = (source: Source) =>
+    !!(settingsSchema || source.inputSchema);
+
+  const [dialog, setDialog] = useState<
+    { index: number } | { source: string } | undefined
+  >();
+
+  const latest = useRef({ devices, onChange, path, moduleConfig });
+  latest.current = { devices, onChange, path, moduleConfig };
 
   const actions = useMemo((): Actions => {
     const update = (change: (devices: Device[]) => Device[]) => {
@@ -606,18 +583,20 @@ export const DeviceListField = (
       add: (source, options) =>
         update((devices) => [
           ...devices,
-          ...options.map((option) => ({
-            ...structuredClone(latest.current.settingsDefaults),
-            name: defaultName(source, option.label),
-            query: {
-              moduleId: source.moduleId,
-              name: source.queryable.name,
-              input: {
-                ...structuredClone(source.inputDefaults),
-                [source.property]: option.value,
+          ...options.map((option) =>
+            withConfig(
+              {
+                name: defaultName(source, option.label),
+                query: {
+                  moduleId: source.moduleId,
+                  name: source.queryable.name,
+                  input: { [source.property]: option.value },
+                },
               },
-            },
-          })),
+              latest.current.moduleConfig(source),
+              source.property,
+            ),
+          ),
         ]),
       remove: (source, options) =>
         update((devices) =>
@@ -628,12 +607,95 @@ export const DeviceListField = (
         ),
       removeAt: (index) =>
         update((devices) => devices.filter((_, i) => i !== index)),
+      update,
       updateAt: (index, change) =>
         update((devices) =>
           devices.map((device, i) => (i === index ? change(device) : device)),
         ),
+      configure: (index) => setDialog({ index }),
     };
   }, []);
+
+  const closeDialog = () => setDialog(undefined);
+
+  const renderDialog = (dialog: { index: number } | { source: string }) => {
+    if ("source" in dialog) {
+      const source = sources.find((source) => keyOf(source) === dialog.source);
+      if (!source) {
+        return null;
+      }
+
+      const previous = moduleConfig(source);
+      const following = devices.filter(
+        (device) =>
+          isFromSource(device, source) && !isOverridden(device, source),
+      );
+
+      return (
+        <DeviceConfigDialog
+          title={`Configure ${source.title}`}
+          description={`Applies to the ${following.length} selected devices that use the module configuration, and to devices you select later. Devices with their own configuration keep it.`}
+          config={previous}
+          settingsSchema={settingsSchema}
+          inputSchema={source.inputSchema}
+          inputTitle={`${source.queryable.title || source.queryable.name} inputs`}
+          SchemaField={SchemaField}
+          onClose={closeDialog}
+          onSave={(config) => {
+            pinModuleConfig(source, config);
+            actions.update((devices) =>
+              devices.map((device) =>
+                isFromSource(device, source) &&
+                deepEquals(configOf(device, source.property), previous)
+                  ? withConfig(device, config, source.property)
+                  : device,
+              ),
+            );
+            closeDialog();
+          }}
+        />
+      );
+    }
+
+    const device = devices[dialog.index];
+    const source =
+      device && sources.find((source) => isFromSource(device, source));
+    if (!device || !source) {
+      return null;
+    }
+
+    const save = (config: DeviceConfig) => {
+      pinModuleConfig(source);
+      actions.updateAt(dialog.index, (device) =>
+        withConfig(device, config, source.property),
+      );
+      closeDialog();
+    };
+
+    return (
+      <DeviceConfigDialog
+        title={`Configure ${device.name}`}
+        description={
+          isOverridden(device, source)
+            ? `This device overrides the configuration of ${source.title}.`
+            : `Changes here override the configuration of ${source.title} for this device only.`
+        }
+        config={configOf(device, source.property)}
+        settingsSchema={settingsSchema}
+        inputSchema={source.inputSchema}
+        inputTitle={`${source.queryable.title || source.queryable.name} inputs`}
+        errors={errorsFor(device)}
+        SchemaField={SchemaField}
+        onClose={closeDialog}
+        onSave={save}
+        onReset={
+          isOverridden(device, source)
+            ? () => save(moduleConfig(source))
+            : undefined
+        }
+      />
+    );
+  };
 
   const needle = search.trim().toLowerCase();
 
@@ -716,6 +778,19 @@ export const DeviceListField = (
               </>
             }
             count={`${selectedCount}/${options.length}`}
+            action={
+              isConfigurable(source) && (
+                <Tooltip title="Configure all devices of this module">
+                  <IconButton
+                    aria-label="Configure module"
+                    disabled={isDisabled}
+                    onClick={() => setDialog({ source: keyOf(source) })}
+                  >
+                    <Tune />
+                  </IconButton>
+                </Tooltip>
+              )
+            }
             searching={needle !== ""}
             hasErrors={hasErrors(
               devices.filter((device) => isFromSource(device, source)),
@@ -744,12 +819,12 @@ export const DeviceListField = (
                 label={option.label}
                 device={selected(option)}
                 index={indexOf(selected(option))}
-                settingsSchema={settingsSchema}
+                configurable={isConfigurable(source)}
+                overridden={isOverridden(selected(option), source)}
                 errors={errorsFor(selected(option))}
                 source={source}
                 option={option}
                 disabled={isDisabled}
-                SchemaField={SchemaField}
                 actions={actions}
               />
             ))}
@@ -760,12 +835,12 @@ export const DeviceListField = (
                 label={device.name}
                 device={device}
                 index={indexOf(device)}
-                settingsSchema={settingsSchema}
+                configurable={isConfigurable(source)}
+                overridden={isOverridden(device, source)}
                 errors={errorsFor(device)}
                 source={source}
                 unavailable
                 disabled={isDisabled}
-                SchemaField={SchemaField}
                 actions={actions}
               />
             ))}
@@ -805,7 +880,6 @@ export const DeviceListField = (
                 label={device.name}
                 device={device}
                 index={indexOf(device)}
-                settingsSchema={settingsSchema}
                 errors={errorsFor(device)}
                 unavailable
                 disabled={isDisabled}
@@ -815,6 +889,8 @@ export const DeviceListField = (
           </DeviceSection>
         );
       })}
+
+      {dialog && renderDialog(dialog)}
     </Paper>
   );
 };
