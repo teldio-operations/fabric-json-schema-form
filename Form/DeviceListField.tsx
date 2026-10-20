@@ -1,4 +1,10 @@
-import { ExpandLess, ExpandMore, Search, Warning } from "@mui/icons-material";
+import {
+  Edit,
+  ExpandLess,
+  ExpandMore,
+  Search,
+  Warning,
+} from "@mui/icons-material";
 import {
   Checkbox,
   Collapse,
@@ -92,6 +98,9 @@ const withoutProperty = (
   };
 };
 
+const defaultName = (source: Source, label: string) =>
+  `${source.title} - ${label}`;
+
 const sourceKey = ({ moduleId, name }: QueryRequest) => `${moduleId}/${name}`;
 
 const isFromSource = (device: Device, source: Source) =>
@@ -114,6 +123,101 @@ type Actions = {
   remove: (source: Source, options: DeviceOption[]) => void;
   removeDevice: (device: Device) => void;
   replace: (previous: Device, next: Device) => void;
+};
+
+type DeviceNameProps = {
+  name: string;
+  original?: string;
+  error?: string;
+  warning?: boolean;
+  editable: boolean;
+  onRename: (name: string) => void;
+};
+
+const DeviceName = ({
+  name,
+  original,
+  error,
+  warning,
+  editable,
+  onRename,
+}: DeviceNameProps) => {
+  const [editing, setEditing] = useState(false);
+
+  if (editing) {
+    return (
+      <TextField
+        size="small"
+        label="Name"
+        autoFocus
+        defaultValue={name}
+        error={!!error}
+        onBlur={(e) => {
+          setEditing(false);
+          if (e.target.value !== name) {
+            onRename(e.target.value);
+          }
+        }}
+        onKeyDown={(e) => {
+          const input = e.target as HTMLInputElement;
+          if (e.key === "Escape") {
+            input.value = name;
+          }
+          if (e.key === "Enter" || e.key === "Escape") {
+            e.preventDefault();
+            input.blur();
+          }
+        }}
+        sx={{ flex: 1 }}
+      />
+    );
+  }
+
+  return (
+    <Stack
+      direction="row"
+      alignItems="center"
+      gap={0.5}
+      flex={1}
+      minWidth={0}
+      sx={{ "&:hover .edit-name": { opacity: 1 } }}
+    >
+      <Stack minWidth={0}>
+        <Typography
+          noWrap
+          color={error ? "error" : warning ? "warning.main" : undefined}
+        >
+          {name || <em>No name</em>}
+        </Typography>
+        {original && (
+          <Typography variant="caption" color="text.secondary" noWrap>
+            {original}
+          </Typography>
+        )}
+        {error && (
+          <Typography variant="caption" color="error">
+            {error}
+          </Typography>
+        )}
+      </Stack>
+
+      {editable && (
+        <IconButton
+          className="edit-name"
+          size="small"
+          aria-label="Edit name"
+          onClick={() => setEditing(true)}
+          sx={{
+            opacity: 0,
+            "&:focus-visible": { opacity: 1 },
+            "@media (hover: none)": { opacity: 1 },
+          }}
+        >
+          <Edit fontSize="small" />
+        </IconButton>
+      )}
+    </Stack>
+  );
 };
 
 type DeviceRowProps = {
@@ -190,31 +294,21 @@ const DeviceRow = memo(function DeviceRow({
           </Tooltip>
         )}
 
-        <Typography
-          flex={1}
-          minWidth={0}
-          noWrap
-          color={unavailable ? "warning.main" : undefined}
-        >
-          {label}
-        </Typography>
-
-        {device && (
-          <TextField
-            size="small"
-            key={device.name}
-            label="Name"
-            error={!!nameErrors?.length}
-            helperText={nameErrors?.[0]}
-            disabled={disabled}
-            defaultValue={device.name}
-            onBlur={(e) =>
-              e.target.value !== device.name &&
-              onChange({ ...device, name: e.target.value })
-            }
-            sx={{ flex: 1 }}
-          />
-        )}
+        <DeviceName
+          name={device?.name ?? label}
+          original={
+            device &&
+            source &&
+            !unavailable &&
+            device.name !== defaultName(source, label)
+              ? label
+              : undefined
+          }
+          error={nameErrors?.[0]}
+          warning={unavailable}
+          editable={!!device && !disabled}
+          onRename={(name) => device && onChange({ ...device, name })}
+        />
 
         {showInput && (
           <IconButton
@@ -421,7 +515,7 @@ export const DeviceListField = (
         update((devices) => [
           ...devices,
           ...options.map((option) => ({
-            name: `${source.title} - ${option.label}`,
+            name: defaultName(source, option.label),
             query: {
               moduleId: source.moduleId,
               name: source.queryable.name,
@@ -450,6 +544,9 @@ export const DeviceListField = (
   }, []);
 
   const needle = search.trim().toLowerCase();
+
+  const matches = (...texts: (string | undefined)[]) =>
+    texts.some((text) => text?.toLowerCase().includes(needle));
 
   const hasErrors = (devices: Device[]) =>
     devices.some((device) => errorMessages(errorsFor(device)).length > 0);
@@ -495,18 +592,26 @@ export const DeviceListField = (
       )}
 
       {sources.map((source) => {
-        const options = source.options.filter((option) =>
-          option.label.toLowerCase().includes(needle),
-        );
-
         const selected = (option: DeviceOption) =>
           devices.find((device) => isDevice(device, source, option));
+
+        const options = source.options.filter((option) =>
+          matches(source.title, option.label, selected(option)?.name),
+        );
 
         const selectedCount = options.filter(selected).length;
 
         const sourceUnavailable = unavailable.filter((device) =>
           isFromSource(device, source),
         );
+
+        const shownUnavailable = sourceUnavailable.filter((device) =>
+          matches(source.title, device.name),
+        );
+
+        if (options.length === 0 && shownUnavailable.length === 0 && needle) {
+          return null;
+        }
 
         return (
           <DeviceSection
@@ -554,21 +659,19 @@ export const DeviceListField = (
               />
             ))}
 
-            {sourceUnavailable
-              .filter((device) => device.name.toLowerCase().includes(needle))
-              .map((device) => (
-                <DeviceRow
-                  key={JSON.stringify(device.query)}
-                  label="Unavailable"
-                  device={device}
-                  errors={errorsFor(device)}
-                  source={source}
-                  unavailable
-                  disabled={isDisabled}
-                  SchemaField={SchemaField}
-                  actions={actions}
-                />
-              ))}
+            {shownUnavailable.map((device) => (
+              <DeviceRow
+                key={JSON.stringify(device.query)}
+                label={device.name}
+                device={device}
+                errors={errorsFor(device)}
+                source={source}
+                unavailable
+                disabled={isDisabled}
+                SchemaField={SchemaField}
+                actions={actions}
+              />
+            ))}
           </DeviceSection>
         );
       })}
@@ -576,6 +679,15 @@ export const DeviceListField = (
       {[...missingSources].map(([key, missing]) => {
         const { moduleId, name } = missing[0]!.query;
         const config = configs?.[moduleId];
+        const moduleTitle = config?.title || config?.module || moduleId;
+
+        const shown = missing.filter((device) =>
+          matches(moduleTitle, device.name),
+        );
+
+        if (shown.length === 0) {
+          return null;
+        }
 
         return (
           <DeviceSection
@@ -583,26 +695,24 @@ export const DeviceListField = (
             title={name}
             subtitle={
               <>
-                {config?.title || config?.module || moduleId}
+                {moduleTitle}
                 {unavailableNote(missing.length)}
               </>
             }
             searching={needle !== ""}
             hasErrors={hasErrors(missing)}
           >
-            {missing
-              .filter((device) => device.name.toLowerCase().includes(needle))
-              .map((device) => (
-                <DeviceRow
-                  key={JSON.stringify(device.query)}
-                  label="Unavailable"
-                  device={device}
-                  errors={errorsFor(device)}
-                  unavailable
-                  disabled={isDisabled}
-                  actions={actions}
-                />
-              ))}
+            {shown.map((device) => (
+              <DeviceRow
+                key={JSON.stringify(device.query)}
+                label={device.name}
+                device={device}
+                errors={errorsFor(device)}
+                unavailable
+                disabled={isDisabled}
+                actions={actions}
+              />
+            ))}
           </DeviceSection>
         );
       })}
