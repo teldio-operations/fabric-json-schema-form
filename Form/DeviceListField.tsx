@@ -399,8 +399,15 @@ const DeviceSection = ({
   const open = expanded || searching;
 
   return (
-    <Stack>
-      <Stack direction="row" alignItems="center" gap={1} minHeight={42}>
+    <Paper variant="outlined" sx={{ overflow: "hidden" }}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        gap={1}
+        minHeight={56}
+        pr={0.5}
+        bgcolor="action.selected"
+      >
         {checkbox}
         <Stack
           flex={1}
@@ -409,7 +416,9 @@ const DeviceSection = ({
           sx={{ cursor: "pointer" }}
           onClick={() => setExpanded(!open)}
         >
-          <Typography noWrap>{title}</Typography>
+          <Typography variant="subtitle1" fontWeight={500} noWrap>
+            {title}
+          </Typography>
           <Typography variant="body2" color="text.secondary" noWrap>
             {subtitle}
           </Typography>
@@ -427,12 +436,11 @@ const DeviceSection = ({
         </IconButton>
       </Stack>
 
-      <Divider />
-
       <Collapse in={open} unmountOnExit>
-        {children}
+        <Divider />
+        <Stack px={1}>{children}</Stack>
       </Collapse>
-    </Stack>
+    </Paper>
   );
 };
 
