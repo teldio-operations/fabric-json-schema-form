@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/teldio-operations/fabric-json-schema-form/compare/v1.0.1...v1.0.2) (2026-10-21)
+
+
+### Bug Fixes
+
+* Clearer list items and a show/hide button on masked fields ([#65](https://github.com/teldio-operations/fabric-json-schema-form/issues/65)) ([f319449](https://github.com/teldio-operations/fabric-json-schema-form/commit/f3194497c3467d7ea5b29fdbfa574d1d2b741c39))
+
 ## [1.0.1](https://github.com/teldio-operations/fabric-json-schema-form/compare/v1.0.0...v1.0.1) (2026-09-30)
 
 
