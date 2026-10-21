@@ -28,6 +28,13 @@ const withMaxLength = (uiSchema: UiSchema, maxLength: number): UiSchema => {
   };
 };
 
+const withItemNumbers =
+  (title: string, items: UiSchema["items"]): UiSchema["items"] =>
+  (item: unknown, index: number, formContext: unknown) => ({
+    "ui:title": `${title} ${index + 1}`,
+    ...(typeof items === "function" ? items(item, index, formContext) : items),
+  });
+
 export const SchemaField = (props: FieldProps) => {
   if (!DefaultSchemaField) {
     return null;
@@ -67,6 +74,19 @@ export const SchemaField = (props: FieldProps) => {
 
   if (props.schema.control == "rawjson") {
     uiSchema = { "ui:field": "RawJsonField", ...uiSchema };
+  }
+
+  if (
+    props.schema.type === "array" &&
+    isRecord(props.schema.items) &&
+    typeof props.schema.items.title === "string" &&
+    !props.registry.schemaUtils.isMultiSelect(props.schema)
+  ) {
+    uiSchema = {
+      ...props.uiSchema,
+      ...uiSchema,
+      items: withItemNumbers(props.schema.items.title, props.uiSchema?.items),
+    };
   }
 
   if (Object.keys(uiSchema).length !== 0) {
