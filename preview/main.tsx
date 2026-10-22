@@ -24,7 +24,7 @@ const schema = {
       type: "array",
       title: "Cameras",
       description: "The cameras this plugin shows",
-      control: "device-list",
+      control: "queryable-list",
       accept: "video/*",
       items: {
         type: "object",

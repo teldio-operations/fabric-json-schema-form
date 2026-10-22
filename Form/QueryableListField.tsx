@@ -38,18 +38,18 @@ import { removeEmpty } from "../utils/data";
 import { type QueryRequest, useQueryableModules } from "../utils/queryables";
 import {
   configOf,
-  type Device,
-  type DeviceConfig,
-  DeviceConfigDialog,
+  type Item,
+  type ItemConfig,
+  ItemConfigDialog,
   mostCommonConfig,
   withConfig,
-} from "./DeviceConfigDialog";
+} from "./ItemConfigDialog";
 
-type DeviceListSchema = RJSFSchema & {
+type QueryableListSchema = RJSFSchema & {
   accept?: string;
 };
 
-type DeviceOption = {
+type ItemOption = {
   value: unknown;
   label: string;
 };
@@ -58,13 +58,13 @@ type Source = {
   moduleId: string;
   title: string;
   queryable: Queryable;
-  property: string;
-  options: DeviceOption[];
+  property?: string;
+  options: ItemOption[];
   inputSchema?: RJSFSchema;
   inputDefaults: object;
 };
 
-const findDeviceProperty = (input: RJSFSchema) => {
+const findOptionProperty = (input: RJSFSchema) => {
   for (const [property, schema] of Object.entries(input.properties ?? {})) {
     if (typeof schema !== "object") {
       continue;
@@ -119,13 +119,14 @@ const revealOnHover = {
   "@media (hover: none)": { opacity: 1 },
 };
 
-const isFromSource = (device: Device, source: Source) =>
-  device.query.moduleId === source.moduleId &&
-  device.query.name === source.queryable.name;
+const isFromSource = (item: Item, source: Source) =>
+  item.query.moduleId === source.moduleId &&
+  item.query.name === source.queryable.name;
 
-const isDevice = (device: Device, source: Source, option: DeviceOption) =>
-  isFromSource(device, source) &&
-  device.query.input?.[source.property] === option.value;
+const isOption = (item: Item, source: Source, option: ItemOption) =>
+  isFromSource(item, source) &&
+  (source.property === undefined ||
+    item.query.input?.[source.property] === option.value);
 
 const errorMessages = (errors: unknown): string[] =>
   typeof errors === "object" && errors !== null
@@ -135,15 +136,15 @@ const errorMessages = (errors: unknown): string[] =>
     : [];
 
 type Actions = {
-  add: (source: Source, options: DeviceOption[]) => void;
-  remove: (source: Source, options: DeviceOption[]) => void;
+  add: (source: Source, options: ItemOption[]) => void;
+  remove: (source: Source, options: ItemOption[]) => void;
   removeAt: (index: number) => void;
-  update: (change: (devices: Device[]) => Device[]) => void;
-  updateAt: (index: number, change: (device: Device) => Device) => void;
+  update: (change: (items: Item[]) => Item[]) => void;
+  updateAt: (index: number, change: (item: Item) => Item) => void;
   configure: (index: number) => void;
 };
 
-type DeviceNameProps = {
+type ItemNameProps = {
   name: string;
   original?: string;
   error?: string;
@@ -152,14 +153,14 @@ type DeviceNameProps = {
   onRename: (name: string) => void;
 };
 
-const DeviceName = ({
+const ItemName = ({
   name,
   original,
   error,
   warning,
   editable,
   onRename,
-}: DeviceNameProps) => {
+}: ItemNameProps) => {
   const [editing, setEditing] = useState(false);
 
   if (editing) {
@@ -226,23 +227,23 @@ const DeviceName = ({
   );
 };
 
-type DeviceRowProps = {
+type ItemRowProps = {
   label: string;
-  device?: Device;
+  item?: Item;
   index?: number;
   source?: Source;
-  option?: DeviceOption;
+  option?: ItemOption;
   configurable?: boolean;
   overridden?: boolean;
-  errors?: ErrorSchema<Device>;
+  errors?: ErrorSchema<Item>;
   unavailable?: boolean;
   disabled?: boolean;
   actions: Actions;
 };
 
-const DeviceRow = memo(function DeviceRow({
+const ItemRow = memo(function ItemRow({
   label,
-  device,
+  item,
   index,
   source,
   option,
@@ -252,7 +253,7 @@ const DeviceRow = memo(function DeviceRow({
   unavailable,
   disabled,
   actions,
-}: DeviceRowProps) {
+}: ItemRowProps) {
   const nameErrors = errors?.name?.__errors;
   const otherErrors = errorMessages({ ...errors, name: undefined });
 
@@ -277,30 +278,30 @@ const DeviceRow = memo(function DeviceRow({
       }}
     >
       <Stack direction="row" alignItems="center" gap={1} minHeight={48}>
-        <Checkbox checked={!!device} disabled={disabled} onChange={onToggle} />
+        <Checkbox checked={!!item} disabled={disabled} onChange={onToggle} />
 
         {unavailable && (
-          <Tooltip title="The module no longer offers this device. Uncheck it to remove it.">
+          <Tooltip title="The module no longer offers this item. Uncheck it to remove it.">
             <Warning color="warning" />
           </Tooltip>
         )}
 
-        <DeviceName
-          name={device?.name ?? label}
+        <ItemName
+          name={item?.name ?? label}
           original={
-            device &&
+            item &&
             source &&
             !unavailable &&
-            device.name !== defaultName(source, label)
+            item.name !== defaultName(source, label)
               ? label
               : undefined
           }
           error={nameErrors?.[0]}
           warning={unavailable}
-          editable={!!device && !disabled}
+          editable={!!item && !disabled}
           onRename={(name) =>
             index !== undefined &&
-            actions.updateAt(index, (device) => ({ ...device, name }))
+            actions.updateAt(index, (item) => ({ ...item, name }))
           }
         />
 
@@ -308,12 +309,12 @@ const DeviceRow = memo(function DeviceRow({
           <Tooltip
             title={
               overridden
-                ? "This device overrides the module configuration"
-                : "Configure this device"
+                ? "This item overrides the module configuration"
+                : "Configure this item"
             }
           >
             <IconButton
-              aria-label="Configure device"
+              aria-label="Configure item"
               disabled={disabled}
               color={
                 otherErrors.length > 0
@@ -350,7 +351,7 @@ const unavailableNote = (count: number) =>
     </Typography>
   );
 
-type DeviceSectionProps = {
+type ItemSectionProps = {
   title: string;
   subtitle: ReactNode;
   count?: string;
@@ -361,7 +362,7 @@ type DeviceSectionProps = {
   children: ReactNode;
 };
 
-const DeviceSection = ({
+const ItemSection = ({
   title,
   subtitle,
   count,
@@ -370,7 +371,7 @@ const DeviceSection = ({
   searching,
   hasErrors,
   children,
-}: DeviceSectionProps) => {
+}: ItemSectionProps) => {
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
@@ -428,11 +429,11 @@ const DeviceSection = ({
   );
 };
 
-export const DeviceListField = (
-  props: FieldProps<Device[], DeviceListSchema>,
+export const QueryableListField = (
+  props: FieldProps<Item[], QueryableListSchema>,
 ) => {
   const {
-    schema: { title, description, accept, items },
+    schema: { title, description, accept, items: itemSchema },
     disabled,
     readonly,
     rawErrors,
@@ -446,18 +447,18 @@ export const DeviceListField = (
     },
   } = props;
 
-  const devices = useMemo(() => formData ?? [], [formData]);
+  const items = useMemo(() => formData ?? [], [formData]);
   const isDisabled = disabled || readonly;
 
   const settingsSchema = useMemo(
     () =>
-      typeof items === "object" && !Array.isArray(items)
-        ? withoutProperties(schemaUtils.retrieveSchema(items), [
+      typeof itemSchema === "object" && !Array.isArray(itemSchema)
+        ? withoutProperties(schemaUtils.retrieveSchema(itemSchema), [
             "name",
             "query",
           ])
         : undefined,
-    [items, schemaUtils],
+    [itemSchema, schemaUtils],
   );
 
   const settingsDefaults = useMemo(
@@ -468,12 +469,11 @@ export const DeviceListField = (
     [settingsSchema, schemaUtils],
   );
 
-  const indexOf = (device?: Device) =>
-    device ? devices.indexOf(device) : undefined;
+  const indexOf = (item?: Item) => (item ? items.indexOf(item) : undefined);
 
-  const errorsFor = (device?: Device) =>
-    device &&
-    (errorSchema?.[devices.indexOf(device)] as ErrorSchema<Device> | undefined);
+  const errorsFor = (item?: Item) =>
+    item &&
+    (errorSchema?.[items.indexOf(item)] as ErrorSchema<Item> | undefined);
 
   const { queryableModules, configs, isFetching } = useQueryableModules(accept);
 
@@ -483,24 +483,25 @@ export const DeviceListField = (
     () =>
       queryableModules.flatMap(({ id, config, queries }): Source[] =>
         (queries ?? []).flatMap((queryable) => {
-          if (!queryable.input) {
-            return [];
-          }
+          const input = removeEmpty(queryable.input ?? {}) as RJSFSchema;
+          const picker = findOptionProperty(input) ?? {
+            property: undefined,
+            options: [
+              { value: undefined, label: queryable.title || queryable.name },
+            ],
+          };
 
-          const input = removeEmpty(queryable.input) as RJSFSchema;
-          const device = findDeviceProperty(input);
-          if (!device) {
-            return [];
-          }
-
-          const inputSchema = withoutProperties(input, [device.property]);
+          const inputSchema = withoutProperties(
+            input,
+            picker.property === undefined ? [] : [picker.property],
+          );
 
           return [
             {
               moduleId: id,
               title: config.title || config.module,
               queryable,
-              ...device,
+              ...picker,
               inputSchema,
               inputDefaults: inputSchema
                 ? ((schemaUtils.getDefaultFormState(inputSchema) as unknown) ??
@@ -515,22 +516,22 @@ export const DeviceListField = (
 
   const unavailable = isFetching
     ? []
-    : devices.filter(
-        (device) =>
+    : items.filter(
+        (item) =>
           !sources.some((source) =>
-            source.options.some((option) => isDevice(device, source, option)),
+            source.options.some((option) => isOption(item, source, option)),
           ),
       );
 
   const missingSources = Map.groupBy(
     unavailable.filter(
-      (device) => !sources.some((source) => isFromSource(device, source)),
+      (item) => !sources.some((source) => isFromSource(item, source)),
     ),
-    (device) => sourceKey(device.query),
+    (item) => sourceKey(item.query),
   );
 
   const [pinnedConfigs, setPinnedConfigs] = useState(
-    new Map<string, DeviceConfig>(),
+    new Map<string, ItemConfig>(),
   );
 
   const moduleConfigs = useMemo(
@@ -540,16 +541,16 @@ export const DeviceListField = (
           keyOf(source),
           pinnedConfigs.get(keyOf(source)) ??
             mostCommonConfig(
-              devices
-                .filter((device) => isFromSource(device, source))
-                .map((device) => configOf(device, source.property)),
+              items
+                .filter((item) => isFromSource(item, source))
+                .map((item) => configOf(item, source.property)),
             ) ?? {
               settings: settingsDefaults as Record<string, unknown>,
               input: source.inputDefaults as Record<string, unknown>,
             },
         ]),
       ),
-    [sources, devices, pinnedConfigs, settingsDefaults],
+    [sources, items, pinnedConfigs, settingsDefaults],
   );
 
   const moduleConfig = (source: Source) => moduleConfigs.get(keyOf(source))!;
@@ -557,9 +558,9 @@ export const DeviceListField = (
   const pinModuleConfig = (source: Source, config = moduleConfig(source)) =>
     setPinnedConfigs((pinned) => new Map(pinned).set(keyOf(source), config));
 
-  const isOverridden = (device: Device | undefined, source: Source) =>
-    !!device &&
-    !deepEquals(configOf(device, source.property), moduleConfig(source));
+  const isOverridden = (item: Item | undefined, source: Source) =>
+    !!item &&
+    !deepEquals(configOf(item, source.property), moduleConfig(source));
 
   const isConfigurable = (source: Source) =>
     !!(settingsSchema || source.inputSchema);
@@ -568,21 +569,21 @@ export const DeviceListField = (
     { index: number } | { source: string } | undefined
   >();
 
-  const latest = useRef({ devices, onChange, path, moduleConfig });
-  latest.current = { devices, onChange, path, moduleConfig };
+  const latest = useRef({ items, onChange, path, moduleConfig });
+  latest.current = { items, onChange, path, moduleConfig };
 
   const actions = useMemo((): Actions => {
-    const update = (change: (devices: Device[]) => Device[]) => {
-      const { devices, onChange, path } = latest.current;
-      const next = change(devices);
-      latest.current.devices = next;
+    const update = (change: (items: Item[]) => Item[]) => {
+      const { items, onChange, path } = latest.current;
+      const next = change(items);
+      latest.current.items = next;
       onChange(next, path);
     };
 
     return {
       add: (source, options) =>
-        update((devices) => [
-          ...devices,
+        update((items) => [
+          ...items,
           ...options.map((option) =>
             withConfig(
               {
@@ -590,7 +591,10 @@ export const DeviceListField = (
                 query: {
                   moduleId: source.moduleId,
                   name: source.queryable.name,
-                  input: { [source.property]: option.value },
+                  input:
+                    source.property === undefined
+                      ? {}
+                      : { [source.property]: option.value },
                 },
               },
               latest.current.moduleConfig(source),
@@ -599,18 +603,17 @@ export const DeviceListField = (
           ),
         ]),
       remove: (source, options) =>
-        update((devices) =>
-          devices.filter(
-            (device) =>
-              !options.some((option) => isDevice(device, source, option)),
+        update((items) =>
+          items.filter(
+            (item) => !options.some((option) => isOption(item, source, option)),
           ),
         ),
       removeAt: (index) =>
-        update((devices) => devices.filter((_, i) => i !== index)),
+        update((items) => items.filter((_, i) => i !== index)),
       update,
       updateAt: (index, change) =>
-        update((devices) =>
-          devices.map((device, i) => (i === index ? change(device) : device)),
+        update((items) =>
+          items.map((item, i) => (i === index ? change(item) : item)),
         ),
       configure: (index) => setDialog({ index }),
     };
@@ -626,15 +629,14 @@ export const DeviceListField = (
       }
 
       const previous = moduleConfig(source);
-      const following = devices.filter(
-        (device) =>
-          isFromSource(device, source) && !isOverridden(device, source),
+      const following = items.filter(
+        (item) => isFromSource(item, source) && !isOverridden(item, source),
       );
 
       return (
-        <DeviceConfigDialog
+        <ItemConfigDialog
           title={`Configure ${source.title}`}
-          description={`Applies to the ${following.length} selected devices that use the module configuration, and to devices you select later. Devices with their own configuration keep it.`}
+          description={`Applies to the ${following.length} selected items that use the module configuration, and to items you select later. Items with their own configuration keep it.`}
           config={previous}
           settingsSchema={settingsSchema}
           inputSchema={source.inputSchema}
@@ -643,12 +645,12 @@ export const DeviceListField = (
           onClose={closeDialog}
           onSave={(config) => {
             pinModuleConfig(source, config);
-            actions.update((devices) =>
-              devices.map((device) =>
-                isFromSource(device, source) &&
-                deepEquals(configOf(device, source.property), previous)
-                  ? withConfig(device, config, source.property)
-                  : device,
+            actions.update((items) =>
+              items.map((item) =>
+                isFromSource(item, source) &&
+                deepEquals(configOf(item, source.property), previous)
+                  ? withConfig(item, config, source.property)
+                  : item,
               ),
             );
             closeDialog();
@@ -657,39 +659,38 @@ export const DeviceListField = (
       );
     }
 
-    const device = devices[dialog.index];
-    const source =
-      device && sources.find((source) => isFromSource(device, source));
-    if (!device || !source) {
+    const item = items[dialog.index];
+    const source = item && sources.find((source) => isFromSource(item, source));
+    if (!item || !source) {
       return null;
     }
 
-    const save = (config: DeviceConfig) => {
+    const save = (config: ItemConfig) => {
       pinModuleConfig(source);
-      actions.updateAt(dialog.index, (device) =>
-        withConfig(device, config, source.property),
+      actions.updateAt(dialog.index, (item) =>
+        withConfig(item, config, source.property),
       );
       closeDialog();
     };
 
     return (
-      <DeviceConfigDialog
-        title={`Configure ${device.name}`}
+      <ItemConfigDialog
+        title={`Configure ${item.name}`}
         description={
-          isOverridden(device, source)
-            ? `This device overrides the configuration of ${source.title}.`
-            : `Changes here override the configuration of ${source.title} for this device only.`
+          isOverridden(item, source)
+            ? `This item overrides the configuration of ${source.title}.`
+            : `Changes here override the configuration of ${source.title} for this item only.`
         }
-        config={configOf(device, source.property)}
+        config={configOf(item, source.property)}
         settingsSchema={settingsSchema}
         inputSchema={source.inputSchema}
         inputTitle={`${source.queryable.title || source.queryable.name} inputs`}
-        errors={errorsFor(device)}
+        errors={errorsFor(item)}
         SchemaField={SchemaField}
         onClose={closeDialog}
         onSave={save}
         onReset={
-          isOverridden(device, source)
+          isOverridden(item, source)
             ? () => save(moduleConfig(source))
             : undefined
         }
@@ -702,8 +703,8 @@ export const DeviceListField = (
   const matches = (...texts: (string | undefined)[]) =>
     texts.some((text) => text?.toLowerCase().includes(needle));
 
-  const hasErrors = (devices: Device[]) =>
-    devices.some((device) => errorMessages(errorsFor(device)).length > 0);
+  const hasErrors = (items: Item[]) =>
+    items.some((item) => errorMessages(errorsFor(item)).length > 0);
 
   return (
     <Paper component={Stack} p={2} gap={2}>
@@ -723,7 +724,7 @@ export const DeviceListField = (
 
       <TextField
         size="small"
-        placeholder="Search devices"
+        placeholder="Search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         slotProps={{
@@ -741,13 +742,13 @@ export const DeviceListField = (
 
       {!isFetching && sources.length === 0 && missingSources.size === 0 && (
         <Typography color="text.secondary">
-          No module provides devices for this list.
+          No module provides items for this list.
         </Typography>
       )}
 
       {sources.map((source) => {
-        const selected = (option: DeviceOption) =>
-          devices.find((device) => isDevice(device, source, option));
+        const selected = (option: ItemOption) =>
+          items.find((item) => isOption(item, source, option));
 
         const options = source.options.filter((option) =>
           matches(source.title, option.label, selected(option)?.name),
@@ -755,12 +756,12 @@ export const DeviceListField = (
 
         const selectedCount = options.filter(selected).length;
 
-        const sourceUnavailable = unavailable.filter((device) =>
-          isFromSource(device, source),
+        const sourceUnavailable = unavailable.filter((item) =>
+          isFromSource(item, source),
         );
 
-        const shownUnavailable = sourceUnavailable.filter((device) =>
-          matches(source.title, device.name),
+        const shownUnavailable = sourceUnavailable.filter((item) =>
+          matches(source.title, item.name),
         );
 
         if (options.length === 0 && shownUnavailable.length === 0 && needle) {
@@ -768,7 +769,7 @@ export const DeviceListField = (
         }
 
         return (
-          <DeviceSection
+          <ItemSection
             key={`${source.moduleId}/${source.queryable.name}`}
             title={source.queryable.title || source.queryable.name}
             subtitle={
@@ -780,7 +781,7 @@ export const DeviceListField = (
             count={`${selectedCount}/${options.length}`}
             action={
               isConfigurable(source) && (
-                <Tooltip title="Configure all devices of this module">
+                <Tooltip title="Configure all items of this module">
                   <IconButton
                     aria-label="Configure module"
                     disabled={isDisabled}
@@ -793,7 +794,7 @@ export const DeviceListField = (
             }
             searching={needle !== ""}
             hasErrors={hasErrors(
-              devices.filter((device) => isFromSource(device, source)),
+              items.filter((item) => isFromSource(item, source)),
             )}
             checkbox={
               <Checkbox
@@ -814,10 +815,10 @@ export const DeviceListField = (
             }
           >
             {options.map((option) => (
-              <DeviceRow
-                key={JSON.stringify(option.value)}
+              <ItemRow
+                key={String(JSON.stringify(option.value))}
                 label={option.label}
-                device={selected(option)}
+                item={selected(option)}
                 index={indexOf(selected(option))}
                 configurable={isConfigurable(source)}
                 overridden={isOverridden(selected(option), source)}
@@ -829,22 +830,22 @@ export const DeviceListField = (
               />
             ))}
 
-            {shownUnavailable.map((device) => (
-              <DeviceRow
-                key={JSON.stringify(device.query)}
-                label={device.name}
-                device={device}
-                index={indexOf(device)}
+            {shownUnavailable.map((item) => (
+              <ItemRow
+                key={JSON.stringify(item.query)}
+                label={item.name}
+                item={item}
+                index={indexOf(item)}
                 configurable={isConfigurable(source)}
-                overridden={isOverridden(device, source)}
-                errors={errorsFor(device)}
+                overridden={isOverridden(item, source)}
+                errors={errorsFor(item)}
                 source={source}
                 unavailable
                 disabled={isDisabled}
                 actions={actions}
               />
             ))}
-          </DeviceSection>
+          </ItemSection>
         );
       })}
 
@@ -853,16 +854,14 @@ export const DeviceListField = (
         const config = configs?.[moduleId];
         const moduleTitle = config?.title || config?.module || moduleId;
 
-        const shown = missing.filter((device) =>
-          matches(moduleTitle, device.name),
-        );
+        const shown = missing.filter((item) => matches(moduleTitle, item.name));
 
         if (shown.length === 0) {
           return null;
         }
 
         return (
-          <DeviceSection
+          <ItemSection
             key={key}
             title={name}
             subtitle={
@@ -874,19 +873,19 @@ export const DeviceListField = (
             searching={needle !== ""}
             hasErrors={hasErrors(missing)}
           >
-            {shown.map((device) => (
-              <DeviceRow
-                key={JSON.stringify(device.query)}
-                label={device.name}
-                device={device}
-                index={indexOf(device)}
-                errors={errorsFor(device)}
+            {shown.map((item) => (
+              <ItemRow
+                key={JSON.stringify(item.query)}
+                label={item.name}
+                item={item}
+                index={indexOf(item)}
+                errors={errorsFor(item)}
                 unavailable
                 disabled={isDisabled}
                 actions={actions}
               />
             ))}
-          </DeviceSection>
+          </ItemSection>
         );
       })}
 

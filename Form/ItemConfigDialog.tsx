@@ -17,41 +17,46 @@ import { useState } from "react";
 import type { QueryRequest } from "../utils/queryables";
 import { FabricJsonSchemaForm } from "./Form";
 
-export type Device = {
+export type Item = {
   name: string;
   query: QueryRequest;
   [setting: string]: unknown;
 };
 
-export type DeviceConfig = {
+export type ItemConfig = {
   settings: Record<string, unknown>;
   input: Record<string, unknown>;
 };
 
-export const configOf = (device: Device, property: string): DeviceConfig => {
-  const { name: _name, query, ...settings } = device;
-  const { [property]: _device, ...input } = query.input ?? {};
+export const configOf = (item: Item, property?: string): ItemConfig => {
+  const { name: _name, query, ...settings } = item;
+  const input = { ...query.input };
+  if (property !== undefined) {
+    delete input[property];
+  }
   return { settings, input };
 };
 
 export const withConfig = (
-  device: Device,
-  config: DeviceConfig,
-  property: string,
-): Device => ({
+  item: Item,
+  config: ItemConfig,
+  property?: string,
+): Item => ({
   ...structuredClone(config.settings),
-  name: device.name,
+  name: item.name,
   query: {
-    ...device.query,
+    ...item.query,
     input: {
       ...structuredClone(config.input),
-      [property]: device.query.input?.[property],
+      ...(property !== undefined && {
+        [property]: item.query.input?.[property],
+      }),
     },
   },
 });
 
-export const mostCommonConfig = (configs: DeviceConfig[]) => {
-  const groups: { config: DeviceConfig; count: number }[] = [];
+export const mostCommonConfig = (configs: ItemConfig[]) => {
+  const groups: { config: ItemConfig; count: number }[] = [];
   for (const config of configs) {
     const group = groups.find((group) => deepEquals(group.config, config));
     if (group) {
@@ -67,21 +72,21 @@ export const mostCommonConfig = (configs: DeviceConfig[]) => {
   )?.config;
 };
 
-type DeviceConfigDialogProps = {
+type ItemConfigDialogProps = {
   title: string;
   description?: string;
-  config: DeviceConfig;
+  config: ItemConfig;
   settingsSchema?: RJSFSchema;
   inputSchema?: RJSFSchema;
   inputTitle: string;
-  errors?: ErrorSchema<Device>;
+  errors?: ErrorSchema<Item>;
   SchemaField?: Field;
-  onSave: (config: DeviceConfig) => void;
+  onSave: (config: ItemConfig) => void;
   onReset?: () => void;
   onClose: () => void;
 };
 
-export const DeviceConfigDialog = ({
+export const ItemConfigDialog = ({
   title,
   description,
   config,
@@ -93,7 +98,7 @@ export const DeviceConfigDialog = ({
   onSave,
   onReset,
   onClose,
-}: DeviceConfigDialogProps) => {
+}: ItemConfigDialogProps) => {
   const [draft, setDraft] = useState(config);
 
   const { name: _name, query, ...settingsErrors } = errors ?? {};
