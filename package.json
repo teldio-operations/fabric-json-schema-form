@@ -21,6 +21,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
+    "preview": "bun ./preview/index.html",
     "check:tsc": "bun tsc --noEmit",
     "check:oxlint": "bun --bun oxlint",
     "check:oxfmt": "bun --bun oxfmt --check",
@@ -44,9 +45,11 @@
   },
   "type": "module",
   "devDependencies": {
+    "@types/react-dom": "^19.3.0",
     "openapi-typescript": "^7.13.0",
     "oxfmt": "^0.59.0",
     "oxlint": "1.74.0",
+    "react-dom": "^19.2.8",
     "typescript": "^7.0.2"
   }
 }
