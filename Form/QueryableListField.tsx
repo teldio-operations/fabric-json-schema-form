@@ -41,6 +41,7 @@ import { removeEmpty } from "../utils/data";
 import { type QueryRequest, useQueryableModules } from "../utils/queryables";
 import { ItemConfigDialog } from "./ItemConfigDialog";
 import {
+  accepts,
   type ChainProperty,
   configOf,
   findRequestProperty,
@@ -670,8 +671,13 @@ export const QueryableListField = (
       })
       .join(" → ");
 
-  const isConfigurable = (source: Source) =>
-    !!(settingsSchema || source.inputSchema || processors.length > 0);
+  const isConfigurable = (source: Source, item?: Item) =>
+    !!(
+      settingsSchema ||
+      source.inputSchema ||
+      processors.some((processor) => accepts(processor, source.queryable)) ||
+      processingOf(item)
+    );
 
   const [dialog, setDialog] = useState<
     { index: number } | { source: string } | undefined
@@ -989,7 +995,7 @@ export const QueryableListField = (
                     label={option.label}
                     item={selected(option)}
                     index={indexOf(selected(option))}
-                    configurable={isConfigurable(source)}
+                    configurable={isConfigurable(source, selected(option))}
                     overridden={isOverridden(selected(option), source)}
                     processing={processingOf(selected(option))}
                     errors={errorsFor(selected(option))}
@@ -1006,7 +1012,7 @@ export const QueryableListField = (
                     label={item.name}
                     item={item}
                     index={indexOf(item)}
-                    configurable={isConfigurable(source)}
+                    configurable={isConfigurable(source, item)}
                     overridden={isOverridden(item, source)}
                     processing={processingOf(item)}
                     errors={errorsFor(item)}

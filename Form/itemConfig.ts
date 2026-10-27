@@ -1,6 +1,7 @@
 import { deepEquals, type RJSFSchema } from "@rjsf/utils";
 import type { Queryable } from "../manager-api";
 import type { QueryRequest } from "../utils/queryables";
+import { filterQueries } from "./mediaType";
 
 export type Item = {
   name: string;
@@ -30,6 +31,9 @@ export type Processor = {
   inputSchema?: RJSFSchema;
   inputDefaults: Record<string, unknown>;
 };
+
+export const accepts = (processor: Processor, output?: Queryable) =>
+  !output || !processor.accept || filterQueries(processor.accept)(output);
 
 export type ChainProperty = (query: QueryRequest) => string | undefined;
 

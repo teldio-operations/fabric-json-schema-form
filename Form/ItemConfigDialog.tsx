@@ -17,8 +17,13 @@ import type { ErrorSchema, Field, RJSFSchema } from "@rjsf/utils";
 import { useState } from "react";
 import type { Queryable } from "../manager-api";
 import { FabricJsonSchemaForm } from "./Form";
-import type { Item, ItemConfig, Processor, Step } from "./itemConfig";
-import { filterQueries } from "./mediaType";
+import {
+  accepts,
+  type Item,
+  type ItemConfig,
+  type Processor,
+  type Step,
+} from "./itemConfig";
 
 const processorOf = (processors: Processor[], step: Step) =>
   processors.find(
@@ -63,18 +68,17 @@ export const ItemConfigDialog = ({
 
   const { name: _name, query, ...settingsErrors } = errors ?? {};
 
-  const showProcessing = processors.length > 0 || draft.steps.length > 0;
-  const showHeadings =
-    [settingsSchema, inputSchema, showProcessing].filter(Boolean).length > 1;
-
   const lastStep = draft.steps.at(-1);
   const output = lastStep
     ? processorOf(processors, lastStep)?.queryable
     : queryable;
-  const available = processors.filter(
-    (processor) =>
-      !output || !processor.accept || filterQueries(processor.accept)(output),
+  const available = processors.filter((processor) =>
+    accepts(processor, output),
   );
+
+  const showProcessing = available.length > 0 || draft.steps.length > 0;
+  const showHeadings =
+    [settingsSchema, inputSchema, showProcessing].filter(Boolean).length > 1;
 
   const setSteps = (change: (steps: Step[]) => Step[]) =>
     setDraft((draft) => ({ ...draft, steps: change(draft.steps) }));
