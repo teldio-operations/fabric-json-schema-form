@@ -1,9 +1,11 @@
 import {
+  DynamicForm,
   Edit,
   ExpandLess,
   ExpandMore,
   Search,
   Tune,
+  ViewList,
   Warning,
 } from "@mui/icons-material";
 import {
@@ -28,6 +30,7 @@ import {
 import {
   memo,
   type ReactNode,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -36,14 +39,18 @@ import {
 import type { Queryable } from "../manager-api";
 import { removeEmpty } from "../utils/data";
 import { type QueryRequest, useQueryableModules } from "../utils/queryables";
+import { ItemConfigDialog } from "./ItemConfigDialog";
 import {
+  type ChainProperty,
   configOf,
+  findRequestProperty,
   type Item,
   type ItemConfig,
-  ItemConfigDialog,
   mostCommonConfig,
+  type Processor,
+  unwrap,
   withConfig,
-} from "./ItemConfigDialog";
+} from "./itemConfig";
 
 type QueryableListSchema = RJSFSchema & {
   accept?: string;
@@ -119,14 +126,24 @@ const revealOnHover = {
   "@media (hover: none)": { opacity: 1 },
 };
 
-const isFromSource = (item: Item, source: Source) =>
-  item.query.moduleId === source.moduleId &&
-  item.query.name === source.queryable.name;
+const isFromSource = (query: QueryRequest, source: Source) =>
+  query.moduleId === source.moduleId && query.name === source.queryable.name;
 
-const isOption = (item: Item, source: Source, option: ItemOption) =>
-  isFromSource(item, source) &&
+const isOption = (query: QueryRequest, source: Source, option: ItemOption) =>
+  isFromSource(query, source) &&
   (source.property === undefined ||
-    item.query.input?.[source.property] === option.value);
+    query.input?.[source.property] === option.value);
+
+const isListValue = (value: unknown) =>
+  value === undefined ||
+  (Array.isArray(value) &&
+    value.every(
+      (item) =>
+        typeof item === "object" &&
+        item !== null &&
+        typeof item.query?.moduleId === "string" &&
+        typeof item.query?.name === "string",
+    ));
 
 const errorMessages = (errors: unknown): string[] =>
   typeof errors === "object" && errors !== null
@@ -147,6 +164,7 @@ type Actions = {
 type ItemNameProps = {
   name: string;
   original?: string;
+  processing?: string;
   error?: string;
   warning?: boolean;
   editable: boolean;
@@ -156,6 +174,7 @@ type ItemNameProps = {
 const ItemName = ({
   name,
   original,
+  processing,
   error,
   warning,
   editable,
@@ -206,6 +225,11 @@ const ItemName = ({
             {original}
           </Typography>
         )}
+        {processing && (
+          <Typography variant="caption" color="primary" noWrap>
+            Processing: {processing}
+          </Typography>
+        )}
         {error && (
           <Typography variant="caption" color="error">
             {error}
@@ -235,6 +259,7 @@ type ItemRowProps = {
   option?: ItemOption;
   configurable?: boolean;
   overridden?: boolean;
+  processing?: string;
   errors?: ErrorSchema<Item>;
   unavailable?: boolean;
   disabled?: boolean;
@@ -249,6 +274,7 @@ const ItemRow = memo(function ItemRow({
   option,
   configurable,
   overridden,
+  processing,
   errors,
   unavailable,
   disabled,
@@ -296,6 +322,7 @@ const ItemRow = memo(function ItemRow({
               ? label
               : undefined
           }
+          processing={processing}
           error={nameErrors?.[0]}
           warning={unavailable}
           editable={!!item && !disabled}
@@ -442,12 +469,20 @@ export const QueryableListField = (
     formData,
     fieldPathId: { path },
     registry: {
-      fields: { SchemaField },
+      fields: { SchemaField, ArrayField },
       schemaUtils,
     },
   } = props;
 
-  const items = useMemo(() => formData ?? [], [formData]);
+  const isList = isListValue(formData);
+  const items = useMemo(() => (isList && formData) || [], [isList, formData]);
+
+  const { "ui:widget": _widget, ...standardUiSchema } = props.uiSchema ?? {};
+  const [standard, setStandard] = useState(false);
+  const showStandard = standard || !isList;
+  const editorToggleLabel = showStandard
+    ? "Use the list editor"
+    : "Use the standard form";
   const isDisabled = disabled || readonly;
 
   const settingsSchema = useMemo(
@@ -484,6 +519,10 @@ export const QueryableListField = (
       queryableModules.flatMap(({ id, config, queries }): Source[] =>
         (queries ?? []).flatMap((queryable) => {
           const input = removeEmpty(queryable.input ?? {}) as RJSFSchema;
+          if (findRequestProperty(input)) {
+            return [];
+          }
+
           const picker = findOptionProperty(input) ?? {
             property: undefined,
             options: [
@@ -514,20 +553,70 @@ export const QueryableListField = (
     [queryableModules, schemaUtils],
   );
 
+  const processors = useMemo(
+    () =>
+      queryableModules.flatMap(({ id, config, queries }): Processor[] =>
+        (queries ?? []).flatMap((queryable) => {
+          const input = removeEmpty(queryable.input ?? {}) as RJSFSchema;
+          const request = findRequestProperty(input);
+          if (!request) {
+            return [];
+          }
+
+          const [property, { accept }] = request;
+          const inputSchema = withoutProperties(input, [property]);
+
+          return [
+            {
+              moduleId: id,
+              moduleTitle: config.title || config.module,
+              queryable,
+              property,
+              accept,
+              inputSchema,
+              inputDefaults: inputSchema
+                ? ((schemaUtils.getDefaultFormState(
+                    inputSchema,
+                  ) as unknown as Record<string, unknown>) ?? {})
+                : {},
+            },
+          ];
+        }),
+      ),
+    [queryableModules, schemaUtils],
+  );
+
+  const chainProperty: ChainProperty = useCallback(
+    (query) =>
+      processors.find(
+        (processor) =>
+          processor.moduleId === query.moduleId &&
+          processor.queryable.name === query.name,
+      )?.property,
+    [processors],
+  );
+
+  const baseOf = useCallback(
+    (item: Item) => unwrap(item.query, chainProperty).base,
+    [chainProperty],
+  );
+
   const unavailable = isFetching
     ? []
     : items.filter(
         (item) =>
           !sources.some((source) =>
-            source.options.some((option) => isOption(item, source, option)),
+            source.options.some((option) =>
+              isOption(baseOf(item), source, option),
+            ),
           ),
       );
 
   const missingSources = Map.groupBy(
     unavailable.filter(
-      (item) => !sources.some((source) => isFromSource(item, source)),
+      (item) => !sources.some((source) => isFromSource(baseOf(item), source)),
     ),
-    (item) => sourceKey(item.query),
+    (item) => sourceKey(baseOf(item)),
   );
 
   const [pinnedConfigs, setPinnedConfigs] = useState(
@@ -542,15 +631,16 @@ export const QueryableListField = (
           pinnedConfigs.get(keyOf(source)) ??
             mostCommonConfig(
               items
-                .filter((item) => isFromSource(item, source))
-                .map((item) => configOf(item, source.property)),
+                .filter((item) => isFromSource(baseOf(item), source))
+                .map((item) => configOf(item, source.property, chainProperty)),
             ) ?? {
               settings: settingsDefaults as Record<string, unknown>,
               input: source.inputDefaults as Record<string, unknown>,
+              steps: [],
             },
         ]),
       ),
-    [sources, items, pinnedConfigs, settingsDefaults],
+    [sources, items, pinnedConfigs, settingsDefaults, baseOf, chainProperty],
   );
 
   const moduleConfig = (source: Source) => moduleConfigs.get(keyOf(source))!;
@@ -560,17 +650,49 @@ export const QueryableListField = (
 
   const isOverridden = (item: Item | undefined, source: Source) =>
     !!item &&
-    !deepEquals(configOf(item, source.property), moduleConfig(source));
+    !deepEquals(
+      configOf(item, source.property, chainProperty),
+      moduleConfig(source),
+    );
+
+  const processingOf = (item?: Item) =>
+    item &&
+    unwrap(item.query, chainProperty)
+      .steps.map((step) => {
+        const processor = processors.find(
+          (processor) =>
+            processor.moduleId === step.moduleId &&
+            processor.queryable.name === step.name,
+        );
+        return processor
+          ? processor.queryable.title || processor.queryable.name
+          : step.name;
+      })
+      .join(" → ");
 
   const isConfigurable = (source: Source) =>
-    !!(settingsSchema || source.inputSchema);
+    !!(settingsSchema || source.inputSchema || processors.length > 0);
 
   const [dialog, setDialog] = useState<
     { index: number } | { source: string } | undefined
   >();
 
-  const latest = useRef({ items, onChange, path, moduleConfig });
-  latest.current = { items, onChange, path, moduleConfig };
+  const latest = useRef({
+    items,
+    onChange,
+    path,
+    moduleConfig,
+    baseOf,
+    chainProperty,
+  });
+  latest.current = {
+    items,
+    onChange,
+    path,
+    moduleConfig,
+    baseOf,
+    chainProperty,
+  };
 
   const actions = useMemo((): Actions => {
     const update = (change: (items: Item[]) => Item[]) => {
@@ -599,13 +721,17 @@ export const QueryableListField = (
               },
               latest.current.moduleConfig(source),
               source.property,
+              latest.current.chainProperty,
             ),
           ),
         ]),
       remove: (source, options) =>
         update((items) =>
           items.filter(
-            (item) => !options.some((option) => isOption(item, source, option)),
+            (item) =>
+              !options.some((option) =>
+                isOption(latest.current.baseOf(item), source, option),
+              ),
           ),
         ),
       removeAt: (index) =>
@@ -630,7 +756,8 @@ export const QueryableListField = (
 
       const previous = moduleConfig(source);
       const following = items.filter(
-        (item) => isFromSource(item, source) && !isOverridden(item, source),
+        (item) =>
+          isFromSource(baseOf(item), source) && !isOverridden(item, source),
       );
 
       return (
@@ -641,15 +768,20 @@ export const QueryableListField = (
           settingsSchema={settingsSchema}
           inputSchema={source.inputSchema}
           inputTitle={`${source.queryable.title || source.queryable.name} inputs`}
+          queryable={source.queryable}
+          processors={processors}
           SchemaField={SchemaField}
           onClose={closeDialog}
           onSave={(config) => {
             pinModuleConfig(source, config);
             actions.update((items) =>
               items.map((item) =>
-                isFromSource(item, source) &&
-                deepEquals(configOf(item, source.property), previous)
-                  ? withConfig(item, config, source.property)
+                isFromSource(baseOf(item), source) &&
+                deepEquals(
+                  configOf(item, source.property, chainProperty),
+                  previous,
+                )
+                  ? withConfig(item, config, source.property, chainProperty)
                   : item,
               ),
             );
@@ -660,7 +792,8 @@ export const QueryableListField = (
     }
 
     const item = items[dialog.index];
-    const source = item && sources.find((source) => isFromSource(item, source));
+    const source =
+      item && sources.find((source) => isFromSource(baseOf(item), source));
     if (!item || !source) {
       return null;
     }
@@ -668,7 +801,7 @@ export const QueryableListField = (
     const save = (config: ItemConfig) => {
       pinModuleConfig(source);
       actions.updateAt(dialog.index, (item) =>
-        withConfig(item, config, source.property),
+        withConfig(item, config, source.property, chainProperty),
       );
       closeDialog();
     };
@@ -681,10 +814,12 @@ export const QueryableListField = (
             ? `This item overrides the configuration of ${source.title}.`
             : `Changes here override the configuration of ${source.title} for this item only.`
         }
-        config={configOf(item, source.property)}
+        config={configOf(item, source.property, chainProperty)}
         settingsSchema={settingsSchema}
         inputSchema={source.inputSchema}
         inputTitle={`${source.queryable.title || source.queryable.name} inputs`}
+        queryable={source.queryable}
+        processors={processors}
         errors={errorsFor(item)}
         SchemaField={SchemaField}
         onClose={closeDialog}
@@ -708,188 +843,228 @@ export const QueryableListField = (
 
   return (
     <Paper component={Stack} p={2} gap={2}>
-      <Stack gap={0.5}>
-        {title && <Typography variant="subtitle1">{title}</Typography>}
-        {description && (
-          <Typography variant="body2" color="text.secondary">
-            {description}
-          </Typography>
-        )}
-        {rawErrors?.map((error) => (
-          <Typography key={error} variant="body2" color="error">
-            {error}
-          </Typography>
-        ))}
+      <Stack direction="row" alignItems="flex-start" gap={1}>
+        <Stack gap={0.5} flex={1} minWidth={0}>
+          {!showStandard && (
+            <>
+              {title && <Typography variant="subtitle1">{title}</Typography>}
+              {description && (
+                <Typography variant="body2" color="text.secondary">
+                  {description}
+                </Typography>
+              )}
+              {rawErrors?.map((error) => (
+                <Typography key={error} variant="body2" color="error">
+                  {error}
+                </Typography>
+              ))}
+            </>
+          )}
+          {!isList && (
+            <Typography variant="body2" color="warning.main">
+              This value cannot be shown in the list editor. Fix it in the
+              standard form.
+            </Typography>
+          )}
+        </Stack>
+
+        <Tooltip title={editorToggleLabel}>
+          <span>
+            <IconButton
+              aria-label={editorToggleLabel}
+              disabled={!isList}
+              onClick={() => setStandard(!standard)}
+            >
+              {showStandard ? <ViewList /> : <DynamicForm />}
+            </IconButton>
+          </span>
+        </Tooltip>
       </Stack>
 
-      <TextField
-        size="small"
-        placeholder="Search"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        slotProps={{
-          input: {
-            startAdornment: (
-              <InputAdornment position="start">
-                <Search />
-              </InputAdornment>
-            ),
-          },
-        }}
-      />
+      {showStandard ? (
+        ArrayField && <ArrayField {...props} uiSchema={standardUiSchema} />
+      ) : (
+        <>
+          <TextField
+            size="small"
+            placeholder="Search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
 
-      {isFetching && <LinearProgress />}
+          {isFetching && <LinearProgress />}
 
-      {!isFetching && sources.length === 0 && missingSources.size === 0 && (
-        <Typography color="text.secondary">
-          No module provides items for this list.
-        </Typography>
-      )}
+          {!isFetching && sources.length === 0 && missingSources.size === 0 && (
+            <Typography color="text.secondary">
+              No module provides items for this list.
+            </Typography>
+          )}
 
-      {sources.map((source) => {
-        const selected = (option: ItemOption) =>
-          items.find((item) => isOption(item, source, option));
+          {sources.map((source) => {
+            const selected = (option: ItemOption) =>
+              items.find((item) => isOption(baseOf(item), source, option));
 
-        const options = source.options.filter((option) =>
-          matches(source.title, option.label, selected(option)?.name),
-        );
+            const options = source.options.filter((option) =>
+              matches(source.title, option.label, selected(option)?.name),
+            );
 
-        const selectedCount = options.filter(selected).length;
+            const selectedCount = options.filter(selected).length;
 
-        const sourceUnavailable = unavailable.filter((item) =>
-          isFromSource(item, source),
-        );
+            const sourceUnavailable = unavailable.filter((item) =>
+              isFromSource(baseOf(item), source),
+            );
 
-        const shownUnavailable = sourceUnavailable.filter((item) =>
-          matches(source.title, item.name),
-        );
+            const shownUnavailable = sourceUnavailable.filter((item) =>
+              matches(source.title, item.name),
+            );
 
-        if (options.length === 0 && shownUnavailable.length === 0 && needle) {
-          return null;
-        }
-
-        return (
-          <ItemSection
-            key={`${source.moduleId}/${source.queryable.name}`}
-            title={source.queryable.title || source.queryable.name}
-            subtitle={
-              <>
-                {source.title}
-                {unavailableNote(sourceUnavailable.length)}
-              </>
+            if (
+              options.length === 0 &&
+              shownUnavailable.length === 0 &&
+              needle
+            ) {
+              return null;
             }
-            count={`${selectedCount}/${options.length}`}
-            action={
-              isConfigurable(source) && (
-                <Tooltip title="Configure all items of this module">
-                  <IconButton
-                    aria-label="Configure module"
+
+            return (
+              <ItemSection
+                key={`${source.moduleId}/${source.queryable.name}`}
+                title={source.queryable.title || source.queryable.name}
+                subtitle={
+                  <>
+                    {source.title}
+                    {unavailableNote(sourceUnavailable.length)}
+                  </>
+                }
+                count={`${selectedCount}/${options.length}`}
+                action={
+                  isConfigurable(source) && (
+                    <Tooltip title="Configure all items of this module">
+                      <IconButton
+                        aria-label="Configure module"
+                        disabled={isDisabled}
+                        onClick={() => setDialog({ source: keyOf(source) })}
+                      >
+                        <Tune />
+                      </IconButton>
+                    </Tooltip>
+                  )
+                }
+                searching={needle !== ""}
+                hasErrors={hasErrors(
+                  items.filter((item) => isFromSource(baseOf(item), source)),
+                )}
+                checkbox={
+                  <Checkbox
+                    disabled={isDisabled || options.length === 0}
+                    checked={
+                      options.length > 0 && selectedCount === options.length
+                    }
+                    indeterminate={
+                      selectedCount > 0 && selectedCount < options.length
+                    }
+                    onChange={() =>
+                      selectedCount === options.length
+                        ? actions.remove(source, options)
+                        : actions.add(
+                            source,
+                            options.filter((option) => !selected(option)),
+                          )
+                    }
+                  />
+                }
+              >
+                {options.map((option) => (
+                  <ItemRow
+                    key={String(JSON.stringify(option.value))}
+                    label={option.label}
+                    item={selected(option)}
+                    index={indexOf(selected(option))}
+                    configurable={isConfigurable(source)}
+                    overridden={isOverridden(selected(option), source)}
+                    processing={processingOf(selected(option))}
+                    errors={errorsFor(selected(option))}
+                    source={source}
+                    option={option}
                     disabled={isDisabled}
-                    onClick={() => setDialog({ source: keyOf(source) })}
-                  >
-                    <Tune />
-                  </IconButton>
-                </Tooltip>
-              )
+                    actions={actions}
+                  />
+                ))}
+
+                {shownUnavailable.map((item) => (
+                  <ItemRow
+                    key={JSON.stringify(item.query)}
+                    label={item.name}
+                    item={item}
+                    index={indexOf(item)}
+                    configurable={isConfigurable(source)}
+                    overridden={isOverridden(item, source)}
+                    processing={processingOf(item)}
+                    errors={errorsFor(item)}
+                    source={source}
+                    unavailable
+                    disabled={isDisabled}
+                    actions={actions}
+                  />
+                ))}
+              </ItemSection>
+            );
+          })}
+
+          {[...missingSources].map(([key, missing]) => {
+            const { moduleId, name } = baseOf(missing[0]!);
+            const config = configs?.[moduleId];
+            const moduleTitle = config?.title || config?.module || moduleId;
+
+            const shown = missing.filter((item) =>
+              matches(moduleTitle, item.name),
+            );
+
+            if (shown.length === 0) {
+              return null;
             }
-            searching={needle !== ""}
-            hasErrors={hasErrors(
-              items.filter((item) => isFromSource(item, source)),
-            )}
-            checkbox={
-              <Checkbox
-                disabled={isDisabled || options.length === 0}
-                checked={options.length > 0 && selectedCount === options.length}
-                indeterminate={
-                  selectedCount > 0 && selectedCount < options.length
+
+            return (
+              <ItemSection
+                key={key}
+                title={name}
+                subtitle={
+                  <>
+                    {moduleTitle}
+                    {unavailableNote(missing.length)}
+                  </>
                 }
-                onChange={() =>
-                  selectedCount === options.length
-                    ? actions.remove(source, options)
-                    : actions.add(
-                        source,
-                        options.filter((option) => !selected(option)),
-                      )
-                }
-              />
-            }
-          >
-            {options.map((option) => (
-              <ItemRow
-                key={String(JSON.stringify(option.value))}
-                label={option.label}
-                item={selected(option)}
-                index={indexOf(selected(option))}
-                configurable={isConfigurable(source)}
-                overridden={isOverridden(selected(option), source)}
-                errors={errorsFor(selected(option))}
-                source={source}
-                option={option}
-                disabled={isDisabled}
-                actions={actions}
-              />
-            ))}
+                searching={needle !== ""}
+                hasErrors={hasErrors(missing)}
+              >
+                {shown.map((item) => (
+                  <ItemRow
+                    key={JSON.stringify(item.query)}
+                    label={item.name}
+                    item={item}
+                    index={indexOf(item)}
+                    errors={errorsFor(item)}
+                    unavailable
+                    disabled={isDisabled}
+                    actions={actions}
+                  />
+                ))}
+              </ItemSection>
+            );
+          })}
 
-            {shownUnavailable.map((item) => (
-              <ItemRow
-                key={JSON.stringify(item.query)}
-                label={item.name}
-                item={item}
-                index={indexOf(item)}
-                configurable={isConfigurable(source)}
-                overridden={isOverridden(item, source)}
-                errors={errorsFor(item)}
-                source={source}
-                unavailable
-                disabled={isDisabled}
-                actions={actions}
-              />
-            ))}
-          </ItemSection>
-        );
-      })}
-
-      {[...missingSources].map(([key, missing]) => {
-        const { moduleId, name } = missing[0]!.query;
-        const config = configs?.[moduleId];
-        const moduleTitle = config?.title || config?.module || moduleId;
-
-        const shown = missing.filter((item) => matches(moduleTitle, item.name));
-
-        if (shown.length === 0) {
-          return null;
-        }
-
-        return (
-          <ItemSection
-            key={key}
-            title={name}
-            subtitle={
-              <>
-                {moduleTitle}
-                {unavailableNote(missing.length)}
-              </>
-            }
-            searching={needle !== ""}
-            hasErrors={hasErrors(missing)}
-          >
-            {shown.map((item) => (
-              <ItemRow
-                key={JSON.stringify(item.query)}
-                label={item.name}
-                item={item}
-                index={indexOf(item)}
-                errors={errorsFor(item)}
-                unavailable
-                disabled={isDisabled}
-                actions={actions}
-              />
-            ))}
-          </ItemSection>
-        );
-      })}
-
-      {dialog && renderDialog(dialog)}
+          {dialog && renderDialog(dialog)}
+        </>
+      )}
     </Paper>
   );
 };

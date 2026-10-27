@@ -1,76 +1,31 @@
+import { Add, Delete } from "@mui/icons-material";
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Paper,
   Stack,
   Typography,
 } from "@mui/material";
-import {
-  deepEquals,
-  type ErrorSchema,
-  type Field,
-  type RJSFSchema,
-} from "@rjsf/utils";
+import type { ErrorSchema, Field, RJSFSchema } from "@rjsf/utils";
 import { useState } from "react";
-import type { QueryRequest } from "../utils/queryables";
+import type { Queryable } from "../manager-api";
 import { FabricJsonSchemaForm } from "./Form";
+import type { Item, ItemConfig, Processor, Step } from "./itemConfig";
+import { filterQueries } from "./mediaType";
 
-export type Item = {
-  name: string;
-  query: QueryRequest;
-  [setting: string]: unknown;
-};
-
-export type ItemConfig = {
-  settings: Record<string, unknown>;
-  input: Record<string, unknown>;
-};
-
-export const configOf = (item: Item, property?: string): ItemConfig => {
-  const { name: _name, query, ...settings } = item;
-  const input = { ...query.input };
-  if (property !== undefined) {
-    delete input[property];
-  }
-  return { settings, input };
-};
-
-export const withConfig = (
-  item: Item,
-  config: ItemConfig,
-  property?: string,
-): Item => ({
-  ...structuredClone(config.settings),
-  name: item.name,
-  query: {
-    ...item.query,
-    input: {
-      ...structuredClone(config.input),
-      ...(property !== undefined && {
-        [property]: item.query.input?.[property],
-      }),
-    },
-  },
-});
-
-export const mostCommonConfig = (configs: ItemConfig[]) => {
-  const groups: { config: ItemConfig; count: number }[] = [];
-  for (const config of configs) {
-    const group = groups.find((group) => deepEquals(group.config, config));
-    if (group) {
-      group.count++;
-    } else {
-      groups.push({ config, count: 1 });
-    }
-  }
-
-  return groups.reduce<(typeof groups)[number] | undefined>(
-    (best, group) => (!best || group.count > best.count ? group : best),
-    undefined,
-  )?.config;
-};
+const processorOf = (processors: Processor[], step: Step) =>
+  processors.find(
+    (processor) =>
+      processor.moduleId === step.moduleId &&
+      processor.queryable.name === step.name,
+  );
 
 type ItemConfigDialogProps = {
   title: string;
@@ -79,6 +34,8 @@ type ItemConfigDialogProps = {
   settingsSchema?: RJSFSchema;
   inputSchema?: RJSFSchema;
   inputTitle: string;
+  queryable: Queryable;
+  processors: Processor[];
   errors?: ErrorSchema<Item>;
   SchemaField?: Field;
   onSave: (config: ItemConfig) => void;
@@ -93,6 +50,8 @@ export const ItemConfigDialog = ({
   settingsSchema,
   inputSchema,
   inputTitle,
+  queryable,
+  processors,
   errors,
   SchemaField,
   onSave,
@@ -100,9 +59,25 @@ export const ItemConfigDialog = ({
   onClose,
 }: ItemConfigDialogProps) => {
   const [draft, setDraft] = useState(config);
+  const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
 
   const { name: _name, query, ...settingsErrors } = errors ?? {};
-  const showHeadings = settingsSchema && inputSchema;
+
+  const showProcessing = processors.length > 0 || draft.steps.length > 0;
+  const showHeadings =
+    [settingsSchema, inputSchema, showProcessing].filter(Boolean).length > 1;
+
+  const lastStep = draft.steps.at(-1);
+  const output = lastStep
+    ? processorOf(processors, lastStep)?.queryable
+    : queryable;
+  const available = processors.filter(
+    (processor) =>
+      !output || !processor.accept || filterQueries(processor.accept)(output),
+  );
+
+  const setSteps = (change: (steps: Step[]) => Step[]) =>
+    setDraft((draft) => ({ ...draft, steps: change(draft.steps) }));
 
   const nestedForm = {
     tagName: "div" as const,
@@ -156,6 +131,116 @@ export const ItemConfigDialog = ({
                   setDraft((draft) => ({ ...draft, input: formData }))
                 }
               />
+            </>
+          )}
+
+          {showProcessing && (
+            <>
+              {showHeadings && (
+                <Typography variant="overline" color="text.secondary">
+                  Processing
+                </Typography>
+              )}
+
+              {draft.steps.map((step, index) => {
+                const processor = processorOf(processors, step);
+
+                return (
+                  <Paper
+                    key={`${index}/${step.moduleId}/${step.name}`}
+                    variant="outlined"
+                    component={Stack}
+                    p={1.5}
+                    gap={1}
+                  >
+                    <Stack direction="row" alignItems="center" gap={1}>
+                      <Stack flex={1} minWidth={0}>
+                        <Typography noWrap>
+                          {processor
+                            ? processor.queryable.title ||
+                              processor.queryable.name
+                            : step.name}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color={processor ? "text.secondary" : "warning.main"}
+                          noWrap
+                        >
+                          {processor
+                            ? processor.moduleTitle
+                            : `${step.moduleId} · Unavailable`}
+                        </Typography>
+                      </Stack>
+                      <IconButton
+                        aria-label="Remove processing step"
+                        onClick={() =>
+                          setSteps((steps) =>
+                            steps.filter((_, i) => i !== index),
+                          )
+                        }
+                      >
+                        <Delete />
+                      </IconButton>
+                    </Stack>
+
+                    {processor?.inputSchema && (
+                      <FabricJsonSchemaForm
+                        {...nestedForm}
+                        schema={processor.inputSchema}
+                        formData={step.input}
+                        onChange={({ formData }) =>
+                          setSteps((steps) =>
+                            steps.map((step, i) =>
+                              i === index ? { ...step, input: formData } : step,
+                            ),
+                          )
+                        }
+                      />
+                    )}
+                  </Paper>
+                );
+              })}
+
+              <Stack direction="row">
+                <Button
+                  startIcon={<Add />}
+                  disabled={available.length === 0}
+                  onClick={(e) => setMenuAnchor(e.currentTarget)}
+                >
+                  Add processing
+                </Button>
+              </Stack>
+
+              <Menu
+                anchorEl={menuAnchor}
+                open={!!menuAnchor}
+                onClose={() => setMenuAnchor(undefined)}
+              >
+                {available.map((processor) => (
+                  <MenuItem
+                    key={`${processor.moduleId}/${processor.queryable.name}`}
+                    onClick={() => {
+                      setSteps((steps) => [
+                        ...steps,
+                        {
+                          moduleId: processor.moduleId,
+                          name: processor.queryable.name,
+                          property: processor.property,
+                          input: structuredClone(processor.inputDefaults),
+                        },
+                      ]);
+                      setMenuAnchor(undefined);
+                    }}
+                  >
+                    <ListItemText
+                      primary={
+                        processor.queryable.title || processor.queryable.name
+                      }
+                      secondary={processor.moduleTitle}
+                    />
+                  </MenuItem>
+                ))}
+              </Menu>
             </>
           )}
         </Stack>

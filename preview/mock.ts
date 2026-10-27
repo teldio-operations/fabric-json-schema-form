@@ -48,7 +48,28 @@ const configs: Record<string, Config> = {
     status: "online",
     statusReason: "",
   },
+  transcoder: {
+    id: "transcoder",
+    module: "transcoder",
+    title: "Transcoder",
+    status: "online",
+    statusReason: "",
+  },
+  multiplexer: {
+    id: "multiplexer",
+    module: "multiplexer",
+    title: "Multiplexer",
+    status: "online",
+    statusReason: "",
+  },
 };
+
+const videoRequest = (title: string) => ({
+  type: "object",
+  title,
+  control: "queryable",
+  accept: "video/*",
+});
 
 const configured = {
   alta: {
@@ -93,6 +114,63 @@ const configured = {
               title: "Source",
               control: "queryable",
               accept: "video/*",
+            },
+          },
+        },
+      },
+    ],
+  },
+  transcoder: {
+    name: "transcoder",
+    title: "Transcoder",
+    queries: [
+      {
+        name: "re-encode",
+        title: "Re-encode",
+        mediaType: "video/mp2t",
+        input: {
+          type: "object",
+          properties: {
+            video: videoRequest("Video"),
+            codec: {
+              type: "string",
+              title: "Codec",
+              enum: ["h264", "h265"],
+              default: "h264",
+            },
+            bitrate: {
+              type: "integer",
+              title: "Bitrate (kbit/s)",
+              minimum: 100,
+              default: 2000,
+            },
+          },
+        },
+      },
+    ],
+  },
+  multiplexer: {
+    name: "multiplexer",
+    title: "Multiplexer",
+    queries: [
+      {
+        name: "multiplex",
+        title: "Multiplex",
+        mediaType: "video/mp2t",
+        input: {
+          type: "object",
+          properties: {
+            video: videoRequest("Main video"),
+            layout: {
+              type: "string",
+              title: "Layout",
+              enum: ["side-by-side", "picture-in-picture", "grid"],
+              default: "picture-in-picture",
+            },
+            others: {
+              type: "array",
+              title: "Other videos",
+              items: videoRequest("Video"),
             },
           },
         },
