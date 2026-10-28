@@ -16,6 +16,7 @@ import {
   type SetFieldError,
 } from "../utils/fieldErrorContext";
 import { validator } from "../utils/validator";
+import { QueryableListField } from "./QueryableListField";
 import { PreventSubmitOnEnter } from "./PreventSubmitOnEnter";
 import { QueryableField } from "./QueryableField";
 import { RawJsonField } from "./RawJsonField";
@@ -136,6 +137,7 @@ export const FabricJsonSchemaForm = ({
             fields={{
               SchemaField,
               QueryableField,
+              QueryableListField,
               RawJsonField,
               NumberField,
               ...props.fields,

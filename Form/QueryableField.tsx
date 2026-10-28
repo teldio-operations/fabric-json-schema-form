@@ -1,33 +1,10 @@
 import { MenuItem, Paper, Stack, Typography } from "@mui/material";
 import type { FieldProps, RJSFSchema } from "@rjsf/utils";
 import { useMemo, useRef } from "react";
-import { api } from "../api";
 import { LoadingTextField } from "../components/LoadingTextField";
-import { useAppinfo } from "../utils/appinfo";
+import { removeEmpty } from "../utils/data";
+import { type QueryRequest, useQueryableModules } from "../utils/queryables";
 import { FabricJsonSchemaForm } from "./Form";
-import { filterQueries } from "./mediaType";
-
-const isObject = (value: unknown): value is Record<string, unknown> => {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-};
-
-const removeEmpty = <T extends Record<string, unknown>>(obj: T): T => {
-  const newObj = {} as T;
-  for (const key in obj) {
-    const value = obj[key];
-    if (value !== undefined && value !== null) {
-      if (isObject(value)) {
-        const cleaned = removeEmpty(value);
-        if (Object.keys(cleaned).length > 0) {
-          newObj[key] = cleaned;
-        }
-      } else {
-        newObj[key] = value;
-      }
-    }
-  }
-  return newObj;
-};
 
 const toValue = (moduleId?: string, name?: string) =>
   moduleId && name ? `${moduleId}/${name}` : undefined;
@@ -35,12 +12,6 @@ const toValue = (moduleId?: string, name?: string) =>
 const fromValue = (value: string) => {
   const [moduleId, name] = value.split("/");
   return { moduleId, name };
-};
-
-type QueryRequest = {
-  name: string;
-  moduleId: string;
-  input?: Record<string, unknown>;
 };
 
 type QueryableSchema = RJSFSchema & {
@@ -62,38 +33,8 @@ export const QueryableField = (
     },
   } = props;
 
-  const {
-    getInfo,
-    isLoading: isLoadingAppinfo,
-    refetch: refetchAppinfo,
-  } = useAppinfo();
-
-  const {
-    data: configs,
-    isPending: isFetchingConfigs,
-    refetch: refetchConfigs,
-  } = api.useQuery("get", "/api/config");
-
-  const refetch = () => {
-    refetchAppinfo();
-    refetchConfigs();
-  };
-
-  const isFetching = isLoadingAppinfo || isFetchingConfigs;
-
-  const queryableModules = useMemo(
-    () =>
-      Object.entries(configs ?? {})
-        .map(([id, config]) => ({
-          id,
-          config,
-          queries: getInfo({ id, name: config.module })?.queries?.filter(
-            filterQueries(accept),
-          ),
-        }))
-        .filter(({ queries }) => !!queries?.length),
-    [accept, getInfo, configs],
-  );
+  const { queryableModules, configs, getInfo, isFetching, refetch } =
+    useQueryableModules(accept);
 
   const selectedConfig = formData?.moduleId
     ? configs?.[formData.moduleId]

@@ -1,0 +1,218 @@
+import type { Config, Info } from "../manager-api";
+
+const cameras = (prefix: string, count: number) =>
+  Array.from({ length: count }, (_, i) => ({
+    type: "string",
+    const: `${prefix}-${i + 1}`,
+    title: `${prefix} Camera ${String(i + 1).padStart(3, "0")}`,
+  }));
+
+const videoPlayback = (prefix: string, count: number) => ({
+  name: "video-playback",
+  title: "Recorded video",
+  mediaType: "video/mp4",
+  input: {
+    type: "object",
+    required: ["camera_id"],
+    properties: {
+      camera_id: {
+        type: "string",
+        title: "Camera",
+        control: "combobox",
+        oneOf: cameras(prefix, count),
+      },
+    },
+  },
+});
+
+const videoStream = (prefix: string, count: number, extra = {}) => ({
+  name: "video-stream",
+  title: "Live video stream",
+  mediaType: "video/mp2t",
+  input: {
+    type: "object",
+    required: ["camera_id"],
+    properties: {
+      camera_id: {
+        type: "string",
+        title: "Camera",
+        control: "combobox",
+        oneOf: cameras(prefix, count),
+      },
+      ...extra,
+    },
+  },
+});
+
+const configs: Record<string, Config> = {
+  alta: {
+    id: "alta",
+    module: "avigilon-alta-video",
+    title: "Alta HQ",
+    status: "online",
+    statusReason: "",
+  },
+  unity: {
+    id: "unity",
+    module: "avigilon-unity-video",
+    title: "Unity Warehouse",
+    status: "online",
+    statusReason: "",
+  },
+  watermark: {
+    id: "watermark",
+    module: "watermark",
+    title: "Watermark",
+    status: "online",
+    statusReason: "",
+  },
+  transcoder: {
+    id: "transcoder",
+    module: "transcoder",
+    title: "Transcoder",
+    status: "online",
+    statusReason: "",
+  },
+  multiplexer: {
+    id: "multiplexer",
+    module: "multiplexer",
+    title: "Multiplexer",
+    status: "online",
+    statusReason: "",
+  },
+};
+
+const videoRequest = (title: string) => ({
+  type: "object",
+  title,
+  control: "queryable",
+  accept: "video/*",
+});
+
+const configured = {
+  alta: {
+    name: "avigilon-alta-video",
+    title: "Avigilon Alta Video",
+    queries: [videoStream("Lobby", 12), videoPlayback("Lobby", 12)],
+  },
+  unity: {
+    name: "avigilon-unity-video",
+    title: "Avigilon Unity Video",
+    queries: [
+      videoStream("Dock", 250, {
+        quality: {
+          type: "string",
+          title: "Quality",
+          enum: ["high", "low"],
+          default: "high",
+        },
+      }),
+      {
+        name: "snapshot",
+        title: "Snapshot",
+        mediaType: "image/jpeg",
+        input: { type: "object", properties: {} },
+      },
+    ],
+  },
+  watermark: {
+    name: "watermark",
+    title: "Watermark",
+    queries: [
+      {
+        name: "watermark-video",
+        title: "Watermark a video",
+        mediaType: "video/mp2t",
+        input: {
+          type: "object",
+          properties: {
+            text: { type: "string", title: "Text" },
+            source: {
+              type: "object",
+              title: "Source",
+              control: "queryable",
+              accept: "video/*",
+            },
+          },
+        },
+      },
+    ],
+  },
+  transcoder: {
+    name: "transcoder",
+    title: "Transcoder",
+    queries: [
+      {
+        name: "re-encode",
+        title: "Re-encode",
+        mediaType: "video/mp2t",
+        input: {
+          type: "object",
+          properties: {
+            video: videoRequest("Video"),
+            codec: {
+              type: "string",
+              title: "Codec",
+              enum: ["h264", "h265"],
+              default: "h264",
+            },
+            bitrate: {
+              type: "integer",
+              title: "Bitrate (kbit/s)",
+              minimum: 100,
+              default: 2000,
+            },
+          },
+        },
+      },
+    ],
+  },
+  multiplexer: {
+    name: "multiplexer",
+    title: "Multiplexer",
+    queries: [
+      {
+        name: "multiplex",
+        title: "Multiplex",
+        mediaType: "video/mp2t",
+        input: {
+          type: "object",
+          properties: {
+            video: videoRequest("Main video"),
+            layout: {
+              type: "string",
+              title: "Layout",
+              enum: ["side-by-side", "picture-in-picture", "grid"],
+              default: "picture-in-picture",
+            },
+            others: {
+              type: "array",
+              title: "Other videos",
+              items: videoRequest("Video"),
+            },
+          },
+        },
+      },
+    ],
+  },
+} as unknown as Record<string, Info>;
+
+const routes: Record<string, unknown> = {
+  "/api/config": configs,
+  "/api/appinfo": [],
+  "/api/appinfo/configured": configured,
+};
+
+const realFetch = globalThis.fetch;
+
+globalThis.fetch = Object.assign(
+  async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = new URL(
+      input instanceof Request ? input.url : input,
+      location.href,
+    );
+    const body = routes[url.pathname];
+    return body === undefined ? realFetch(input, init) : Response.json(body);
+  },
+  realFetch,
+);
