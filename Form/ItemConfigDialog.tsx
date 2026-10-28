@@ -1,6 +1,8 @@
 import { Add, Delete } from "@mui/icons-material";
 import {
   Button,
+  Checkbox,
+  FormControlLabel,
   Dialog,
   DialogActions,
   DialogContent,
@@ -41,6 +43,7 @@ type ItemConfigDialogProps = {
   inputTitle: string;
   queryable: Queryable;
   processors: Processor[];
+  linked: { property: string; title: string; available: boolean }[];
   errors?: ErrorSchema<Item>;
   SchemaField?: Field;
   onSave: (config: ItemConfig) => void;
@@ -57,6 +60,7 @@ export const ItemConfigDialog = ({
   inputTitle,
   queryable,
   processors,
+  linked,
   errors,
   SchemaField,
   onSave,
@@ -77,8 +81,19 @@ export const ItemConfigDialog = ({
   );
 
   const showProcessing = available.length > 0 || draft.steps.length > 0;
+  const showSettings = !!settingsSchema || linked.length > 0;
   const showHeadings =
-    [settingsSchema, inputSchema, showProcessing].filter(Boolean).length > 1;
+    [showSettings, inputSchema, showProcessing].filter(Boolean).length > 1;
+
+  const toggleLinked = (property: string, enabled: boolean) =>
+    setDraft((draft) => ({
+      ...draft,
+      linked: linked
+        .map((linked) => linked.property)
+        .filter((linked) =>
+          linked === property ? enabled : draft.linked.includes(linked),
+        ),
+    }));
 
   const setSteps = (change: (steps: Step[]) => Step[]) =>
     setDraft((draft) => ({ ...draft, steps: change(draft.steps) }));
@@ -100,22 +115,46 @@ export const ItemConfigDialog = ({
             </Typography>
           )}
 
-          {settingsSchema && (
+          {showSettings && (
             <>
               {showHeadings && (
                 <Typography variant="overline" color="text.secondary">
                   Settings
                 </Typography>
               )}
-              <FabricJsonSchemaForm
-                {...nestedForm}
-                schema={settingsSchema}
-                formData={draft.settings}
-                extraErrors={settingsErrors as ErrorSchema}
-                onChange={({ formData }) =>
-                  setDraft((draft) => ({ ...draft, settings: formData }))
-                }
-              />
+              {linked.map(({ property, title, available }) => {
+                const checked = draft.linked.includes(property);
+                return (
+                  <FormControlLabel
+                    key={property}
+                    label={
+                      available
+                        ? title
+                        : `${title} (not offered by this module)`
+                    }
+                    disabled={!available && !checked}
+                    control={
+                      <Checkbox
+                        checked={checked}
+                        onChange={(e) =>
+                          toggleLinked(property, e.target.checked)
+                        }
+                      />
+                    }
+                  />
+                );
+              })}
+              {settingsSchema && (
+                <FabricJsonSchemaForm
+                  {...nestedForm}
+                  schema={settingsSchema}
+                  formData={draft.settings}
+                  extraErrors={settingsErrors as ErrorSchema}
+                  onChange={({ formData }) =>
+                    setDraft((draft) => ({ ...draft, settings: formData }))
+                  }
+                />
+              )}
             </>
           )}
 

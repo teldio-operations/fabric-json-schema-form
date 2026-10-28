@@ -25,7 +25,7 @@ const schema = {
       title: "Cameras",
       description: "The cameras this plugin shows",
       control: "queryable-list",
-      accept: "video/*",
+      accept: "video/mp2t",
       items: {
         type: "object",
         required: ["name", "query"],
@@ -34,7 +34,13 @@ const schema = {
           query: {
             type: "object",
             control: "queryable",
-            accept: "video/*",
+            accept: "video/mp2t",
+          },
+          history: {
+            type: "object",
+            title: "Historical video",
+            control: "queryable",
+            accept: "video/mp4",
           },
           ptz: {
             type: "boolean",

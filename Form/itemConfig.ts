@@ -20,6 +20,7 @@ export type ItemConfig = {
   settings: Record<string, unknown>;
   input: Record<string, unknown>;
   steps: Step[];
+  linked: string[];
 };
 
 export type Processor = {
@@ -36,6 +37,12 @@ export const accepts = (processor: Processor, output?: Queryable) =>
   !output || !processor.accept || filterQueries(processor.accept)(output);
 
 export type ChainProperty = (query: QueryRequest) => string | undefined;
+
+export type ItemTools = {
+  chainProperty: ChainProperty;
+  linkedProperties: string[];
+  link: (property: string, base: QueryRequest) => QueryRequest | undefined;
+};
 
 export const findRequestProperty = (input: RJSFSchema) =>
   Object.entries(input.properties ?? {}).find(
@@ -88,27 +95,40 @@ export const wrap = (base: QueryRequest, steps: Step[]): QueryRequest =>
 export const configOf = (
   item: Item,
   property: string | undefined,
-  chainProperty: ChainProperty,
+  tools: ItemTools,
 ): ItemConfig => {
   const { name: _name, query, ...settings } = item;
-  const { base, steps } = unwrap(query, chainProperty);
+  const { base, steps } = unwrap(query, tools.chainProperty);
   const input = { ...base.input };
   if (property !== undefined) {
     delete input[property];
   }
-  return { settings, input, steps };
+  const linked = tools.linkedProperties.filter(
+    (linked) => settings[linked] !== undefined,
+  );
+  for (const linked of tools.linkedProperties) {
+    delete settings[linked];
+  }
+  return { settings, input, steps, linked };
 };
 
 export const withConfig = (
   item: Item,
   config: ItemConfig,
   property: string | undefined,
-  chainProperty: ChainProperty,
+  tools: ItemTools,
 ): Item => {
-  const { base } = unwrap(item.query, chainProperty);
+  const { base } = unwrap(item.query, tools.chainProperty);
+  const linked = Object.fromEntries(
+    config.linked.flatMap((linked) => {
+      const request = tools.link(linked, base);
+      return request ? [[linked, request]] : [];
+    }),
+  );
 
   return {
     ...structuredClone(config.settings),
+    ...linked,
     name: item.name,
     query: wrap(
       {

@@ -7,6 +7,24 @@ const cameras = (prefix: string, count: number) =>
     title: `${prefix} Camera ${String(i + 1).padStart(3, "0")}`,
   }));
 
+const videoPlayback = (prefix: string, count: number) => ({
+  name: "video-playback",
+  title: "Recorded video",
+  mediaType: "video/mp4",
+  input: {
+    type: "object",
+    required: ["camera_id"],
+    properties: {
+      camera_id: {
+        type: "string",
+        title: "Camera",
+        control: "combobox",
+        oneOf: cameras(prefix, count),
+      },
+    },
+  },
+});
+
 const videoStream = (prefix: string, count: number, extra = {}) => ({
   name: "video-stream",
   title: "Live video stream",
@@ -75,7 +93,7 @@ const configured = {
   alta: {
     name: "avigilon-alta-video",
     title: "Avigilon Alta Video",
-    queries: [videoStream("Lobby", 12)],
+    queries: [videoStream("Lobby", 12), videoPlayback("Lobby", 12)],
   },
   unity: {
     name: "avigilon-unity-video",

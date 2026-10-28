@@ -40,9 +40,11 @@ import type { Queryable } from "../manager-api";
 import { removeEmpty } from "../utils/data";
 import { type QueryRequest, useQueryableModules } from "../utils/queryables";
 import { ItemConfigDialog } from "./ItemConfigDialog";
+import { filterQueries } from "./mediaType";
 import {
   accepts,
   type ChainProperty,
+  type ItemTools,
   configOf,
   findRequestProperty,
   type Item,
@@ -54,6 +56,12 @@ import {
 } from "./itemConfig";
 
 type QueryableListSchema = RJSFSchema & {
+  accept?: string;
+};
+
+type LinkedRequest = {
+  property: string;
+  title: string;
   accept?: string;
 };
 
@@ -486,15 +494,42 @@ export const QueryableListField = (
     : "Use the standard form";
   const isDisabled = disabled || readonly;
 
-  const settingsSchema = useMemo(
+  const resolvedItemSchema = useMemo(
     () =>
       typeof itemSchema === "object" && !Array.isArray(itemSchema)
-        ? withoutProperties(schemaUtils.retrieveSchema(itemSchema), [
-            "name",
-            "query",
-          ])
+        ? schemaUtils.retrieveSchema(itemSchema)
         : undefined,
     [itemSchema, schemaUtils],
+  );
+
+  const linkedRequests = useMemo(
+    () =>
+      Object.entries(resolvedItemSchema?.properties ?? {}).flatMap(
+        ([property, schema]): LinkedRequest[] =>
+          property !== "query" &&
+          typeof schema === "object" &&
+          (schema as { control?: unknown }).control === "queryable"
+            ? [
+                {
+                  property,
+                  title: schema.title ?? property,
+                  accept: (schema as { accept?: string }).accept,
+                },
+              ]
+            : [],
+      ),
+    [resolvedItemSchema],
+  );
+
+  const settingsSchema = useMemo(
+    () =>
+      resolvedItemSchema &&
+      withoutProperties(resolvedItemSchema, [
+        "name",
+        "query",
+        ...linkedRequests.map((linked) => linked.property),
+      ]),
+    [resolvedItemSchema, linkedRequests],
   );
 
   const settingsDefaults = useMemo(
@@ -511,7 +546,8 @@ export const QueryableListField = (
     item &&
     (errorSchema?.[items.indexOf(item)] as ErrorSchema<Item> | undefined);
 
-  const { queryableModules, configs, isFetching } = useQueryableModules(accept);
+  const { queryableModules, configs, getInfo, isFetching } =
+    useQueryableModules(accept);
 
   const [search, setSearch] = useState("");
 
@@ -602,6 +638,57 @@ export const QueryableListField = (
     [chainProperty],
   );
 
+  const linkTarget = useCallback(
+    (source: Source, linked: LinkedRequest) =>
+      getInfo({
+        id: source.moduleId,
+        name: configs?.[source.moduleId]?.module,
+      })?.queries?.find(
+        (queryable) =>
+          queryable.name !== source.queryable.name &&
+          (!linked.accept || filterQueries(linked.accept)(queryable)) &&
+          (source.property === undefined ||
+            (queryable.input as RJSFSchema | undefined)?.properties?.[
+              source.property
+            ] !== undefined),
+      ),
+    [getInfo, configs],
+  );
+
+  const tools = useMemo(
+    (): ItemTools => ({
+      chainProperty,
+      linkedProperties: linkedRequests.map((linked) => linked.property),
+      link: (property, base) => {
+        const source = sources.find((source) => isFromSource(base, source));
+        const linked = linkedRequests.find(
+          (linked) => linked.property === property,
+        );
+        const target = source && linked && linkTarget(source, linked);
+        if (!source || !target) {
+          return undefined;
+        }
+
+        return {
+          moduleId: base.moduleId,
+          name: target.name,
+          input:
+            source.property === undefined
+              ? {}
+              : { [source.property]: base.input?.[source.property] },
+        };
+      },
+    }),
+    [chainProperty, linkedRequests, sources, linkTarget],
+  );
+
+  const linkedFor = (source: Source) =>
+    linkedRequests.map((linked) => ({
+      property: linked.property,
+      title: linked.title,
+      available: !!linkTarget(source, linked),
+    }));
+
   const unavailable = isFetching
     ? []
     : items.filter(
@@ -633,15 +720,16 @@ export const QueryableListField = (
             mostCommonConfig(
               items
                 .filter((item) => isFromSource(baseOf(item), source))
-                .map((item) => configOf(item, source.property, chainProperty)),
+                .map((item) => configOf(item, source.property, tools)),
             ) ?? {
               settings: settingsDefaults as Record<string, unknown>,
               input: source.inputDefaults as Record<string, unknown>,
               steps: [],
+              linked: [],
             },
         ]),
       ),
-    [sources, items, pinnedConfigs, settingsDefaults, baseOf, chainProperty],
+    [sources, items, pinnedConfigs, settingsDefaults, baseOf, tools],
   );
 
   const moduleConfig = (source: Source) => moduleConfigs.get(keyOf(source))!;
@@ -651,10 +739,7 @@ export const QueryableListField = (
 
   const isOverridden = (item: Item | undefined, source: Source) =>
     !!item &&
-    !deepEquals(
-      configOf(item, source.property, chainProperty),
-      moduleConfig(source),
-    );
+    !deepEquals(configOf(item, source.property, tools), moduleConfig(source));
 
   const processingOf = (item?: Item) =>
     item &&
@@ -676,6 +761,7 @@ export const QueryableListField = (
       settingsSchema ||
       source.inputSchema ||
       processors.some((processor) => accepts(processor, source.queryable)) ||
+      linkedRequests.some((linked) => linkTarget(source, linked)) ||
       processingOf(item)
     );
 
@@ -689,7 +775,7 @@ export const QueryableListField = (
     path,
     moduleConfig,
     baseOf,
-    chainProperty,
+    tools,
   });
   latest.current = {
     items,
@@ -697,7 +783,7 @@ export const QueryableListField = (
     path,
     moduleConfig,
     baseOf,
-    chainProperty,
+    tools,
   };
 
   const actions = useMemo((): Actions => {
@@ -727,7 +813,7 @@ export const QueryableListField = (
               },
               latest.current.moduleConfig(source),
               source.property,
-              latest.current.chainProperty,
+              latest.current.tools,
             ),
           ),
         ]),
@@ -776,6 +862,7 @@ export const QueryableListField = (
           inputTitle={`${source.queryable.title || source.queryable.name} inputs`}
           queryable={source.queryable}
           processors={processors}
+          linked={linkedFor(source)}
           SchemaField={SchemaField}
           onClose={closeDialog}
           onSave={(config) => {
@@ -783,11 +870,8 @@ export const QueryableListField = (
             actions.update((items) =>
               items.map((item) =>
                 isFromSource(baseOf(item), source) &&
-                deepEquals(
-                  configOf(item, source.property, chainProperty),
-                  previous,
-                )
-                  ? withConfig(item, config, source.property, chainProperty)
+                deepEquals(configOf(item, source.property, tools), previous)
+                  ? withConfig(item, config, source.property, tools)
                   : item,
               ),
             );
@@ -807,7 +891,7 @@ export const QueryableListField = (
     const save = (config: ItemConfig) => {
       pinModuleConfig(source);
       actions.updateAt(dialog.index, (item) =>
-        withConfig(item, config, source.property, chainProperty),
+        withConfig(item, config, source.property, tools),
       );
       closeDialog();
     };
@@ -820,12 +904,13 @@ export const QueryableListField = (
             ? `This item overrides the configuration of ${source.title}.`
             : `Changes here override the configuration of ${source.title} for this item only.`
         }
-        config={configOf(item, source.property, chainProperty)}
+        config={configOf(item, source.property, tools)}
         settingsSchema={settingsSchema}
         inputSchema={source.inputSchema}
         inputTitle={`${source.queryable.title || source.queryable.name} inputs`}
         queryable={source.queryable}
         processors={processors}
+        linked={linkedFor(source)}
         errors={errorsFor(item)}
         SchemaField={SchemaField}
         onClose={closeDialog}
