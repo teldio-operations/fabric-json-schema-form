@@ -24,6 +24,23 @@ const GROUP_SEPARATOR =
 
 const GROUP_SEPARATOR_ERROR = `Group separators (e.g. "${GROUP_SEPARATOR}") are not allowed`;
 
+function rangeError(
+  value: number | null | undefined,
+  minimum: number | undefined,
+  maximum: number | undefined,
+): string | undefined {
+  if (typeof value !== "number") {
+    return undefined;
+  }
+  if (minimum !== undefined && value < minimum) {
+    return `Must be at least ${minimum}`;
+  }
+  if (maximum !== undefined && value > maximum) {
+    return `Must be at most ${maximum}`;
+  }
+  return undefined;
+}
+
 export function NumberField({
   formData,
   onChange,
@@ -49,21 +66,34 @@ export function NumberField({
   const pathRef = useRef(path);
   pathRef.current = path;
 
+  const editable = !disabled && !readonly;
+  const minimum = editable ? schema.minimum : undefined;
+  const maximum = editable ? schema.maximum : undefined;
+
   const onValueChange = useCallback(
     (val: number | null, evDetails: NumberFieldRootChangeEventDetails) => {
       const target = evDetails.event?.target;
       const rawValue = target instanceof HTMLInputElement ? target.value : "";
 
       const hasSeparator = rawValue.includes(GROUP_SEPARATOR);
-      setFieldError(path, hasSeparator ? GROUP_SEPARATOR_ERROR : undefined);
+      setFieldError(
+        path,
+        hasSeparator
+          ? GROUP_SEPARATOR_ERROR
+          : rangeError(val, minimum, maximum),
+      );
       if (hasSeparator) {
         return;
       }
 
       onChange(val, path);
     },
-    [onChange, path, setFieldError],
+    [onChange, path, minimum, maximum, setFieldError],
   );
+
+  useEffect(() => {
+    setFieldError(pathRef.current, rangeError(formData, minimum, maximum));
+  }, [formData, pathKey, minimum, maximum, setFieldError]);
 
   useEffect(() => {
     return () => setFieldError(pathRef.current, undefined);
@@ -102,8 +132,6 @@ export function NumberField({
       error={rawErrors && rawErrors.length > 0}
       format={{ useGrouping: false }}
       required={required}
-      min={schema.minimum}
-      max={schema.maximum}
     />
   );
 }

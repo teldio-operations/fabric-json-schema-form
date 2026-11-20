@@ -3,7 +3,7 @@ import { type FormProps } from "@rjsf/core";
 import RJSFMuiForm from "@rjsf/mui";
 import { ErrorSchemaBuilder, type FieldPathList } from "@rjsf/utils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ArrayFieldItemTemplate } from "../components/ArrayFieldItemTemplate";
 import { ComboboxWidget } from "../components/ComboboxWidget";
@@ -25,7 +25,10 @@ export type FabricJsonSchemaFormProps = Omit<FormProps, "validator"> & {
   onCancel?: () => void;
   loading?: boolean;
   disableSubmitOnEnter?: boolean;
+  onFieldErrorsChange?: (errors: FieldError[]) => void;
 };
+
+export type FieldError = { path: FieldPathList; message: string };
 
 const queryClient = new QueryClient();
 
@@ -34,6 +37,7 @@ export const FabricJsonSchemaForm = ({
   loading,
   children,
   disableSubmitOnEnter,
+  onFieldErrorsChange,
   ...props
 }: FabricJsonSchemaFormProps) => {
   const submitButtonOptions =
@@ -44,9 +48,9 @@ export const FabricJsonSchemaForm = ({
 
   const disabled = props.disabled || loading;
 
-  const [fieldErrors, setFieldErrors] = useState<
-    Record<string, { path: FieldPathList; message: string }>
-  >({});
+  const [fieldErrors, setFieldErrors] = useState<Record<string, FieldError>>(
+    {},
+  );
 
   const setFieldError = useCallback<SetFieldError>((path, message) => {
     const key = path.join(".");
@@ -66,6 +70,17 @@ export const FabricJsonSchemaForm = ({
   }, []);
 
   const hasFieldErrors = Object.keys(fieldErrors).length > 0;
+
+  const onFieldErrorsChangeRef = useRef(onFieldErrorsChange);
+  onFieldErrorsChangeRef.current = onFieldErrorsChange;
+
+  useEffect(() => {
+    onFieldErrorsChangeRef.current?.(Object.values(fieldErrors));
+  }, [fieldErrors]);
+
+  useEffect(() => {
+    return () => onFieldErrorsChangeRef.current?.([]);
+  }, []);
 
   const extraErrors = useMemo(() => {
     if (!hasFieldErrors) {
@@ -111,6 +126,21 @@ export const FabricJsonSchemaForm = ({
     [props],
   );
 
+  // NumberField reports minimum/maximum itself as soon as the value changes.
+  // Drop ajv's copy so the field does not show the error twice.
+  const transformErrors: FabricJsonSchemaFormProps["transformErrors"] =
+    useCallback<NonNullable<FabricJsonSchemaFormProps["transformErrors"]>>(
+      (errors, uiSchema) => {
+        const filtered = errors.filter(
+          (error) => error.name !== "minimum" && error.name !== "maximum",
+        );
+        return props.transformErrors
+          ? props.transformErrors(filtered, uiSchema)
+          : filtered;
+      },
+      [props],
+    );
+
   const onSubmit: FabricJsonSchemaFormProps["onSubmit"] = useCallback(
     ({ formData, ...data }, id) => {
       props.onSubmit?.({ ...data, formData: omitNulls(formData) }, id);
@@ -128,6 +158,7 @@ export const FabricJsonSchemaForm = ({
             disabled={disabled}
             onChange={onChange}
             onSubmit={onSubmit}
+            transformErrors={transformErrors}
             extraErrors={extraErrors}
             showErrorList={false}
             extraErrorsBlockSubmit={
