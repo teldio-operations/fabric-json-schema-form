@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.2](https://github.com/teldio-operations/fabric-json-schema-form/compare/v1.0.1...v1.0.2) (2026-11-23)
+
+
+### Bug Fixes
+
+* Clearer list items and a show/hide button on masked fields ([#65](https://github.com/teldio-operations/fabric-json-schema-form/issues/65)) ([f319449](https://github.com/teldio-operations/fabric-json-schema-form/commit/f3194497c3467d7ea5b29fdbfa574d1d2b741c39))
+* NumberField silently clamps out-of-range values on blur ([#69](https://github.com/teldio-operations/fabric-json-schema-form/issues/69)) ([9b869f8](https://github.com/teldio-operations/fabric-json-schema-form/commit/9b869f8f9d9e4b86535452594fe1cefae3a379e4))
+
 ## [1.0.1](https://github.com/teldio-operations/fabric-json-schema-form/compare/v1.0.0...v1.0.1) (2026-09-30)
 
 
