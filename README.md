@@ -52,6 +52,17 @@ The public API is small:
 
 Everything else is internal. The `exports` map in `package.json` blocks it.
 
+## Preview
+
+To see the form without a manager, run:
+
+```bash
+bun run preview
+```
+
+Then open the URL that Bun prints. The page in `preview/` renders a sample
+schema. `preview/mock.ts` replaces the manager API with sample modules.
+
 ## Test local changes in `fabric-manager`
 
 Use `yalc` to test local changes inside `fabric-manager`.
